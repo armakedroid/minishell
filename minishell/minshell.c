@@ -1,0 +1,89 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minshell.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/12 18:39:21 by argharag          #+#    #+#             */
+/*   Updated: 2025/05/12 20:48:13 by argharag         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+#include <unistd.h>
+#include <stdlib.h>
+#include <signal.h>
+#include "pipex/pipex.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdio.h>
+
+char **command_s(char *line)
+{
+	char	**back;
+	back = ft_split(line, ' ');
+	if (!back)
+		return (NULL);
+	return (back);
+}
+
+void check_f(char **back)
+{
+	if (ft_strncmp(back[0], "echo", 4) == 0)
+		printf("es echon em\n");
+	else if (ft_strncmp(back[0], "cd", 2) == 0)
+		printf("es cdn em\n");
+	else if (ft_strncmp(back[0], "pwd", 3) == 0)
+		printf("es pwdn em\n");
+	else if (ft_strncmp(back[0], "export", 6) == 0)
+		printf("es exportn em\n");
+	else if (ft_strncmp(back[0], "unset", 5) == 0)
+		printf("es unsetn em\n");
+	else
+		write(1, "zsh: command not found", 22);
+	exit(1);
+	// wait(NULL);
+}
+
+void handle_sigint(int x)
+{
+	printf("\nx = %d\n", x);
+	rl_replace_line("", 0);
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_redisplay();
+	return ;
+}
+
+int main(int argc, char **argv, char **envp)
+{
+	char	*line;
+	char	**back;
+	int		pordz;
+	pid_t	cha;
+
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
+	while (1)
+	{
+		line = readline("minishell $ ");
+		if (!line)
+			break;
+		if (*line)
+			add_history(line);
+		if (ft_strncmp(line, "exit", 4) == 0)
+		{
+			free(line);
+			break;
+		}
+		back = command_s(line);
+		if (!back)
+			exit (1);
+		cha = fork();
+		if (cha == 0)
+			check_f(back);
+		else
+			kill(cha, SIGINT);
+		wait(NULL);
+		rl_redisplay();
+	}
+}
