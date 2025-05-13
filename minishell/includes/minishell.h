@@ -12,8 +12,8 @@
 
 int	ft_export(char **envp, char **back);
 int	ft_cd(char **envp, char **back);
-int	ft_echo(char **envp, char **back);
-int	ft_env(char **envp, char **back);
+void	ft_echo(char **back);
+void	ft_env(char **envp);
 int	ft_unset(char **envp, char **back);
 void	ft_pwd(char **envp, char **back);
 

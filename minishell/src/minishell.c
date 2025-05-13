@@ -28,16 +28,16 @@ char **command_s(char *line)
 
 void check_f(char **back, char **envp)
 {
-	int pordz;
-
 	if (ft_strncmp(back[0], "echo", 4) == 0)
-		printf("es echon em\n");
+		ft_echo(back);
 	else if (ft_strncmp(back[0], "pwd", 3) == 0)
 		ft_pwd(envp, back);
 	else if (ft_strncmp(back[0], "export", 6) == 0)
 		printf("es exportn em\n");
 	else if (ft_strncmp(back[0], "unset", 5) == 0)
 		printf("es unsetn em\n");
+	else if (ft_strncmp(back[0], "env", 3) == 0)
+		ft_env(envp);
 	else
 		write(1, "bash: command not found\n", 25);
 	exit(1);
@@ -92,15 +92,16 @@ int main(int argc, char **argv, char **envp)
 		back = command_s(line);
 		if (!back)
 			exit (1);
-		if (!ft_strncmp(back[0], "cd", 3))
+		if (!ft_strncmp(back[0], "cd", 2) == 0 && back[0][2] == '\0')
 			ft_cd(envp, back);
 		else
 		{
 			cha = fork();
 			if (cha == 0)
-				check_f(back, envp);
+				check_f(argc, back, envp);
+			else
+				wait(NULL);
 		}
-		wait(NULL);
 		rl_redisplay();
 	}
 	free(line);
