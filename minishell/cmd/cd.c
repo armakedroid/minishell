@@ -12,3 +12,10 @@
 
 #include "minishell.h"
 
+int	ft_cd(char **envp, char **back)
+{
+	int	i;
+
+	i = 0;
+
+}

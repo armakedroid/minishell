@@ -16,6 +16,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdio.h>
+#include <sys/wait.h>
 
 char **command_s(char *line)
 {
@@ -42,6 +43,19 @@ void check_f(char **back)
 		write(1, "zsh: command not found", 22);
 	exit(1);
 	// wait(NULL);
+}
+
+void free_split(char **back)
+{
+	int	i;
+
+	i = 0;
+	while (back[i])
+	{
+		free(back[i]);
+		i++;
+	}
+	free(back);
 }
 
 void handle_sigint(int x)
@@ -82,8 +96,10 @@ int main(int argc, char **argv, char **envp)
 		if (cha == 0)
 			check_f(back);
 		else
-			kill(cha, SIGINT);
 		wait(NULL);
 		rl_redisplay();
 	}
+	free(line);
+	free_split(back);
+	return (0);
 }
