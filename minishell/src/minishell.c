@@ -1,15 +1,15 @@
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minshell.c                                         :+:      :+:    :+:   */
+/*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 18:39:21 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/12 20:48:13 by argharag         ###   ########.fr       */
+/*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
+/*   Updated: 2025/05/13 22:17:08 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <unistd.h>
-#include <stdlib.h>
+
 #include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -32,11 +32,6 @@ void check_f(char **back, char **envp)
 
 	if (ft_strncmp(back[0], "echo", 4) == 0)
 		printf("es echon em\n");
-	else if (ft_strncmp(back[0], "cd", 2) == 0)
-	{
-		pordz = ft_cd(envp, back);
-		printf ("pordz = %d\n", pordz);
-	}
 	else if (ft_strncmp(back[0], "pwd", 3) == 0)
 		ft_pwd(envp, back);
 	else if (ft_strncmp(back[0], "export", 6) == 0)
@@ -97,10 +92,14 @@ int main(int argc, char **argv, char **envp)
 		back = command_s(line);
 		if (!back)
 			exit (1);
-		cha = fork();
-		if (cha == 0)
-			check_f(back, envp);
-		// else
+		if (!ft_strncmp(back[0], "cd", 3))
+			ft_cd(envp, back);
+		else
+		{
+			cha = fork();
+			if (cha == 0)
+				check_f(back, envp);
+		}
 		wait(NULL);
 		rl_redisplay();
 	}
