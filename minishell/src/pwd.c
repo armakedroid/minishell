@@ -1,5 +1,4 @@
 #include "../includes/minishell.h"
-
 void	ft_pwd(char **envp, char **back)
 {
 	int	i;
