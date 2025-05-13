@@ -27,14 +27,14 @@ char **command_s(char *line)
 	return (back);
 }
 
-void check_f(char **back)
+void check_f(char **back, char **envp)
 {
 	if (ft_strncmp(back[0], "echo", 4) == 0)
 		printf("es echon em\n");
 	else if (ft_strncmp(back[0], "cd", 2) == 0)
 		printf("es cdn em\n");
 	else if (ft_strncmp(back[0], "pwd", 3) == 0)
-		printf("es pwdn em\n");
+		ft_pwd(envp, back);
 	else if (ft_strncmp(back[0], "export", 6) == 0)
 		printf("es exportn em\n");
 	else if (ft_strncmp(back[0], "unset", 5) == 0)
