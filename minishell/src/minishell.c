@@ -11,11 +11,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
-#include "pipex/pipex.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include "../includes/minishell.h"
 
 char **command_s(char *line)
 {
@@ -28,10 +28,15 @@ char **command_s(char *line)
 
 void check_f(char **back, char **envp)
 {
+	int pordz;
+
 	if (ft_strncmp(back[0], "echo", 4) == 0)
 		printf("es echon em\n");
 	else if (ft_strncmp(back[0], "cd", 2) == 0)
-		printf("es cdn em\n");
+	{
+		pordz = ft_cd(envp, back);
+		printf ("pordz = %d\n", pordz);
+	}
 	else if (ft_strncmp(back[0], "pwd", 3) == 0)
 		ft_pwd(envp, back);
 	else if (ft_strncmp(back[0], "export", 6) == 0)
@@ -39,7 +44,7 @@ void check_f(char **back, char **envp)
 	else if (ft_strncmp(back[0], "unset", 5) == 0)
 		printf("es unsetn em\n");
 	else
-		write(1, "zsh: command not found", 22);
+		write(1, "bash: command not found\n", 25);
 	exit(1);
 	// wait(NULL);
 }
@@ -59,7 +64,6 @@ void free_split(char **back)
 
 void handle_sigint(int x)
 {
-	printf("\nx = %d\n", x);
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
 	rl_on_new_line();
@@ -74,6 +78,8 @@ int main(int argc, char **argv, char **envp)
 	int		pordz;
 	pid_t	cha;
 
+	if (argc != 1)
+		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
@@ -93,8 +99,8 @@ int main(int argc, char **argv, char **envp)
 			exit (1);
 		cha = fork();
 		if (cha == 0)
-			check_f(back);
-		else
+			check_f(back, envp);
+		// else
 		wait(NULL);
 		rl_redisplay();
 	}

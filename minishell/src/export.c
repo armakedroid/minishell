@@ -9,5 +9,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
+int	ft_export(char **envp, char **back)
+{
+	int	i;
+
+	i = 0;
+	return 0;
+}

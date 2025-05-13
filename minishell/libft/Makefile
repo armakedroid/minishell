@@ -23,19 +23,19 @@ LIBA = ar rcs
 all: $(NAME)
 
 $(NAME) : $(OBJS)
-	$(LIBA) $(NAME) $(OBJS)
+	@$(LIBA) $(NAME) $(OBJS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -I. -c $< -o $@
+	@$(CC) $(CFLAGS) -I. -c $< -o $@
 
 bonus: all $(OBJS_B)
-	$(LIBA) $(NAME) $(OBJS_B)
+	@$(LIBA) $(NAME) $(OBJS_B)
 
 clean:
-	rm -f $(OBJS) $(OBJS_B)
+	@rm -f $(OBJS) $(OBJS_B)
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re:	fclean all
 
