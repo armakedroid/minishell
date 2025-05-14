@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/14 18:56:03 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/14 19:41:32 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,16 +92,15 @@ int main(int argc, char **argv, char **envp)
 		back = command_s(line);
 		if (!back)
 			exit (1);
-		if (!(ft_strncmp(back[0], "cd", 2) == 0) && back[0][2] == '\0')
+		if (!(ft_strncmp(back[0], "cd", 3)))
 			ft_cd(envp, back);
 		else
 		{
 			cha = fork();
 			if (cha == 0)
 				check_f(back, envp);
-			else
-				wait(NULL);
 		}
+		wait(NULL);
 		rl_redisplay();
 	}
 	free(line);
