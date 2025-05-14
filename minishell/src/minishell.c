@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/14 19:41:32 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/14 21:59:14 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,15 @@ char **command_s(char *line)
 
 void check_f(char **back, char **envp)
 {
-	if (ft_strncmp(back[0], "echo", 4) == 0)
+	if (ft_strncmp(back[0], "echo", 5) == 0)
 		ft_echo(back);
-	else if (ft_strncmp(back[0], "pwd", 3) == 0)
-		ft_pwd(envp, back);
-	else if (ft_strncmp(back[0], "export", 6) == 0)
-		printf("es exportn em\n");
-	else if (ft_strncmp(back[0], "unset", 5) == 0)
+	else if (ft_strncmp(back[0], "pwd", 4) == 0)
+		printf("%s\n", ft_pwd(envp, back));
+	else if (ft_strncmp(back[0], "export", 7) == 0)
+		envp = ft_export(envp, back);
+	else if (ft_strncmp(back[0], "unset", 6) == 0)
 		ft_unset(envp, back);
-	else if (ft_strncmp(back[0], "env", 3) == 0)
+	else if (!ft_strncmp(back[0], "env", 4))
 		ft_env(envp);
 	else
 		write(1, "bash: command not found\n", 25);
@@ -66,17 +66,37 @@ void handle_sigint(int x)
 	return ;
 }
 
+char	**ft_copy_env(char **envp)
+{
+	char	**tmp;
+	int		i;
+
+	i = 0;
+	while(envp[i])
+		i++;
+	tmp = malloc((i) * sizeof(char *));
+	i = 0;
+	while(envp[i])
+	{
+		tmp[i] = ft_strdup(envp[i]);
+		i++;
+	}
+	tmp[i] = NULL;
+	return (tmp);
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	char	**back;
-	int		pordz;
+	char	**env;
 	pid_t	cha;
 
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
+	env = ft_copy_env(envp);
 	while (1)
 	{
 		line = readline("minishell $ ");
@@ -93,12 +113,14 @@ int main(int argc, char **argv, char **envp)
 		if (!back)
 			exit (1);
 		if (!(ft_strncmp(back[0], "cd", 3)))
-			ft_cd(envp, back);
+			ft_cd(env, back);
+		else if (!(ft_strncmp(back[0], "export", 7)))
+			env = ft_export(env, back);
 		else
 		{
 			cha = fork();
 			if (cha == 0)
-				check_f(back, envp);
+				check_f(back, env);
 		}
 		wait(NULL);
 		rl_redisplay();

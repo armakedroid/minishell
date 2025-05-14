@@ -10,11 +10,13 @@
 #include <sys/wait.h>
 #include "../libft/libft.h"
 
-int	ft_export(char **envp, char **back);
-int	ft_cd(char **envp, char **back);
+int		have_a_var(char **envp, char **back);
+void	update_smth(char **envp, char *var, char *value);
+char	**ft_export(char **envp, char **back);
+int		ft_cd(char **envp, char **back);
 void	ft_echo(char **back);
 void	ft_env(char **envp);
 void	ft_unset(char **envp, char **back);
-void	ft_pwd(char **envp, char **back);
+char	*ft_pwd(char **envp, char **back);
 
 #endif

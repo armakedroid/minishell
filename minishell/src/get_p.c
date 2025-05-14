@@ -1,15 +1,40 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_p.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/14 20:43:30 by apetoyan          #+#    #+#             */
+/*   Updated: 2025/05/14 22:29:03 by apetoyan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-char *get_p(char **back, char **env)
+#include "../includes/minishell.h"
+
+// Stugum enq ENVP-i mej ka ed andamy te che? 
+// Ete ka kveradardzne 1, ete chka 0, ete chka "=" nshany -1 (unset-i hamar)
+
+int	have_a_var(char **envp, char **back)
 {
 	int	i;
-
+	int	j;
+	
 	i = 0;
-	while (env[i])
+	while (back[1][i])
 	{
-		if (strncmp(env[i], "PATH=", 5) == 0)
-			return (env[i]);
+		if (back[1][i] == '=')
+			break;
 		i++;
 	}
-	return (NULL);
+	if (!back[1][i])
+		return (-1);
+	j = 0;
+	while (envp[j])
+	{
+		if (!ft_strncmp(envp[j],back[1], i + 1))
+			return (1);
+		j++;
+	}
+	return (0);
 }
