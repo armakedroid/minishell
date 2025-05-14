@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/13 22:17:08 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/14 18:56:03 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void check_f(char **back, char **envp)
 	else if (ft_strncmp(back[0], "export", 6) == 0)
 		printf("es exportn em\n");
 	else if (ft_strncmp(back[0], "unset", 5) == 0)
-		printf("es unsetn em\n");
+		ft_unset(envp, back);
 	else if (ft_strncmp(back[0], "env", 3) == 0)
 		ft_env(envp);
 	else
@@ -92,13 +92,13 @@ int main(int argc, char **argv, char **envp)
 		back = command_s(line);
 		if (!back)
 			exit (1);
-		if (!ft_strncmp(back[0], "cd", 2) == 0 && back[0][2] == '\0')
+		if (!(ft_strncmp(back[0], "cd", 2) == 0) && back[0][2] == '\0')
 			ft_cd(envp, back);
 		else
 		{
 			cha = fork();
 			if (cha == 0)
-				check_f(argc, back, envp);
+				check_f(back, envp);
 			else
 				wait(NULL);
 		}

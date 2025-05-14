@@ -11,10 +11,25 @@
 
 #include "../includes/minishell.h"
 
-int	ft_unset(char **envp, char **back)
+void	ft_unset(char **envp, char **back)
 {
 	int	i;
 
 	i = 0;
-	return 0;
+	printf("%s\n\n",back[1]);
+	while (envp[i])
+	{
+		printf("%s\n", envp[i]);
+		if (ft_strncmp(back[1], envp[i], ft_strlen(back[i]) == 0))
+		{
+			while (envp[i + 1])
+			{
+				envp[i] = envp[i + 1];
+				i++;
+			}
+			envp[i] = NULL;
+			return ;
+		}
+		i++;
+	}
 }
