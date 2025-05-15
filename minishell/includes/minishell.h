@@ -18,5 +18,8 @@ void	ft_echo(char **back);
 void	ft_env(char **envp);
 void	ft_unset(char **envp, char **back);
 char	*ft_pwd(char **envp, char **back);
+char	*cmdfile(char *cmd, char **path, char **envp);
+char	*get_path(char **env);
+void	free_split(char **back);
 
 #endif

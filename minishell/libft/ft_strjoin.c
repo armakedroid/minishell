@@ -6,7 +6,7 @@
 /*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 22:05:45 by argharag          #+#    #+#             */
-/*   Updated: 2025/01/25 21:33:46 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/15 21:08:53 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,18 @@ static void	fill(char *back, const char *s1, const char *s2)
 	back[index] = '\0';
 }
 
-char	*ft_strjoin(const char *s1, const char *s2)
+char	*ft_strjoin(char *s1, const char *s2)
 {
 	int		i1;
 	int		i2;
 	char	*back;
 
-	if (!s1 || !s2)
+	if (!s1)
+	{
+		s1 = malloc(1);
+		s1[0] = '\0';
+	}
+	if (!s2)
 		return (NULL);
 	i1 = ft_strlen(s1);
 	i2 = ft_strlen(s2);

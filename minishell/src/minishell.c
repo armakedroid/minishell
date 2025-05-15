@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/14 21:59:14 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/15 21:04:13 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,13 @@ char **command_s(char *line)
 	return (back);
 }
 
-void check_f(char **back, char **envp)
+void check_f(char **back, char **envp, char **path)
 {
+	char	*line;
+	int	i;
+
+	i = 0;
+	line = NULL;
 	if (ft_strncmp(back[0], "echo", 5) == 0)
 		ft_echo(back);
 	else if (ft_strncmp(back[0], "pwd", 4) == 0)
@@ -39,8 +44,17 @@ void check_f(char **back, char **envp)
 	else if (!ft_strncmp(back[0], "env", 4))
 		ft_env(envp);
 	else
-		write(1, "bash: command not found\n", 25);
-	exit(1);
+	{
+		while (back[i])
+		{
+			line = ft_strjoin(line, back[i]);
+			if (back[i + 1])
+				line = ft_strjoin(line, " ");
+			i++;
+		}
+		cmdfile(line, path, envp);
+	}
+	exit(0);
 	// wait(NULL);
 }
 
@@ -91,12 +105,16 @@ int main(int argc, char **argv, char **envp)
 	char	**back;
 	char	**env;
 	pid_t	cha;
+	char	*path;
+	char	**my_p;
 
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 	env = ft_copy_env(envp);
+	path = get_path(envp);
+	my_p = ft_split(path, ':');
 	while (1)
 	{
 		line = readline("minishell $ ");
@@ -120,7 +138,7 @@ int main(int argc, char **argv, char **envp)
 		{
 			cha = fork();
 			if (cha == 0)
-				check_f(back, env);
+				check_f(back, env, my_p);
 		}
 		wait(NULL);
 		rl_redisplay();
