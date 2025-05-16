@@ -19,11 +19,11 @@ void	ft_unset(char **envp, char **back)
 	printf("%s\n\n",back[1]);
 	while (envp[i])
 	{
-		printf("%s\n", envp[i]);
-		if (ft_strncmp(back[1], envp[i], ft_strlen(back[i]) == 0))
+		if (ft_strncmp(back[1], envp[i], ft_strlen(back[1])) == 0)
 		{
 			while (envp[i + 1])
 			{
+				printf("barev");
 				envp[i] = envp[i + 1];
 				i++;
 			}
