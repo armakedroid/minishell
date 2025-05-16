@@ -29,7 +29,13 @@ void update_smth(char **envp, char *var, char *value)
 		i++;
 	}
 	if (envp[i])
-		envp[i] = ft_strjoin(var, value);
+	{
+		if (value)
+			envp[i] = ft_strjoin(var, value);
+		else
+			envp[i] = NULL;
+
+	}
 }
 
 char **ft_export(char **envp, char **back)

@@ -27,7 +27,7 @@ int	have_a_var(char **envp, char **back)
 			break;
 		i++;
 	}
-	if (!back[1][i])
+	if (back[1][i] == '=' && !ft_strncmp(back[0], "unset", 5))
 		return (-1);
 	j = 0;
 	while (envp[j])

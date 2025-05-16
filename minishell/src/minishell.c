@@ -39,8 +39,6 @@ void check_f(char **back, char **envp, char **path)
 		printf("%s\n", ft_pwd(envp, back));
 	else if (ft_strncmp(back[0], "export", 7) == 0)
 		envp = ft_export(envp, back);
-	else if (ft_strncmp(back[0], "unset", 6) == 0)
-		ft_unset(envp, back);
 	else if (!ft_strncmp(back[0], "env", 4))
 		ft_env(envp);
 	else
@@ -134,6 +132,8 @@ int main(int argc, char **argv, char **envp)
 			ft_cd(env, back);
 		else if (!(ft_strncmp(back[0], "export", 7)))
 			env = ft_export(env, back);
+		else if (ft_strncmp(back[0], "unset", 6) == 0)
+			ft_unset(env, back);
 		else
 		{
 			cha = fork();

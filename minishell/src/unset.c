@@ -14,16 +14,20 @@
 void	ft_unset(char **envp, char **back)
 {
 	int	i;
+	// char *item;
 
 	i = 0;
-	printf("%s\n\n",back[1]);
+	if (have_a_var(envp, back) == -1)
+	{
+		printf("unset: %s: invalid parameter name\n", back[1]);
+		return ;
+	}
 	while (envp[i])
 	{
 		if (ft_strncmp(back[1], envp[i], ft_strlen(back[1])) == 0)
 		{
 			while (envp[i + 1])
 			{
-				printf("barev");
 				envp[i] = envp[i + 1];
 				i++;
 			}
