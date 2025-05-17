@@ -6,12 +6,9 @@ void	ft_echo(char **argv)
 	int	n;
 
 	n = 0;
-	i = 0;
-	if (argv[0] && ft_strncmp(argv[0], "-n", 2) == 0)
-	{
-		i++;
-		n = 1;
-	}
+	i = 1;
+	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
+		n = ++i - 1;
 	while (argv[i])
 	{
 		printf("%s",argv[i]);
@@ -19,6 +16,6 @@ void	ft_echo(char **argv)
 			printf(" ");
 		i++;
 	}
-	if (!n)
+	if (n != 1)
 		printf("\n");
 }

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/15 21:04:13 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/17 20:39:33 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void handle_sigint(int x)
 char	**ft_copy_env(char **envp)
 {
 	char	**tmp;
+	char	*shl;
 	int		i;
 
 	i = 0;
@@ -90,6 +91,8 @@ char	**ft_copy_env(char **envp)
 	i = 0;
 	while(envp[i])
 	{
+		// if (!ft_strncmp(envp[i], "SHLVL=", 7))
+		// 	envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
 		tmp[i] = ft_strdup(envp[i]);
 		i++;
 	}
@@ -115,7 +118,7 @@ int main(int argc, char **argv, char **envp)
 	my_p = ft_split(path, ':');
 	while (1)
 	{
-		line = readline("minishell $ ");
+		line = readline("minishell$ ");
 		if (!line)
 			break;
 		if (*line)
