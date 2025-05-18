@@ -13,8 +13,10 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 		exit(127);
 	if (back[0][0] == '.' && back[0][1] == '/')
 	{
-		if (access(cmd + 2, X_OK) == 0)
-			printf("exec = %d\n", execve(cmd, back, envp));
+		if (access(back[0], X_OK) == 0)
+			execve(back[0], back, envp);
+		else
+			ft_errors(126, back);
 	}
 	else
 	{
@@ -37,7 +39,7 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 			i++;
 		}
 	}
-	if (back[0][0] == '.' && back[0][1] == '/')
+	/*if (back[0][0] == '.' && back[0][1] == '/')
 		perror(cmd);
 	else
 	{
@@ -46,7 +48,9 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 		ft_putstr_fd(all1, 2);
 		free(all);
 		free(all1);
-	}
+		free(all);
+	}*/
+	ft_errors(127, back);
 	free_split(back);
 	exit(127);
 }

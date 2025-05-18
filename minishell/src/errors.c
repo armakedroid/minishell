@@ -20,13 +20,17 @@ void	ft_errors(int signal, char **back)
 	else if (signal == 126)
 	{
 		fd = open(back[0], O_RDONLY);
+		if (fd == -1)
+		{
+			printf("bash: %s: Permission denied\n", back[0]);
+			return ;
+		}
 		line = get_next_line(fd);
-		if (line[0] == '#' && line[1] == '!')
+		if (line && line[0] == '#' && line[1] == '!')
 			printf("bash : %s: %s: bad interpreter: No such file or directory",back[0], line + 2);
 		else
 			printf("bash : %s: Permission denied", back[0]);
 		close(fd);
 		free(line);
-		return ;
 	}
 }
