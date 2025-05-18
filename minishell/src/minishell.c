@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/18 20:31:44 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/18 20:43:08 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ char	**ft_copy_env(char **envp)
 	i = 0;
 	while(envp[i])
 	{
-		if (!ft_strncmp(envp[i], "SHLVL=", 7))
-			envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
+		// if (!ft_strncmp(envp[i], "SHLVL=", 7))
+		// 	envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
 		tmp[i] = ft_strdup(envp[i]);
 		i++;
 	}
