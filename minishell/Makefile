@@ -1,5 +1,5 @@
 NAME = minishell
-SRCS = src/cd.c src/echo.c src/env.c src/export.c src/minishell.c src/pwd.c src/unset.c src/get_p.c src/cmd.c src/get_path.c
+SRCS = src/cd.c src/echo.c src/env.c src/export.c src/minishell.c src/pwd.c src/unset.c src/get_p.c src/cmd.c src/get_path.c src/errors.c gnl/get_next_line.c gnl/get_next_line_utils.c 
 OBJS = $(SRCS:%.c=%.o)
 LIBFT = libft
 CFLGS = -lreadline
