@@ -11,7 +11,7 @@
 
 #include "../includes/minishell.h"
 
-void	ft_unset(char **envp, char **back)
+char	**ft_unset(char **envp, char **back)
 {
 	int	i;
 	// char *item;
@@ -20,7 +20,7 @@ void	ft_unset(char **envp, char **back)
 	if (have_a_var(envp, back) == -1)
 	{
 		printf("unset: %s: invalid parameter name\n", back[1]);
-		return ;
+		return (envp);
 	}
 	while (envp[i])
 	{
@@ -32,8 +32,9 @@ void	ft_unset(char **envp, char **back)
 				i++;
 			}
 			envp[i] = NULL;
-			return ;
+			return (envp);
 		}
 		i++;
 	}
+	return (envp);
 }

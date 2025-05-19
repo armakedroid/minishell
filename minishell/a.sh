@@ -1,3 +1,3 @@
-#!/usr/bin/bash
+#!/sr/bin/bash
 ls
 echo a

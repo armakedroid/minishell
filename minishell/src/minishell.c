@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/18 20:43:08 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:44:51 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv, char **envp)
 		else if (!(ft_strncmp(back[0], "export", 7)))
 			env = ft_export(env, back);
 		else if (ft_strncmp(back[0], "unset", 6) == 0)
-			ft_unset(env, back);
+			env = ft_unset(env, back);
 		else
 		{
 			cha = fork();

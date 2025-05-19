@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/14 22:42:23 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:43:58 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,29 @@ void update_smth(char **envp, char *var, char *value)
 	}
 }
 
+void print_env(char **envp)
+{
+	int	i;
+
+	i = 0;
+}
+
 char **ft_export(char **envp, char **back)
 {
 	int	i;
+	int	e;
+	int	a;
 	char *tmp;
 	char **env;
 
 	i = 0;
-	if (have_a_var(envp, back))
+	a = 0;
+	if (!back[1])
+	{
+		print_env(envp);
+		return (envp);
+	}
+	else if (have_a_var(envp, back))
 	{
 		// If-i mej mtnum e en jamanak ete envp-i mej ka arden ayd popoxakany
 		while (back[1][i] && back[1][i] != '=')
@@ -57,6 +72,24 @@ char **ft_export(char **envp, char **back)
 			free(tmp);
 		}
 		return (envp);
+	}
+	else
+	{
+		while (envp[i])
+		{
+			while (back[1][e] && back[1][e] != '=')
+				e++;
+			if (ft_strncmp(envp[i], back[1], e) == 0)
+			{
+				while(back[1][a])
+					{
+						envp[i][a] = back[1][a];
+						a++;
+					}
+					envp[i][a] = '\0';
+					return (envp);
+			}
+		}
 	}
 	i = 0;
 	while (envp[i])
