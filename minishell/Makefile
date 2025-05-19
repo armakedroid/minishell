@@ -1,28 +1,36 @@
 NAME = minishell
-SRCS = src/cd.c src/echo.c src/env.c src/export.c src/minishell.c src/pwd.c src/unset.c src/get_p.c src/cmd.c src/get_path.c src/errors.c gnl/get_next_line.c gnl/get_next_line_utils.c 
+
+SRCS = src/cd.c src/echo.c src/env.c src/export.c src/minishell.c \
+	   src/pwd.c src/unset.c src/get_p.c src/cmd.c src/get_path.c \
+	   src/errors.c gnl/get_next_line.c gnl/get_next_line_utils.c 
+
 OBJS = $(SRCS:%.c=%.o)
-LIBFT = libft
-CFLGS = -lreadline
+
+LIBFT = libft/libft.a
+
 CC = cc
+READLINE_FLAGS = -lreadline
+
 RM = rm -rf
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@make bonus -C $(LIBFT)
-	@$(CC) $(CFLGS) $(OBJS) $(LIBFT)/$(LIBFT).a -o $(NAME)
+	@make -C libft
+	@$(CC) $(OBJS) $(LIBFT) $(READLINE_FLAGS) -o $(NAME)
 
 %.o: %.c
-	@$(CC) -c $^ -o $@
+	@$(CC) -c $< -o $@
 
 clean:
-	@make clean -C $(LIBFT)
+	@make clean -C libft
 	@$(RM) $(OBJS)
 
 fclean: clean
-	@make fclean -C $(LIBFT)
+	@make fclean -C libft
 	@$(RM) $(NAME)
 
 re: fclean all
 
 .PHONY: all clean fclean re
+

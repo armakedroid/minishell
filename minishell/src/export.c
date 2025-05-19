@@ -20,6 +20,7 @@
 void update_smth(char **envp, char *var, char *value)
 {
 	int	i;
+	char	*new;
 
 	i = 0;
 	while(envp[i])
@@ -30,8 +31,12 @@ void update_smth(char **envp, char *var, char *value)
 	}
 	if (envp[i])
 	{
+		free(envp[i]);
 		if (value)
-			envp[i] = ft_strjoin(var, value);
+		{
+			new = ft_strjoin(var, value);
+			envp[i] = new;
+		}
 		else
 			envp[i] = NULL;
 
@@ -43,6 +48,11 @@ void print_env(char **envp)
 	int	i;
 
 	i = 0;
+	while (envp[i])
+	{
+		printf("declare -x %s\n", envp[i]);
+		i++;
+	}
 }
 
 char **ft_export(char **envp, char **back)
@@ -77,6 +87,7 @@ char **ft_export(char **envp, char **back)
 	{
 		while (envp[i])
 		{
+			e = 0;
 			while (back[1][e] && back[1][e] != '=')
 				e++;
 			if (ft_strncmp(envp[i], back[1], e) == 0)
