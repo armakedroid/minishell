@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:28:30 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/18 20:39:03 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/20 21:59:18 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ static void	ft_free(char ***back, int words)
 
 static void	word_dup_help(const char **s, int in_quotes, int *len, char c)
 {
-	if (**s == '\'')
+	if (**s == '\'' || **s == '\"')
 	{
 		in_quotes = 1;
 		(*s)++;
 	}
-	while ((*s)[*len] && ((*s)[*len] != c || in_quotes))
+	while ((*s)[*len] && (*s)[*len] != c)
 	{
-		if ((*s)[*len] == '\'' && in_quotes)
+		if (((*s)[*len] == '\'' || (*s)[*len] == '\"') && in_quotes)
 		{
 			in_quotes = 0;
 			break ;
@@ -63,7 +63,7 @@ static char	*word_dup(const char **s, char c)
 	while (i < len)
 		back[i++] = *(*s)++;
 	back[i] = '\0';
-	if (**s == '\'')
+	if (**s == '\'' || **s == '\"')
 		(*s)++;
 	return (back);
 }
@@ -80,10 +80,10 @@ static char	**allocate_words(char const *s, char c, int word_count)
 	i = 0;
 	while (i < word_count)
 	{
-		while (*s == c)
+		while (*s == c || *s == '\"')
 			s++;
 		word_start = s;
-		while (*s != '\0' && *s != c)
+		while ((*s != '\0' && *s != c) || *s != '\"')
 			s++;
 		back[i] = word_dup(&word_start, c);
 		if (back[i] == NULL)
@@ -110,13 +110,13 @@ char	**ft_split(char const *s, char c)
 		return (NULL);
 	while (s[i])
 	{
-		while (s[i] == c && !in_quotes)
+		while ((s[i] == c && !in_quotes) || s[i] == '\"')
 			i++;
 		if (s[i])
 			word_count++;
 		while (s[i] && (s[i] != c || in_quotes))
 		{
-			if (s[i] == '\'')
+			if (s[i] == '\'' || s[i] == '\"')
 				in_quotes = !in_quotes;
 			i++;
 		}

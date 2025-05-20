@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 20:43:30 by apetoyan          #+#    #+#             */
-/*   Updated: 2025/05/14 22:29:03 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:41:39 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	have_a_var(char **envp, char **back)
 	j = 0;
 	while (envp[j])
 	{
-		if (!ft_strncmp(envp[j],back[1], i + 1))
+		if (!ft_strncmp(envp[j],back[1], i))
 			return (1);
 		j++;
 	}

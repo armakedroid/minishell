@@ -26,7 +26,7 @@ void	ft_echo(char **argv)
 			}
 			else
 				printf("%s",back[j]);
-			if (back[j + 1] && str)
+			if (back[j + 1] || str)
 				printf(" ");
 			j++;
 		}

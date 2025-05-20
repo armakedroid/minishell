@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/19 18:43:58 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:44:50 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,15 @@ void print_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		printf("declare -x %s\n", envp[i]);
+		if (envp[i][0] == '_')
+			printf("declare -x %s=''\n", envp[i] + 1);
+		else
+		{
+			if (envp[i][ft_strlen(envp[i]) - 1] == '=')
+				printf("declare -x %s''\n", envp[i]);
+			else
+				printf("declare -x %s\n", envp[i]);
+		}
 		i++;
 	}
 }
@@ -65,6 +73,8 @@ char **ft_export(char **envp, char **back)
 
 	i = 0;
 	a = 0;
+	// if (!ft_strchr(back[1], '='))
+		
 	if (!back[1])
 	{
 		print_env(envp);
@@ -72,7 +82,6 @@ char **ft_export(char **envp, char **back)
 	}
 	else if (have_a_var(envp, back))
 	{
-		// If-i mej mtnum e en jamanak ete envp-i mej ka arden ayd popoxakany
 		while (back[1][i] && back[1][i] != '=')
 			i++;
 		if (back[1][i])
@@ -82,25 +91,6 @@ char **ft_export(char **envp, char **back)
 			free(tmp);
 		}
 		return (envp);
-	}
-	else
-	{
-		while (envp[i])
-		{
-			e = 0;
-			while (back[1][e] && back[1][e] != '=')
-				e++;
-			if (ft_strncmp(envp[i], back[1], e) == 0)
-			{
-				while(back[1][a])
-					{
-						envp[i][a] = back[1][a];
-						a++;
-					}
-					envp[i][a] = '\0';
-					return (envp);
-			}
-		}
 	}
 	i = 0;
 	while (envp[i])
@@ -112,7 +102,10 @@ char **ft_export(char **envp, char **back)
 		env[i] = ft_strdup(envp[i]);
 		i++;
 	}
-	env[i] = ft_strdup(back[1]);
+	if (!ft_strchr(back[1], '='))
+		env[i] = ft_strjoin("_", ft_strdup(back[1]));
+	else
+		env[i] = ft_strdup(back[1]);
 	env[i + 1] = NULL;
 	return (env);
 }
