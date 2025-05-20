@@ -15,6 +15,7 @@ char	**ft_unset(char **envp, char **back)
 {
 	int	i;
 	int	j;
+	int	a;
 	// char *item;
 
 	i = 0;
@@ -23,13 +24,13 @@ char	**ft_unset(char **envp, char **back)
 		printf("unset: %s: invalid parameter name\n", back[1]);
 		return (envp);
 	}
+	a = ft_strlen(back[1]);
 	while (envp[i])
 	{
 		j = 0;
 		while (envp[i][j] && envp[i][j] != '=')
 			j++;
-		j--;
-		if (ft_strncmp(back[1], envp[i], j) == 0)
+		if (ft_strncmp(back[1], envp[i], j) == 0 && a == j)
 		{
 			while (envp[i + 1])
 			{

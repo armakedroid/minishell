@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/19 18:44:51 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/19 18:55:24 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ int main(int argc, char **argv, char **envp)
 			ft_errors(signal1, back);
 		rl_redisplay();
 	}
-	free(line);
+	//free(line);
 	free_split(back);
 	return (0);
 }

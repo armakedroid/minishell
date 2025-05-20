@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/14 22:43:59 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:23:16 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char *get_home(char **envp)
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "HOME=", 5))
-			return envp[i] + 5;
+			return (envp[i] + 5);
 		i++;
 	}
 	return (NULL);
