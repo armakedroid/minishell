@@ -31,13 +31,27 @@ void	ft_echo(char **argv)
 		j = 0;
 		while (back[j])
 		{
-			printf("back = %s\n", back[j]);
 			if (back[j][0] == '\'' || back[j][ft_strlen(back[j]) - 1] == '\'')
 			{
 				str = ft_strtrim(back[j], "'");
 				free(back[j]);
 				back[j] = str;
 				printf("%s",back[j]);
+			}
+			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j]) - 1] == '\"')
+			{
+				str = ft_strtrim(back[j], "\"");
+				free(back[j]);
+				back[j] = ft_strdup(str);
+				free(str);
+				if(back[j][0] == '$' && back[j][1])
+				{
+					str = getenv(back[j] + 1);
+					if (str)
+						printf("%s", str);
+				}
+				else
+					printf("%s",back[j]);
 			}
 			else
 			{
@@ -49,9 +63,9 @@ void	ft_echo(char **argv)
 				}
 				else
 					printf("%s",back[j]);
-				if (back[j + 1] || str)
-					printf(" ");
 			}
+			if (back[j + 1] || str)
+				printf(" ");
 			j++;
 		}
 		free_split(back);
