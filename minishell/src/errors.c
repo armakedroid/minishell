@@ -12,13 +12,13 @@ void	ft_errors(int signal, char **back)
 	{
 		printf("hima stex em\n\n");
 		printf("bash : %s: command not found\n", back[0]);
-		return ;
+		exit(127);
 	}
 	else if (signal == 127 && back[0][0] == '.')
 	{
 		printf("stex em\n\n");
 		printf("bash : %s: No such file or directory\n", back[0]);
-		return ;
+		exit(127);
 	}
 	else if (signal == 126)
 	{
@@ -27,19 +27,23 @@ void	ft_errors(int signal, char **back)
 		{
 			printf("lololo\n\n");
 			printf("bash: %s: Permission denied\n", back[0]);
-			return ;
+			exit(126);
 		}
 		line = get_next_line(fd);
 		if (line && line[0] == '#' && line[1] == '!')
 			printf("bash : %s: %s: bad interpreter: No such file or directory\n",back[0], line + 2);
 		else
-			{
+		{
 			printf("126 -2 \n\n");
 			printf("bash : %s: Permission denied\n", back[0]);
-			}
+			exit(126);
+		}
 		close(fd);
 		free(line);
 	}
 	else if (signal == 139)
-		printf("Segmentation fault (core dumped)\n");
+		{
+			printf("Segmentation fault (core dumped)\n");
+			exit(139);
+		}
 }

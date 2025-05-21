@@ -31,7 +31,7 @@ void update_smth(char **envp, char *var, char *value)
 		{
 			new = ft_strjoin(var, value);
 			envp[i] = new;
-		}
+		}git add .
 		else
 			envp[i] = NULL;
 

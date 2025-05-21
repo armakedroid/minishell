@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/19 18:55:24 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/21 19:57:27 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,8 @@ int main(int argc, char **argv, char **envp)
 		waitpid(cha, &signal1,0);
 		signal1 = signal1 / 256;
 		if (ft_strncmp(back[0], "$?", 3) == 0)
-			ft_errors(signal1, back);
+			printf("%d\n",signal1);
+		/*ft_errors(signal1, back);*/
 		rl_redisplay();
 	}
 	//free(line);
