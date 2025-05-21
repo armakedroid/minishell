@@ -6,17 +6,12 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/20 20:44:50 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/21 19:20:54 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// Update_smth funkcian katarum e popoxutyun envp-i mej
-// Yndunum e 3 arjeq` 
-// 1. envp, 
-// 2. var (tesqy partadir ayspes "PATH=", "PWD="), 
-// 3. value (inch petq e lini)
 void update_smth(char **envp, char *var, char *value)
 {
 	int	i;
@@ -43,6 +38,30 @@ void update_smth(char **envp, char *var, char *value)
 	}
 }
 
+void sort(char **envp)
+{
+	int	i;
+	int	j;
+	char	*tmp;
+
+	i = 0;
+	while (envp[i])
+	{
+		j = 0;
+		while (envp[j + 1])
+		{
+			if (ft_strncmp(envp[j], envp[j + 1], 100000) > 0)
+			{
+				tmp = envp[j];
+				envp[j] = envp[j + 1];
+				envp[j + 1] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
 void print_env(char **envp)
 {
 	int	i;
@@ -50,15 +69,10 @@ void print_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		if (envp[i][0] == '_')
-			printf("declare -x %s=''\n", envp[i] + 1);
+		if (envp[i][ft_strlen(envp[i]) - 1] == '=')
+			printf("declare -x %s''\n", envp[i]);
 		else
-		{
-			if (envp[i][ft_strlen(envp[i]) - 1] == '=')
-				printf("declare -x %s''\n", envp[i]);
-			else
-				printf("declare -x %s\n", envp[i]);
-		}
+			printf("declare -x %s\n", envp[i]);
 		i++;
 	}
 }
@@ -73,10 +87,9 @@ char **ft_export(char **envp, char **back)
 
 	i = 0;
 	a = 0;
-	// if (!ft_strchr(back[1], '='))
-		
 	if (!back[1])
 	{
+		sort(envp);
 		print_env(envp);
 		return (envp);
 	}
@@ -102,10 +115,7 @@ char **ft_export(char **envp, char **back)
 		env[i] = ft_strdup(envp[i]);
 		i++;
 	}
-	if (!ft_strchr(back[1], '='))
-		env[i] = ft_strjoin("_", ft_strdup(back[1]));
-	else
-		env[i] = ft_strdup(back[1]);
+	env[i] = ft_strdup(back[1]);
 	env[i + 1] = NULL;
 	return (env);
 }

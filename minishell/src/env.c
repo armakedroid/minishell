@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:30 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/20 20:46:23 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/21 18:47:58 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,12 @@ void	ft_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		// if (envp[i][0] != '_')
-		printf("%s\n", envp[i]);
-		i++;
+		if (!(ft_strchr(envp[i], '=')))
+			i++;
+		else
+		{
+			printf("%s\n", envp[i]);
+			i++;
+		}
 	}
 }

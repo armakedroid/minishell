@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:28:30 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/20 21:59:18 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/21 18:54:58 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ static void	ft_free(char ***back, int words)
 
 static void	word_dup_help(const char **s, int in_quotes, int *len, char c)
 {
-	if (**s == '\'' || **s == '\"')
+	if (**s == '\'')
 	{
 		in_quotes = 1;
 		(*s)++;
 	}
-	while ((*s)[*len] && (*s)[*len] != c)
+	while ((*s)[*len] && ((*s)[*len] != c || in_quotes))
 	{
-		if (((*s)[*len] == '\'' || (*s)[*len] == '\"') && in_quotes)
+		if ((*s)[*len] == '\'' && in_quotes)
 		{
 			in_quotes = 0;
 			break ;
@@ -63,7 +63,7 @@ static char	*word_dup(const char **s, char c)
 	while (i < len)
 		back[i++] = *(*s)++;
 	back[i] = '\0';
-	if (**s == '\'' || **s == '\"')
+	if (**s == '\'')
 		(*s)++;
 	return (back);
 }
@@ -80,10 +80,10 @@ static char	**allocate_words(char const *s, char c, int word_count)
 	i = 0;
 	while (i < word_count)
 	{
-		while (*s == c || *s == '\"')
+		while (*s == c)
 			s++;
 		word_start = s;
-		while ((*s != '\0' && *s != c) || *s != '\"')
+		while (*s != '\0' && *s != c)
 			s++;
 		back[i] = word_dup(&word_start, c);
 		if (back[i] == NULL)
@@ -103,20 +103,20 @@ char	**ft_split(char const *s, char c)
 	int		in_quotes;
 	int		i;
 
+	word_count = 0;
 	in_quotes = 0;
 	i = 0;
-	word_count = 0;
 	if (s == NULL)
 		return (NULL);
 	while (s[i])
 	{
-		while ((s[i] == c && !in_quotes) || s[i] == '\"')
+		while (s[i] == c && !in_quotes)
 			i++;
 		if (s[i])
 			word_count++;
 		while (s[i] && (s[i] != c || in_quotes))
 		{
-			if (s[i] == '\'' || s[i] == '\"')
+			if (s[i] == '\'')
 				in_quotes = !in_quotes;
 			i++;
 		}
