@@ -100,8 +100,29 @@ char	**ft_copy_env(char **envp)
 	return (tmp);
 }
 
+t_token *my_tok(char *line)
+{
+	int	i;
+	t_token	*token;
+
+	i = 0;
+	token = NULL;
+	while (line[i])
+	{
+		if (line[i] == ' ')
+			i++;
+		else if (line[i] == '|')
+		{
+			add_token(&line, "|" ,PIPE);
+			i++;
+		}
+		/**/
+	}
+}
+
 int main(int argc, char **argv, char **envp)
 {
+	t_token	*token;
 	char	*line;
 	char	**back;
 	char	**env;
@@ -124,6 +145,7 @@ int main(int argc, char **argv, char **envp)
 			break;
 		if (*line)
 			add_history(line);
+		token = my_tok(line);
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
 			free(line);
