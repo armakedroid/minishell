@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/21 19:57:27 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/23 21:18:28 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,20 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include "../includes/minishell.h"
+
+int is_space(char c)
+{
+	if (c == ' ')
+		return (1);
+	return (0);
+}
+
+int is_operator(char c)
+{
+	if (c == '|' || c == '>' || c == '<' || c == '&')
+		return (1);
+	return (0);
+}
 
 char **command_s(char *line)
 {
@@ -100,12 +114,35 @@ char	**ft_copy_env(char **envp)
 	return (tmp);
 }
 
+t_token *create_t(char *str, int i)
+{
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->value = ft_strdup(str);
+	token->type = i;
+	token->next = NULL;
+	return (token);
+}
+
+void add_token(t_token **token, char *str, int i)
+{
+	t_token	*new;
+
+	new = create_t(*token, str);
+	//es funkciayum sax tokennery kpcnum enq irar
+}
+
 t_token *my_tok(char *line)
 {
 	int	i;
+	int	start;
 	t_token	*token;
 
 	i = 0;
+	start = 0;
 	token = NULL;
 	while (line[i])
 	{
@@ -113,11 +150,49 @@ t_token *my_tok(char *line)
 			i++;
 		else if (line[i] == '|')
 		{
-			add_token(&line, "|" ,PIPE);
+			add_token(&token, "|" ,PIPE);
 			i++;
 		}
-		/**/
+		else if (line[i] == '>')
+		{
+			if (line[i + 1] == '>')
+			{
+				add_token(&token, ">>", APPEND);
+				i += 2;
+			}
+			else
+			{
+				add_token(&token, ">", OUT);
+				i++;
+			}
+		}
+		else if (line[i] == '<')
+		{
+			if (line[i + 1] == '<')
+			{
+				add_token(&token, "<<", HEREDOC)
+				i += 2;
+			}
+			else
+			{
+				add_token(&token, "<", IN);
+				i++;
+			}
+		}
+		else if (line[i] == '|')
+		{
+			add_token(&token, "|", PIPE);
+			i++;
+		}
+		else
+		{
+			start = i;
+			while (line[i] && !is_operator(line[i]) && !is_space(line[i]))
+				i++;
+			add_token(&token, ft_substr(line, start, i - start), WORD);
+		}
 	}
+	return (token);
 }
 
 int main(int argc, char **argv, char **envp)
