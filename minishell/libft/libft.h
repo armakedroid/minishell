@@ -35,11 +35,12 @@ typedef enum	e_quote_type
 	SINGLE
 }	t_quote_type;
 
-typedef enum	s_output
+typedef struct	s_output
 {
-	INFILE,
-	OUTFILE
-}	t_output;
+	char *infile;
+	char *outfile;
+	char **argum;
+}	t_output
 
 typedef struct s_token
 {

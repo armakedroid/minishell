@@ -266,33 +266,53 @@ void check_word(t_token *token, char **env)
 	// 	ft_unset(env, str);
 }
 
-void parse (t_token *token, char **env)
+t_output *parse(t_token *token)
 {
-	int	i;
+	t_output	*back;
+	t_output	*tmp; 
+	int		i;
 
+	back = NULL;
+	tmp = NULL;
 	i = 0;
+
 	while (token)
 	{
-		if (token->type == WORD)
-			check_word(token, env);
-		/*else if (token->type == IN)
+		if (!tmp)
 		{
-			i = open(token->next->value, O_RDONLY);
-			if (i < 0)
-				printf("infile");
-			token = token->next;
+			tmp = malloc(sizeof(t_output));
+			tmp->args = malloc(sizeof(char *) * 100);
+			i = 0;
 		}
-		else if (token->type == OUT)
+		if (token->type == WORD)
+			tmp->args[i++] = ft_strdup(token->value);
+		else if (token->type == IN && token->next)
 		{
-			i = open(token->next->value, O_CREATE)
-		}*/
-		// else if (token->type == APPEND)
-		// else if (token-type == HEREDOC)
-		// else if (token->type == IN)
-		// else if (token->type == PIPE)
+			token = token->next;
+			tmp->infile = ft_strdup(token->value);
+		}
+		else if (token->type == OUT && token->next)
+		{
+			token = token->next;
+			tmp->outfile = ft_strdup(token->value);
+		}
+		else if (token->type == APPEND && token->next)
+		{
+			token = token->next;
+			tmp->outfile = ft_strdup(token->value);
+			tmp->num = 1;
+		}
+		else if (token->type == PIPE)
+		{
+			tmp->args[i] = NULL;
+			//funkcia grel lisi skzib gnalu hamar;
+			tmp = NULL;
+		}
 		token = token->next;
 	}
+	return (back);
 }
+
 int main(int argc, char **argv, char **envp)
 {
 	t_token	*token;
