@@ -16,7 +16,7 @@ RM = rm -rf
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@make all -C libft
+	@make bonus -C libft
 	@$(CC) $(OBJS) $(LIBFT) $(READLINE_FLAGS) -o $(NAME)
 
 %.o: %.c

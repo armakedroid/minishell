@@ -8,7 +8,6 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 	char	**back;
 
 	i = 0;
-	printf("%s\n\n",cmd);
 	back = ft_split(cmd, ' ');
 	if (!back || !*back)
 		exit(127);
@@ -35,6 +34,12 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 			{
 				if (access(all, X_OK) == 0)
 					execve(all, back, envp);
+				else
+				{
+					ft_errors(126, back);
+					free_split(back);
+					exit(126);
+				}
 			}
 			free(all);
 			all = NULL;

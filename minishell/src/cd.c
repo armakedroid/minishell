@@ -42,18 +42,22 @@ char *get_old_path(char **envp)
 	return (NULL);
 }
 
-int	ft_cd(char **envp, char **back)
+int	ft_cd(t_token *token, char **envp)
 {
 	char *home;
+	t_token *tmp;
 
-	if (back[1])
+	tmp = token->next;
+	if (tmp)
 	{
-		// nerqevi ifi mej kmtni en jamanak ete grenq "cd -", aysinqn het gna ira hin PATH-in
-		if (back[1][0] == '-' && ft_strlen(back[1]) == 1)
+		if (tmp->next)
+			return (100);
+		if (tmp->value[0] == '-' && ft_strlen(tmp->value) == 1)
 			return (chdir(get_old_path(envp)));
-		update_smth(envp, "OLDPWD=", ft_pwd(envp, back)); 	// env-i mej OLDPWD-in khavasercnenq ays pahi pwd-n, vorpeszi "-" nshani depqum karoxananq het gnal hin pwd-in
-		chdir(back[1]); 									// kpoxenq pwd-n
-		update_smth(envp, "PWD=", ft_pwd(envp, back)); 		// env-i mej PWD-in khavasercnenq ays pahi pwd-n
+		update_smth(envp, "OLDPWD=", ft_pwd(envp)); 	// env-i mej OLDPWD-in khavasercnenq ays pahi pwd-n, vorpeszi "-" nshani depqum karoxananq het gnal hin pwd-in
+		if (chdir(tmp->value) == -1)
+			return (1);								    // kpoxenq pwd-n
+		update_smth(envp, "PWD=", ft_pwd(envp)); 		// env-i mej PWD-in khavasercnenq ays pahi pwd-n
 		return (0);
 	}
 	else
@@ -61,9 +65,10 @@ int	ft_cd(char **envp, char **back)
 		home = get_home(envp);
 		if (home)
 		{
-			update_smth(envp, "OLDPWD=", ft_pwd(envp, back));
-			chdir(home);
-			update_smth(envp, "PWD=", ft_pwd(envp, back));
+			update_smth(envp, "OLDPWD=", ft_pwd(envp));
+			if (chdir(home) == -1)
+				return (1);
+			update_smth(envp, "PWD=", ft_pwd(envp));
 			return (0);
 		}
 	}

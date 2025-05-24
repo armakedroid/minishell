@@ -19,6 +19,37 @@
 # include <stdlib.h>
 # include <unistd.h>
 
+typedef enum	e_token_in
+{
+	WORD,
+	PIPE,
+	IN,
+	OUT,
+	APPEND,
+	HEREDOC
+}	t_token_in;
+
+typedef enum	e_quote_type
+{
+	DOUBLE,
+	SINGLE
+}	t_quote_type;
+
+typedef enum	s_output
+{
+	INFILE,
+	OUTFILE
+}	t_output;
+
+typedef struct s_token
+{
+	char			*value;
+	t_token_in		type;
+	t_quote_type	q_type;
+	t_output		out;
+	struct s_token	*next;
+}	t_token;
+
 typedef struct s_list
 {
 	void			*content;

@@ -11,31 +11,14 @@
 #include "../libft/libft.h"
 #include "../gnl/get_next_line.h"
 
-typedef enum	e_token_in
-{
-	WORD,
-	PIPE,
-	IN,
-	OUT,
-	APPEND,
-	HEREDOC
-}	t_token_in;
-
-typedef struct s_token
-{
-	char	*value;
-	t_token_in	type;
-	struct s_token	*next;
-}	t_token;
-
 int		have_a_var(char **envp, char **back);
 void	update_smth(char **envp, char *var, char *value);
 char	**ft_export(char **envp, char **back);
-int		ft_cd(char **envp, char **back);
+int		ft_cd(t_token *token, char **envp);
 void	ft_echo(char **back);
 void	ft_env(char **envp);
 char	**ft_unset(char **envp, char **back);
-char	*ft_pwd(char **envp, char **back);
+char	*ft_pwd(char **envp);
 char	*cmdfile(char *cmd, char **path, char **envp);
 char	*get_path(char **env);
 void	free_split(char **back);

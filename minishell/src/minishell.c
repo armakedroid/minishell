@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/23 21:18:28 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/24 21:36:08 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,18 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include "../includes/minishell.h"
+
+void print_token(t_token *token)
+{
+	t_token *tmp;
+
+	tmp = token;
+	while(tmp)
+	{
+		printf("token value: %s, token type: %d, token quote: %d\n", tmp->value, tmp->type, tmp->q_type);
+		tmp = tmp->next;
+	}
+}
 
 int is_space(char c)
 {
@@ -50,7 +62,7 @@ void check_f(char **back, char **envp, char **path)
 	if (ft_strncmp(back[0], "echo", 5) == 0)
 		ft_echo(back);
 	else if (ft_strncmp(back[0], "pwd", 4) == 0)
-		printf("%s\n", ft_pwd(envp, back));
+		printf("%s\n", ft_pwd(envp));
 	else if (ft_strncmp(back[0], "export", 7) == 0)
 		envp = ft_export(envp, back);
 	else if (!ft_strncmp(back[0], "env", 4))
@@ -105,8 +117,8 @@ char	**ft_copy_env(char **envp)
 	i = 0;
 	while(envp[i])
 	{
-		// if (!ft_strncmp(envp[i], "SHLVL=", 7))
-		// 	envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
+		if (!ft_strncmp(envp[i], "SHLVL=", 7))
+			envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
 		tmp[i] = ft_strdup(envp[i]);
 		i++;
 	}
@@ -123,16 +135,44 @@ t_token *create_t(char *str, int i)
 		return (NULL);
 	token->value = ft_strdup(str);
 	token->type = i;
+	token->q_type = DOUBLE;
+	if (str[0] == '\'')
+		token->q_type = SINGLE;
 	token->next = NULL;
 	return (token);
+}
+
+static void	ft_lstadd_back1(t_token **lst, t_token *new)
+{
+	t_token	*back;
+
+	back = NULL;
+	if (!lst || !new)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	back = *lst;
+	while (back->next)
+		back = back->next;
+	back->next = new;
 }
 
 void add_token(t_token **token, char *str, int i)
 {
 	t_token	*new;
-
-	new = create_t(*token, str);
-	//es funkciayum sax tokennery kpcnum enq irar
+	t_token	*tmp;
+		
+	new = create_t(str, i);
+	tmp = *token;
+	if (!new)
+		return ;
+	if (!*token)
+		*token = new;
+	else
+		ft_lstadd_back1(token, new);
 }
 
 t_token *my_tok(char *line)
@@ -170,7 +210,7 @@ t_token *my_tok(char *line)
 		{
 			if (line[i + 1] == '<')
 			{
-				add_token(&token, "<<", HEREDOC)
+				add_token(&token, "<<", HEREDOC);
 				i += 2;
 			}
 			else
@@ -195,6 +235,64 @@ t_token *my_tok(char *line)
 	return (token);
 }
 
+void check_word(t_token *token, char **env)
+{
+	int	i;
+	char	*str;
+
+	str = token->value;
+	i = 0;
+	if (!(ft_strncmp(str, "cd", 3)))
+	{
+		i = ft_cd(token, env);
+		if (i == 100)
+		{
+			printf("Too many arguments: Signal 1\n");
+		}
+		else if (i == 1)
+		{
+			printf("No such file or directory: Signal 1\n");
+		}
+	}
+	// else if (ft_strncmp(back[0], "echo", 5) == 0)
+		// ft_echo(back);
+	else if (ft_strncmp(str, "pwd", 4) == 0)
+		printf("%s\n", ft_pwd(env));
+	// else if (ft_strncmp(str, "export", 7) == 0)
+		// envp = ft_export(envp, back);
+	else if (!ft_strncmp(str, "env", 4))
+		ft_env(env);
+	// else if (ft_strncmp(str, "unset", 6) == 0)
+	// 	ft_unset(env, str);
+}
+
+void parse (t_token *token, char **env)
+{
+	int	i;
+
+	i = 0;
+	while (token)
+	{
+		if (token->type == WORD)
+			check_word(token, env);
+		/*else if (token->type == IN)
+		{
+			i = open(token->next->value, O_RDONLY);
+			if (i < 0)
+				printf("infile");
+			token = token->next;
+		}
+		else if (token->type == OUT)
+		{
+			i = open(token->next->value, O_CREATE)
+		}*/
+		// else if (token->type == APPEND)
+		// else if (token-type == HEREDOC)
+		// else if (token->type == IN)
+		// else if (token->type == PIPE)
+		token = token->next;
+	}
+}
 int main(int argc, char **argv, char **envp)
 {
 	t_token	*token;
@@ -226,7 +324,9 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			break;
 		}
-		back = command_s(line);
+		parse(token, env);
+		print_token(token);
+		/*back = command_s(line);
 		if (!back)
 			exit (1);
 		if (!(ft_strncmp(back[0], "cd", 3)))
@@ -245,10 +345,11 @@ int main(int argc, char **argv, char **envp)
 		signal1 = signal1 / 256;
 		if (ft_strncmp(back[0], "$?", 3) == 0)
 			printf("%d\n",signal1);
-		/*ft_errors(signal1, back);*/
+		ft_errors(signal1, back);
+		*/
 		rl_redisplay();
 	}
 	//free(line);
-	free_split(back);
+	//free_split(back);
 	return (0);
 }

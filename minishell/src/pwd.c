@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-char	*ft_pwd(char **envp, char **back)
+char	*ft_pwd(char **envp)
 {
 	char	path[1024];
 

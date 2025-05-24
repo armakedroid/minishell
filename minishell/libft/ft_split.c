@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 21:28:30 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/21 20:12:49 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/24 19:15:00 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,12 +233,12 @@ char	**ft_split(char const *s, char c)
 			i++;
 		if (s[i])
 			word_count++;
-		// while (s[i] && (s[i] != c))
-		// {
-		// 	if (s[i] == '\'')
-		// 		in_quotes = !in_quotes;
-		// 	i++;
-		// }
+		 while (s[i] && (s[i] != c))
+		 {
+		 //	if (s[i] == '\'')
+		 //		in_quotes = !in_quotes;
+		 	i++;
+		 }
 	}
 	return (allocate_words(s, c, word_count));
 }

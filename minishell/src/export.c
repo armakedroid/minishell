@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/21 19:20:54 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/21 20:22:23 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void update_smth(char **envp, char *var, char *value)
 		{
 			new = ft_strjoin(var, value);
 			envp[i] = new;
-		}git add .
+		}
 		else
 			envp[i] = NULL;
 
