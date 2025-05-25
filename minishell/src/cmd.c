@@ -5,20 +5,18 @@ char	*cmdfile(char **cmd, char **path, char **envp)
 	char	*all;
 	char	*all1;
 	int		i;	
-	char	**back;
 
 	i = 0;
-	back = cmd;
 	// back = ft_split(cmd, ' ');
-	if (!back || !*back)
+	if (!cmd || !*cmd)
 		exit(127);
-	if (back[0][0] == '.' && back[0][1] == '/')
+	if (cmd[0][0] == '.' && cmd[0][1] == '/')
 	{
-		if (access(back[0], X_OK) == 0)
-			execve(back[0], back, envp);
+		if (access(cmd[0], X_OK) == 0)
+			execve(cmd[0], cmd, envp);
 		else
 		{
-			ft_errors(126, back);
+			ft_errors(126, cmd);
 			exit(126);
 		}
 	}
@@ -26,27 +24,22 @@ char	*cmdfile(char **cmd, char **path, char **envp)
 	{
 		while (path[i])
 		{
-			printf("path = %s\n", path[i]);
 			all = ft_strjoin(path[i], "/");
-			write(1, "---\n", 4);
-			if (back[0][0] != '/')
-				all = ft_strjoin(all, back[0]);
+			if (cmd[0][0] != '/')
+				all = ft_strjoin(all, cmd[0]);
 			else
-				all = ft_strjoin(all, ft_strrchr(back[0], '/') + 1);
-				printf("all = %s\n", all);
-			write(1, "---\n", 4);
+				all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
 			if (access(all, F_OK) == 0)
 			{
 				if (access(all, X_OK) == 0)
-					execve(all, back, envp);
+					execve(all, cmd, envp);
 				else
 				{
-					ft_errors(126, back);
-					free_split(back);
+					ft_errors(126, cmd);
+					free_split(cmd);
 					exit(126);
 				}
 			}
-			write(1, "---\n", 4);
 			free(all);
 			all = NULL;
 			i++;
@@ -63,7 +56,7 @@ char	*cmdfile(char **cmd, char **path, char **envp)
 		free(all1);
 		free(all);
 	}*/
-	ft_errors(127, back);
-	free_split(back);
+	ft_errors(127, cmd);
+	//free_split(back);
 	exit(127);
 }

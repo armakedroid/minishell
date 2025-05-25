@@ -106,16 +106,7 @@ void check_f(char **back, char **envp, char **path)
 	else if (!ft_strncmp(back[0], "env", 4))
 		ft_env(envp);
 	else
-	{
-		while (back[i])
-		{
-			line = ft_strjoin(line, back[i]);
-			if (back[i + 1])
-				line = ft_strjoin(line, " ");
-			i++;
-		}
-		// cmdfile(line, path, envp);
-	}
+		cmdfile(back, path, envp);
 	exit(0);
 	// wait(NULL);
 }
@@ -364,18 +355,18 @@ t_output *parse(t_token *token)
 			// tmp->infile = NULL;
 			// tmp->outfile = NULL;
 			// tmp->next = NULL;
-			// i = 0;
+			i = 0;
 		}
-		
 		else
 		{
 			// free(tmp);
 			tmp = create_out(back->args);
+			i = 0;
 		}
 		
 		if (token->type == WORD)
 		{
-			tmp->args[i] = token->value;
+			tmp->args[i] = ft_strdup(token->value);
 			i++;
 		}
 		else if (token->type == IN && token->next)
@@ -401,11 +392,12 @@ t_output *parse(t_token *token)
 			tmp = NULL;
 		}
 		token = token->next;
-		cmdfun(&back, tmp);
-		// free(tmp);
-		// tmp = NULL;
 	}
-
+	if (tmp)
+	{
+		tmp->args[i] = NULL;
+		cmdfun(&back, tmp);
+	}
 	return (back);
 }
 
@@ -413,7 +405,6 @@ int main(int argc, char **argv, char **envp)
 {
 	t_token	*token;
 	char	*line;
-	char	**back;
 	char	**env;
 	pid_t	cha;
 	char	*path;
@@ -442,36 +433,36 @@ int main(int argc, char **argv, char **envp)
 			break;
 		}
 		cmd = parse(token);
-		while (cmd->next)
-			cmd = cmd->next;
-		cmdfile(cmd->args, my_p, env);
-		print_token(token);
-		printf("\n\n");
-		print_cmd(cmd);
-		/*back = command_s(line);
-		if (!back)
+		//print_token(token);
+		//printf("\n\n");
+		//print_cmd(cmd);
+		if (!cmd->args)
 			exit (1);
-		if (!(ft_strncmp(back[0], "cd", 3)))
-			ft_cd(env, back);
-		else if (!(ft_strncmp(back[0], "export", 7)))
-			env = ft_export(env, back);
-		else if (ft_strncmp(back[0], "unset", 6) == 0)
-			env = ft_unset(env, back);
+		//if (!(ft_strncmp(cmd->args[0], "cd", 3)))
+		//	ft_cd(env, cmd->args[0]);
+		else if (!(ft_strncmp(cmd->args[0], "export", 7)))
+			env = ft_export(env, cmd->args);
+		else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+			env = ft_unset(env, cmd->args);
 		else
 		{
 			cha = fork();
 			if (cha == 0)
-				check_f(back, env, my_p);
+				check_f(cmd->args, env, my_p);
+			else if (cha > 0)
+			{
+				waitpid(cha, &signal1,0);
+				signal1 = WEXITSTATUS(signal1);
+				if (ft_strncmp(cmd->args[0], "$?", 3) == 0)
+					printf("%d\n",signal1);
+				ft_errors(signal1, cmd->args);
+			}
+			else
+				perror("fork");
 		}
-		waitpid(cha, &signal1,0);
-		signal1 = signal1 / 256;
-		if (ft_strncmp(back[0], "$?", 3) == 0)
-			printf("%d\n",signal1);
-		ft_errors(signal1, back);
-		*/
-		rl_redisplay();
+		
+		//rl_redisplay();
 	}
 	//free(line);
-	//free_split(back);
 	return (0);
 }
