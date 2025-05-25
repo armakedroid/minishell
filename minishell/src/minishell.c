@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/24 21:36:08 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/25 16:46:04 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,44 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include "../includes/minishell.h"
+
+void print_str(char **str, char *type)
+{
+	int i = 0;
+	if (str || *str)
+	{
+		while (str[i])
+		{
+			printf("%s = %s\n", type, str[i]);
+			i++;
+		}
+	}
+}
+
+void print_cmd(t_output *token)
+{
+	t_output *tmp;
+	char *str;
+	int	i = 0;
+
+	str = NULL;
+	while(token->args[i])
+	{
+		str = ft_strjoin(str, token->args[i]);
+		i++;
+	}
+	if (token)
+	{
+		tmp = token;
+		while(tmp)
+		{
+			printf("infile: %s, outfile: %s, next: %d, ", tmp->infile, tmp->outfile, !(!(tmp->next)));
+			print_str(tmp->args, "args");
+			printf("\n");
+			tmp = tmp->next;
+		}
+	}
+}
 
 void print_token(t_token *token)
 {
@@ -76,7 +114,7 @@ void check_f(char **back, char **envp, char **path)
 				line = ft_strjoin(line, " ");
 			i++;
 		}
-		cmdfile(line, path, envp);
+		// cmdfile(line, path, envp);
 	}
 	exit(0);
 	// wait(NULL);
@@ -266,6 +304,46 @@ void check_word(t_token *token, char **env)
 	// 	ft_unset(env, str);
 }
 
+void cmdfun(t_output **lst, t_output *new)
+{
+	t_output	*back;
+
+	back = NULL;
+	if (!new || !lst)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	back = *lst;
+	while (back->next)
+		back = back->next;
+	back->next = new;
+}
+
+t_output *create_out(char **str)
+{
+	t_output	*new;
+	int			i;
+
+	i = 0;
+	new = malloc(sizeof(t_output));
+	new->infile = NULL;
+	new->outfile = NULL;
+	new->args = malloc(sizeof(char *) * 100);
+	if (str)
+	{
+		while(str[i])
+		{
+			new->args[i] = ft_strdup(str[i]);
+			i++;
+		}
+	}
+	new->next = NULL;
+	return (new);
+}
+
 t_output *parse(t_token *token)
 {
 	t_output	*back;
@@ -278,14 +356,28 @@ t_output *parse(t_token *token)
 
 	while (token)
 	{
-		if (!tmp)
+		if (!back)
 		{
-			tmp = malloc(sizeof(t_output));
-			tmp->args = malloc(sizeof(char *) * 100);
-			i = 0;
+			tmp = create_out(NULL);
+			// tmp = malloc(sizeof(t_output));
+			// tmp->args = malloc(sizeof(char *) * 100);
+			// tmp->infile = NULL;
+			// tmp->outfile = NULL;
+			// tmp->next = NULL;
+			// i = 0;
 		}
+		
+		else
+		{
+			// free(tmp);
+			tmp = create_out(back->args);
+		}
+		
 		if (token->type == WORD)
-			tmp->args[i++] = ft_strdup(token->value);
+		{
+			tmp->args[i] = token->value;
+			i++;
+		}
 		else if (token->type == IN && token->next)
 		{
 			token = token->next;
@@ -305,11 +397,15 @@ t_output *parse(t_token *token)
 		else if (token->type == PIPE)
 		{
 			tmp->args[i] = NULL;
-			//funkcia grel lisi skzib gnalu hamar;
+			cmdfun(&back,tmp);
 			tmp = NULL;
 		}
 		token = token->next;
+		cmdfun(&back, tmp);
+		// free(tmp);
+		// tmp = NULL;
 	}
+
 	return (back);
 }
 
@@ -323,6 +419,7 @@ int main(int argc, char **argv, char **envp)
 	char	*path;
 	static int		signal1;
 	char	**my_p;
+	t_output	*cmd;
 
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
@@ -344,8 +441,13 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			break;
 		}
-		parse(token, env);
+		cmd = parse(token);
+		while (cmd->next)
+			cmd = cmd->next;
+		cmdfile(cmd->args, my_p, env);
 		print_token(token);
+		printf("\n\n");
+		print_cmd(cmd);
 		/*back = command_s(line);
 		if (!back)
 			exit (1);

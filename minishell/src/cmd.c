@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-char	*cmdfile(char *cmd, char **path, char **envp)
+char	*cmdfile(char **cmd, char **path, char **envp)
 {
 	char	*all;
 	char	*all1;
@@ -8,7 +8,8 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 	char	**back;
 
 	i = 0;
-	back = ft_split(cmd, ' ');
+	back = cmd;
+	// back = ft_split(cmd, ' ');
 	if (!back || !*back)
 		exit(127);
 	if (back[0][0] == '.' && back[0][1] == '/')
@@ -25,11 +26,15 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 	{
 		while (path[i])
 		{
+			printf("path = %s\n", path[i]);
 			all = ft_strjoin(path[i], "/");
+			write(1, "---\n", 4);
 			if (back[0][0] != '/')
 				all = ft_strjoin(all, back[0]);
 			else
 				all = ft_strjoin(all, ft_strrchr(back[0], '/') + 1);
+				printf("all = %s\n", all);
+			write(1, "---\n", 4);
 			if (access(all, F_OK) == 0)
 			{
 				if (access(all, X_OK) == 0)
@@ -41,6 +46,7 @@ char	*cmdfile(char *cmd, char **path, char **envp)
 					exit(126);
 				}
 			}
+			write(1, "---\n", 4);
 			free(all);
 			all = NULL;
 			i++;
