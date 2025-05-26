@@ -10,12 +10,12 @@ void	ft_errors(int signal, char **back)
 	if ((signal == 127 && back[0][0] == '.') || (signal == 1 && !ft_strncmp(back[0], "cd", 3)))
 	{
 		printf("bash : %s: No such file or directory\n", back[0]);
-		exit(signal);
+		return(signal);
 	}
 	else if (signal == 127 && back[0][0] != '.')
 	{
 		printf("bash : %s: command not found\n", back[0]);
-		exit(127);
+		return(127);
 	}
 	else if (signal == 126)
 	{
@@ -23,7 +23,7 @@ void	ft_errors(int signal, char **back)
 		if (fd == -1)
 		{
 			printf("bash: %s: Permission denied\n", back[0]);
-			exit(126);
+			return(126);
 		}
 		line = get_next_line(fd);
 		if (line && line[0] == '#' && line[1] == '!')
@@ -32,7 +32,7 @@ void	ft_errors(int signal, char **back)
 		{
 			printf("126 -2 \n\n");
 			printf("bash : %s: Permission denied\n", back[0]);
-			exit(126);
+			return(126);
 		}
 		close(fd);
 		free(line);
@@ -40,12 +40,11 @@ void	ft_errors(int signal, char **back)
 	else if (signal == 139)
 	{
 		printf("Segmentation fault (core dumped)\n");
-		exit(139);
+		return(139);
 	}
 	else if (signal == 100)
 	{
 		printf("bash : %s: too many arguments\n", back[0]);
-		exit(1);
+		return(1);
 	}
-
 }

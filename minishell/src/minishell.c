@@ -17,6 +17,10 @@
 #include <sys/wait.h>
 #include "../includes/minishell.h"
 
+int	exit_status;
+
+exit_status = 0;
+
 void print_str(char **str, char *type)
 {
 	int i = 0;
@@ -98,14 +102,13 @@ void check_f(char **back, char **envp, char **path)
 	i = 0;
 	line = NULL;
 	if (!ft_strncmp(back[0], "echo", 5))
-		ft_echo(back);
+		exit_status = ft_echo(back);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 		printf("%s\n", ft_pwd(envp));
 	else if (!ft_strncmp(back[0], "env", 4))
-		ft_env(envp);
+		exit_status = ft_env(envp);
 	else
-		cmdfile(back, path, envp);
-	exit(0);
+		exit_status = cmdfile(back, path, envp);
 	// wait(NULL);
 }
 
@@ -439,15 +442,9 @@ int main(int argc, char **argv, char **envp)
 		{
 			cd_result = ft_cd(cmd->args, env);
 			if (cd_result == 100)
-			{
-				ft_errors(100, cmd->args);
-				printf("Too many arguments: Signal 1\n");
-			}
+				exit_status = ft_errors(100, cmd->args);
 			else if (cd_result == 1)
-			{
-				ft_errors(1, cmd->args);
-				printf("No such file or directory: Signal 1\n");
-			}
+				exit_status = ft_errors(1, cmd->args);
 		}
 		else if (!(ft_strncmp(cmd->args[0], "export", 7)))
 			env = ft_export(env, cmd->args);
@@ -465,9 +462,9 @@ int main(int argc, char **argv, char **envp)
 			else if (cha > 0)
 			{
 				waitpid(cha, &signal1,0);
-				// signal1 = WEXITSTATUS(signal1);
+				// exit_status = WEXITSTATUS(signal1);
 				// if (ft_strncmp(cmd->args[0], "$?", 3) == 0)
-				// 	printf("%d\n",signal1);
+				// 	printf("%d\n",exit_status);
 				// ft_errors(signal1, cmd->args);
 			}
 			// else
