@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/25 16:46:04 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/26 19:44:22 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,10 @@ void check_f(char **back, char **envp, char **path)
 
 	i = 0;
 	line = NULL;
-	if (ft_strncmp(back[0], "echo", 5) == 0)
+	if (!ft_strncmp(back[0], "echo", 5))
 		ft_echo(back);
-	else if (ft_strncmp(back[0], "pwd", 4) == 0)
+	else if (!ft_strncmp(back[0], "pwd", 4))
 		printf("%s\n", ft_pwd(envp));
-	else if (ft_strncmp(back[0], "export", 7) == 0)
-		envp = ft_export(envp, back);
 	else if (!ft_strncmp(back[0], "env", 4))
 		ft_env(envp);
 	else
@@ -264,36 +262,36 @@ t_token *my_tok(char *line)
 	return (token);
 }
 
-void check_word(t_token *token, char **env)
-{
-	int	i;
-	char	*str;
+// void check_word(t_token *token, char **env)
+// {
+// 	int	i;
+// 	char	*str;
 
-	str = token->value;
-	i = 0;
-	if (!(ft_strncmp(str, "cd", 3)))
-	{
-		i = ft_cd(token, env);
-		if (i == 100)
-		{
-			printf("Too many arguments: Signal 1\n");
-		}
-		else if (i == 1)
-		{
-			printf("No such file or directory: Signal 1\n");
-		}
-	}
-	// else if (ft_strncmp(back[0], "echo", 5) == 0)
-		// ft_echo(back);
-	else if (ft_strncmp(str, "pwd", 4) == 0)
-		printf("%s\n", ft_pwd(env));
-	// else if (ft_strncmp(str, "export", 7) == 0)
-		// envp = ft_export(envp, back);
-	else if (!ft_strncmp(str, "env", 4))
-		ft_env(env);
-	// else if (ft_strncmp(str, "unset", 6) == 0)
-	// 	ft_unset(env, str);
-}
+// 	str = token->value;
+// 	i = 0;
+// 	if (!(ft_strncmp(str, "cd", 3)))
+// 	{
+// 		i = ft_cd(token, env);
+// 		if (i == 100)
+// 		{
+// 			printf("Too many arguments: Signal 1\n");
+// 		}
+// 		else if (i == 1)
+// 		{
+// 			printf("No such file or directory: Signal 1\n");
+// 		}
+// 	}
+// 	// else if (ft_strncmp(back[0], "echo", 5) == 0)
+// 		// ft_echo(back);
+// 	else if (ft_strncmp(str, "pwd", 4) == 0)
+// 		printf("%s\n", ft_pwd(env));
+// 	// else if (ft_strncmp(str, "export", 7) == 0)
+// 		// envp = ft_export(envp, back);
+// 	else if (!ft_strncmp(str, "env", 4))
+// 		ft_env(env);
+// 	// else if (ft_strncmp(str, "unset", 6) == 0)
+// 	// 	ft_unset(env, str);
+// }
 
 void cmdfun(t_output **lst, t_output *new)
 {
@@ -322,7 +320,11 @@ t_output *create_out(char **str)
 	new = malloc(sizeof(t_output));
 	new->infile = NULL;
 	new->outfile = NULL;
-	new->args = malloc(sizeof(char *) * 100);
+	if (str)
+		while (str[i])
+			i++;
+	new->args = ft_calloc(sizeof(char *), i + 1);
+	i = 0;
 	if (str)
 	{
 		while(str[i])
@@ -338,36 +340,32 @@ t_output *create_out(char **str)
 t_output *parse(t_token *token)
 {
 	t_output	*back;
-	t_output	*tmp; 
+	t_output	*tmp;
+	t_output	*for_args;
 	int		i;
 
 	back = NULL;
 	tmp = NULL;
 	i = 0;
-
 	while (token)
 	{
 		if (!back)
 		{
 			tmp = create_out(NULL);
-			// tmp = malloc(sizeof(t_output));
-			// tmp->args = malloc(sizeof(char *) * 100);
-			// tmp->infile = NULL;
-			// tmp->outfile = NULL;
-			// tmp->next = NULL;
 			i = 0;
 		}
 		else
 		{
-			// free(tmp);
-			tmp = create_out(back->args);
-			i = 0;
+			for_args = back;
+			while (for_args->next)
+				for_args = for_args->next;
+				tmp = create_out(for_args->args);
 		}
-		
 		if (token->type == WORD)
 		{
-			tmp->args[i] = ft_strdup(token->value);
+			tmp->args[i] = token->value;
 			i++;
+			tmp->args[i] = NULL;
 		}
 		else if (token->type == IN && token->next)
 		{
@@ -392,11 +390,7 @@ t_output *parse(t_token *token)
 			tmp = NULL;
 		}
 		token = token->next;
-	}
-	if (tmp)
-	{
-		tmp->args[i] = NULL;
-		cmdfun(&back, tmp);
+		cmdfun(&back,tmp);
 	}
 	return (back);
 }
@@ -404,6 +398,7 @@ t_output *parse(t_token *token)
 int main(int argc, char **argv, char **envp)
 {
 	t_token	*token;
+	int		cd_result;
 	char	*line;
 	char	**env;
 	pid_t	cha;
@@ -438,8 +433,22 @@ int main(int argc, char **argv, char **envp)
 		//print_cmd(cmd);
 		if (!cmd->args)
 			exit (1);
-		//if (!(ft_strncmp(cmd->args[0], "cd", 3)))
-		//	ft_cd(env, cmd->args[0]);
+		while (cmd->next)
+			cmd = cmd->next;
+		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
+		{
+			cd_result = ft_cd(cmd->args, env);
+			if (cd_result == 100)
+			{
+				ft_errors(100, cmd->args);
+				printf("Too many arguments: Signal 1\n");
+			}
+			else if (cd_result == 1)
+			{
+				ft_errors(1, cmd->args);
+				printf("No such file or directory: Signal 1\n");
+			}
+		}
 		else if (!(ft_strncmp(cmd->args[0], "export", 7)))
 			env = ft_export(env, cmd->args);
 		else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
@@ -448,21 +457,27 @@ int main(int argc, char **argv, char **envp)
 		{
 			cha = fork();
 			if (cha == 0)
+			{	
+				while (cmd->next)
+					cmd = cmd->next;
 				check_f(cmd->args, env, my_p);
+			}
 			else if (cha > 0)
 			{
 				waitpid(cha, &signal1,0);
-				signal1 = WEXITSTATUS(signal1);
-				if (ft_strncmp(cmd->args[0], "$?", 3) == 0)
-					printf("%d\n",signal1);
-				ft_errors(signal1, cmd->args);
+				// signal1 = WEXITSTATUS(signal1);
+				// if (ft_strncmp(cmd->args[0], "$?", 3) == 0)
+				// 	printf("%d\n",signal1);
+				// ft_errors(signal1, cmd->args);
 			}
-			else
-				perror("fork");
+			// else
+			// 	perror("fork");
 		}
 		
 		//rl_redisplay();
 	}
-	//free(line);
+	// free_split(env);
+	// free_split(my_p);
+	// free(line);
 	return (0);
 }

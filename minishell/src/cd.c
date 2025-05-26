@@ -42,22 +42,22 @@ char *get_old_path(char **envp)
 	return (NULL);
 }
 
-int	ft_cd(t_token *token, char **envp)
+int	ft_cd(char **str, char **envp)
 {
 	char *home;
-	t_token *tmp;
 
-	tmp = token->next;
-	if (tmp)
+	if (str[1])
 	{
-		if (tmp->next)
+		if (str[2])
+		{
 			return (100);
-		if (tmp->value[0] == '-' && ft_strlen(tmp->value) == 1)
+		}
+		if (str[1][0] == '-' && ft_strlen(str[1]) == 1)
 			return (chdir(get_old_path(envp)));
-		update_smth(envp, "OLDPWD=", ft_pwd(envp)); 	// env-i mej OLDPWD-in khavasercnenq ays pahi pwd-n, vorpeszi "-" nshani depqum karoxananq het gnal hin pwd-in
-		if (chdir(tmp->value) == -1)
-			return (1);								    // kpoxenq pwd-n
-		update_smth(envp, "PWD=", ft_pwd(envp)); 		// env-i mej PWD-in khavasercnenq ays pahi pwd-n
+		update_smth(envp, "OLDPWD=", ft_pwd(envp));
+		if (chdir(str[1]) == -1)
+			return (1);
+		update_smth(envp, "PWD=", ft_pwd(envp));
 		return (0);
 	}
 	else
