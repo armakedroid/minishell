@@ -1,13 +1,12 @@
 #include "../includes/minishell.h"
 
-char	*cmdfile(char **cmd, char **path, char **envp)
+int	cmdfile(char **cmd, char **path, char **envp)
 {
 	char	*all;
 	char	*all1;
 	int		i;	
 
 	i = 0;
-	// back = ft_split(cmd, ' ');
 	if (!cmd || !*cmd)
 		exit(127);
 	if (cmd[0][0] == '.' && cmd[0][1] == '/')
@@ -15,10 +14,7 @@ char	*cmdfile(char **cmd, char **path, char **envp)
 		if (access(cmd[0], X_OK) == 0)
 			execve(cmd[0], cmd, envp);
 		else
-		{
-			ft_errors(126, cmd);
-			exit(126);
-		}
+			return (ft_errors(126, cmd));
 	}
 	else
 	{
@@ -35,9 +31,8 @@ char	*cmdfile(char **cmd, char **path, char **envp)
 					execve(all, cmd, envp);
 				else
 				{
-					ft_errors(126, cmd);
 					free_split(cmd);
-					exit(126);
+					return (ft_errors(126, cmd));
 				}
 			}
 			free(all);
@@ -56,7 +51,6 @@ char	*cmdfile(char **cmd, char **path, char **envp)
 		free(all1);
 		free(all);
 	}*/
-	ft_errors(127, cmd);
+	return(ft_errors(127, cmd));
 	//free_split(back);
-	exit(127);
 }

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/26 19:44:22 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:59:45 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,7 @@
 #include <sys/wait.h>
 #include "../includes/minishell.h"
 
-int	exit_status;
-
-exit_status = 0;
+int	exit_status = 0;
 
 void print_str(char **str, char *type)
 {
@@ -102,7 +100,7 @@ void check_f(char **back, char **envp, char **path)
 	i = 0;
 	line = NULL;
 	if (!ft_strncmp(back[0], "echo", 5))
-		exit_status = ft_echo(back);
+		exit_status = ft_echo(back, exit_status);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 		printf("%s\n", ft_pwd(envp));
 	else if (!ft_strncmp(back[0], "env", 4))
@@ -110,6 +108,7 @@ void check_f(char **back, char **envp, char **path)
 	else
 		exit_status = cmdfile(back, path, envp);
 	// wait(NULL);
+	exit(exit_status);
 }
 
 void free_split(char **back)
@@ -461,14 +460,11 @@ int main(int argc, char **argv, char **envp)
 			}
 			else if (cha > 0)
 			{
-				waitpid(cha, &signal1,0);
-				// exit_status = WEXITSTATUS(signal1);
-				// if (ft_strncmp(cmd->args[0], "$?", 3) == 0)
-				// 	printf("%d\n",exit_status);
-				// ft_errors(signal1, cmd->args);
+				waitpid(cha, &signal1, 0);
+				exit_status = WEXITSTATUS(signal1);
 			}
-			// else
-			// 	perror("fork");
+			else
+				perror("fork");
 		}
 		
 		//rl_redisplay();

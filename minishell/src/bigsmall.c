@@ -10,15 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 int	small(char **back)
 {
 	int	i;
 	int	j;
-	int	flag;
+	int fd;
 
-	flag = 0;
 	i = 0;
 	while (back[i])
 	{
@@ -39,13 +38,12 @@ int	small(char **back)
 	return (0);
 }
 
-int	big(char **back)
+int	big_app(char **back)
 {
 	int	i;
 	int	j;
-	int	flag;
+	int fd;
 
-	flag = 0;
 	i = 0;
 	while (back[i])
 	{
@@ -66,13 +64,12 @@ int	big(char **back)
 	return (0);
 }
 
-int	big(char **back)
+int	big_crt(char **back)
 {
 	int	i;
 	int	j;
-	int	flag;
+	int fd;
 
-	flag = 0;
 	i = 0;
 	while (back[i])
 	{

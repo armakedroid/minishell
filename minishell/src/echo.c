@@ -13,7 +13,7 @@ static int	need_change(char *back)
 	return (0);
 }
 
-void	ft_echo(char **argv)
+int	ft_echo(char **argv, int signal)
 {
 	int		i;
 	int		j;
@@ -46,6 +46,11 @@ void	ft_echo(char **argv)
 				free(str);
 				if(back[j][0] == '$' && back[j][1])
 				{
+					if (back[j][1] == '?')
+					{
+						printf("%d\n", signal);
+						return (0);
+					}
 					str = getenv(back[j] + 1);
 					if (str)
 						printf("%s", str);
@@ -57,6 +62,11 @@ void	ft_echo(char **argv)
 			{
 				if(back[j][0] == '$' && back[j][1])
 				{
+					if (back[j][1] == '?')
+					{
+						printf("%d\n", signal);
+						return (0);
+					}
 					str = getenv(back[j] + 1);
 					if (str)
 						printf("%s", str);
@@ -74,4 +84,5 @@ void	ft_echo(char **argv)
 	}
 	if (n != 1)
 		printf("\n");
+	return (0);
 }

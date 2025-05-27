@@ -6,13 +6,13 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:30 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/21 18:47:58 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:30:27 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	ft_env(char **envp)
+int	ft_env(char **envp)
 {
 	int	i;
 
@@ -27,4 +27,5 @@ void	ft_env(char **envp)
 			i++;
 		}
 	}
+	return (0);
 }

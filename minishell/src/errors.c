@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-void	ft_errors(int signal, char **back)
+int	ft_errors(int signal, char **back)
 {
 	char	*line;
 	int	fd;
@@ -47,4 +47,5 @@ void	ft_errors(int signal, char **back)
 		printf("bash : %s: too many arguments\n", back[0]);
 		return(1);
 	}
+	return (signal);
 }
