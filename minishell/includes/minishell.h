@@ -38,6 +38,9 @@ char	*ft_fill(char **str);
 int		ft_sep(char *str, char c);
 char	*get_next_line(int fd);
 int		ft_errors(int signal, char **back);
+int     big_crt(t_output *back);
+int     big_app(t_output *back);
+int     small(t_output *back);
 void	print_str(char **str, char *type);
 
 #endif

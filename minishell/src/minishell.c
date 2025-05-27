@@ -408,6 +408,7 @@ int main(int argc, char **argv, char **envp)
 	static int		signal1;
 	char	**my_p;
 	t_output	*cmd;
+	// int stdout1;
 
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
@@ -416,6 +417,7 @@ int main(int argc, char **argv, char **envp)
 	env = ft_copy_env(envp);
 	path = get_path(envp);
 	my_p = ft_split(path, ':');
+	// stdout1 = dup(STDOUT_FILENO);
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -437,6 +439,9 @@ int main(int argc, char **argv, char **envp)
 			exit (1);
 		while (cmd->next)
 			cmd = cmd->next;
+		exit_status = big_crt(cmd);
+		// if (dup(STDOUT_FILENO) != stdout1)
+		// 	dup2(dup(STDOUT_FILENO), stdout1);
 		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 		{
 			cd_result = ft_cd(cmd->args, env);
