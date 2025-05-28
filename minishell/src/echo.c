@@ -13,13 +13,29 @@ static int	need_change(char *back)
 	return (0);
 }
 
+// char *get_my_env(char *str, char **env)
+// {
+// 	int	i;
+// 	int	j;
+
+// 	i = 0;
+// 	while (env[i])
+// 	{
+// 		j = 0;
+// 		while (env[i][j])
+// 		{
+// 			if (ft_strncmp())
+// 		}
+// 	}
+// }
+
 int	ft_echo(char **argv, int signal)
 {
 	int		i;
 	int		j;
 	int		n;
 	char	*str;
-	char 	**back;
+	char	**back;
 
 	n = 0;
 	i = 1;
@@ -27,7 +43,7 @@ int	ft_echo(char **argv, int signal)
 		n = ++i - 1;
 	while (argv[i])
 	{
-		back  = ft_split(argv[i], ' ');
+		back = ft_split(argv[i], ' ');
 		j = 0;
 		while (back[j])
 		{
@@ -36,15 +52,16 @@ int	ft_echo(char **argv, int signal)
 				str = ft_strtrim(back[j], "'");
 				free(back[j]);
 				back[j] = str;
-				printf("%s",back[j]);
+				printf("%s", back[j]);
 			}
-			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j]) - 1] == '\"')
+			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j])
+				- 1] == '\"')
 			{
 				str = ft_strtrim(back[j], "\"");
 				free(back[j]);
 				back[j] = ft_strdup(str);
 				free(str);
-				if(back[j][0] == '$' && back[j][1])
+				if (back[j][0] == '$' && back[j][1])
 				{
 					if (back[j][1] == '?')
 					{
@@ -56,11 +73,11 @@ int	ft_echo(char **argv, int signal)
 						printf("%s", str);
 				}
 				else
-					printf("%s",back[j]);
+					printf("%s", back[j]);
 			}
 			else
 			{
-				if(back[j][0] == '$' && back[j][1])
+				if (back[j][0] == '$' && back[j][1])
 				{
 					if (back[j][1] == '?')
 					{
@@ -72,7 +89,7 @@ int	ft_echo(char **argv, int signal)
 						printf("%s", str);
 				}
 				else
-					printf("%s",back[j]);
+					printf("%s", back[j]);
 			}
 			if (back[j + 1] || str)
 				printf(" ");

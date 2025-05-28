@@ -6,14 +6,13 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/27 19:03:12 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:00:20 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// get_home funkcian vorpeszi ete cd-i dimac path chlini inqy gna HOME
-char *get_home(char **envp)
+char	*get_home(char **envp)
 {
 	int	i;
 
@@ -27,8 +26,7 @@ char *get_home(char **envp)
 	return (NULL);
 }
 
-// get_old_path funkcian vorpeszi ete cd-i dimac lini "-" nshany inqy gna hin PATH-in
-char *get_old_path(char **envp)
+char	*get_old_path(char **envp)
 {
 	int	i;
 
@@ -36,7 +34,7 @@ char *get_old_path(char **envp)
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "OLDPWD=", 7))
-			return envp[i] + 7;
+			return (envp[i] + 7);
 		i++;
 	}
 	return (NULL);
@@ -44,7 +42,7 @@ char *get_old_path(char **envp)
 
 int	ft_cd(char **str, char **envp)
 {
-	char *home;
+	char	*home;
 
 	home = get_home(envp);
 	if (!str[1] || (str[1][0] == '~' && !str[1][1]))

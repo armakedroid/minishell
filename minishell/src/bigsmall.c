@@ -3,93 +3,85 @@
 /*                                                        :::      ::::::::   */
 /*   bigsmall.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/22 21:25:10 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:01:05 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	small(t_output *back)
+int	small(t_output *back, int *fd)
 {
-	int	i;
-	int	j;
-	int fd;
+	int	dup_res;
 
-	i = 0;
-	while (back->args[i])
+	if (back->infile)
 	{
-		j = 0;
-		while (back->args[i][j])
-		{
-			if (back->args[i][j] == '<')
-				break;
-			j++;
-		}
-		i++;
+		*fd = open(back->infile, O_RDONLY, 0444);
+		if (*fd == -1)
+			return (ft_errors(1, back->args, back->infile));
 	}
-	fd = open(back->args[i + 1], O_RDONLY, 0444);
-	if (!fd)
-		ft_errors(127, back->args);
-	if (dup2(fd, STDIN_FILENO) == -1)
-		ft_errors(127, back->args);
+	dup_res = dup2(*fd, STDIN_FILENO);
+	if (dup_res == -1)
+		return (ft_errors(127, back->args, NULL));
+	close(*fd);
 	return (0);
 }
-
-int	big_app(t_output *back)
+void	here_doc_u(char **line, char ***back)
 {
-	int	i;
-	int	j;
-	int fd;
-
-	i = 0;
-	while (back->args[i])
-	{
-		j = 0;
-		while (back->args[i][j] && back->args[i][j + 1])
-		{
-			if (back->args[i][j] == '>' && back->args[i][j + 1] == '>')
-				break;
-			j++;
-		}
-		i++;
-	}
-	fd = open(back->args[i + 1], O_WRONLY | O_CREAT, 0666);
-	if (!fd)
-		ft_errors(127, back->args);
-	if (dup2(fd, STDOUT_FILENO) == -1)
-		ft_errors(127, back->args);
-	return (0);
+	*back = ft_split(*line, '\n');
+	if (!*back || !**back)
+		return ;
 }
 
-int	big_crt(t_output *back)
+void	heredoc(const char *li)
 {
-	int	i;
-	int	j;
-	int fd;
+	char	*line;
+	int		fd;
+	char	**back;
 
-	i = 0;
-	while (back->args[i])
+	fd = open(TMP, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	while (1)
 	{
-		printf("args = %s\n", back->args[i]);
-		j = 0;
-		while (back->args[i][j])
+		write(1, "> ", 2);
+		line = get_next_line(STDIN_FILENO);
+		if (!line || !*line)
+			break ;
+		if (*line != '\n')
 		{
-			if (back->args[i][j] == '>')
-				break;
-			j++;
+			here_doc_u(&line, &back);
+			if (ft_strncmp(back[0], li, sizeof(back[0])) == 0)
+			{
+				free(line);
+				break ;
+			}
 		}
-		i++;
+		write(fd, line, strlen(line));
+		free(line);
 	}
-	if (back->outfile)
+	close(fd);
+}
+
+int	big_crt(t_output *back, int *fd)
+{
+	int	dup_res;
+
+	if (back->outfile && back->num == 1)
 	{
-		fd = open(back->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-		if (fd == -1)
-			return ft_errors(127, back->args);
-		if (dup2(fd, STDOUT_FILENO) == -1)
-			return ft_errors(127, back->args);
+		*fd = open(back->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666);
+		if (*fd == -1)
+			return (ft_errors(1, back->args, NULL));
 	}
+	else if (back->outfile)
+	{
+		*fd = open(back->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+		if (*fd == -1)
+			return (ft_errors(1, back->args, NULL));
+	}
+	dup_res = dup2(*fd, STDOUT_FILENO);
+	if (dup_res == -1)
+		return (ft_errors(127, back->args, NULL));
+	close(*fd);
 	return (0);
 }

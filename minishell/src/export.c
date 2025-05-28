@@ -6,22 +6,22 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/21 20:22:23 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/28 21:00:47 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void update_smth(char **envp, char *var, char *value)
+void	update_smth(char **envp, char *var, char *value)
 {
-	int	i;
+	int		i;
 	char	*new;
 
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], var, ft_strlen(var)))
-			break;
+			break ;
 		i++;
 	}
 	if (envp[i])
@@ -34,14 +34,13 @@ void update_smth(char **envp, char *var, char *value)
 		}
 		else
 			envp[i] = NULL;
-
 	}
 }
 
-void sort(char **envp)
+void	sort(char **envp)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	*tmp;
 
 	i = 0;
@@ -62,7 +61,7 @@ void sort(char **envp)
 	}
 }
 
-void print_env(char **envp)
+void	print_env(char **envp)
 {
 	int	i;
 
@@ -77,13 +76,13 @@ void print_env(char **envp)
 	}
 }
 
-char **ft_export(char **envp, char **back)
+char	**ft_export(char **envp, char **back)
 {
-	int	i;
-	int	e;
-	int	a;
-	char *tmp;
-	char **env;
+	int		i;
+	int		e;
+	int		a;
+	char	*tmp;
+	char	**env;
 
 	i = 0;
 	a = 0;
@@ -110,7 +109,7 @@ char **ft_export(char **envp, char **back)
 		i++;
 	env = malloc((i + 1) * sizeof(char *));
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 	{
 		env[i] = ft_strdup(envp[i]);
 		i++;

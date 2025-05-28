@@ -6,22 +6,24 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/27 19:59:45 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/28 20:59:47 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <readline/readline.h>
+#include "../includes/minishell.h"
 #include <readline/history.h>
+#include <readline/readline.h>
+#include <signal.h>
 #include <stdio.h>
 #include <sys/wait.h>
-#include "../includes/minishell.h"
 
-int	exit_status = 0;
+int			g_exit_status = 0;
 
-void print_str(char **str, char *type)
+void	print_str(char **str, char *type)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	if (str || *str)
 	{
 		while (str[i])
@@ -32,14 +34,15 @@ void print_str(char **str, char *type)
 	}
 }
 
-void print_cmd(t_output *token)
+void	print_cmd(t_output *token)
 {
-	t_output *tmp;
-	char *str;
-	int	i = 0;
+	t_output	*tmp;
+	char		*str;
+	int			i;
 
+	i = 0;
 	str = NULL;
-	while(token->args[i])
+	while (token->args[i])
 	{
 		str = ft_strjoin(str, token->args[i]);
 		i++;
@@ -47,9 +50,10 @@ void print_cmd(t_output *token)
 	if (token)
 	{
 		tmp = token;
-		while(tmp)
+		while (tmp)
 		{
-			printf("infile: %s, outfile: %s, next: %d, ", tmp->infile, tmp->outfile, !(!(tmp->next)));
+			printf("infile: %s, outfile: %s, next: %d, ", tmp->infile,
+				tmp->outfile, !(!(tmp->next)));
 			print_str(tmp->args, "args");
 			printf("\n");
 			tmp = tmp->next;
@@ -57,61 +61,62 @@ void print_cmd(t_output *token)
 	}
 }
 
-void print_token(t_token *token)
+void	print_token(t_token *token)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	tmp = token;
-	while(tmp)
+	while (tmp)
 	{
-		printf("token value: %s, token type: %d, token quote: %d\n", tmp->value, tmp->type, tmp->q_type);
+		printf("token value: %s, token type: %d, token quote: %d\n", tmp->value,
+			tmp->type, tmp->q_type);
 		tmp = tmp->next;
 	}
 }
 
-int is_space(char c)
+int	is_space(char c)
 {
 	if (c == ' ')
 		return (1);
 	return (0);
 }
 
-int is_operator(char c)
+int	is_operator(char c)
 {
 	if (c == '|' || c == '>' || c == '<' || c == '&')
 		return (1);
 	return (0);
 }
 
-char **command_s(char *line)
+char	**command_s(char *line)
 {
 	char	**back;
+
 	back = ft_split(line, ' ');
 	if (!back)
 		return (NULL);
 	return (back);
 }
 
-void check_f(char **back, char **envp, char **path)
+void	check_f(char **back, char **envp, char **path)
 {
 	char	*line;
-	int	i;
+	int		i;
 
 	i = 0;
 	line = NULL;
 	if (!ft_strncmp(back[0], "echo", 5))
-		exit_status = ft_echo(back, exit_status);
+		g_exit_status = ft_echo(back, g_exit_status);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 		printf("%s\n", ft_pwd(envp));
 	else if (!ft_strncmp(back[0], "env", 4))
-		exit_status = ft_env(envp);
+		g_exit_status = ft_env(envp);
 	else
-		exit_status = cmdfile(back, path, envp);
-	// wait(NULL);
-	exit(exit_status);
+		cmdfile(back, path, envp, &g_exit_status);
+	exit(g_exit_status);
 }
 
-void free_split(char **back)
+void	free_split(char **back)
 {
 	int	i;
 
@@ -124,7 +129,7 @@ void free_split(char **back)
 	free(back);
 }
 
-void handle_sigint(int x)
+void	handle_sigint(int x)
 {
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
@@ -140,11 +145,11 @@ char	**ft_copy_env(char **envp)
 	int		i;
 
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 		i++;
 	tmp = malloc((i) * sizeof(char *));
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "SHLVL=", 7))
 			envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
@@ -155,7 +160,7 @@ char	**ft_copy_env(char **envp)
 	return (tmp);
 }
 
-t_token *create_t(char *str, int i)
+t_token	*create_t(char *str, int i)
 {
 	t_token	*token;
 
@@ -189,11 +194,11 @@ static void	ft_lstadd_back1(t_token **lst, t_token *new)
 	back->next = new;
 }
 
-void add_token(t_token **token, char *str, int i)
+void	add_token(t_token **token, char *str, int i)
 {
 	t_token	*new;
 	t_token	*tmp;
-		
+
 	new = create_t(str, i);
 	tmp = *token;
 	if (!new)
@@ -204,10 +209,10 @@ void add_token(t_token **token, char *str, int i)
 		ft_lstadd_back1(token, new);
 }
 
-t_token *my_tok(char *line)
+t_token	*my_tok(char *line)
 {
-	int	i;
-	int	start;
+	int		i;
+	int		start;
 	t_token	*token;
 
 	i = 0;
@@ -219,7 +224,7 @@ t_token *my_tok(char *line)
 			i++;
 		else if (line[i] == '|')
 		{
-			add_token(&token, "|" ,PIPE);
+			add_token(&token, "|", PIPE);
 			i++;
 		}
 		else if (line[i] == '>')
@@ -295,7 +300,7 @@ t_token *my_tok(char *line)
 // 	// 	ft_unset(env, str);
 // }
 
-void cmdfun(t_output **lst, t_output *new)
+void	cmdfun(t_output **lst, t_output *new)
 {
 	t_output	*back;
 
@@ -313,15 +318,15 @@ void cmdfun(t_output **lst, t_output *new)
 	back->next = new;
 }
 
-t_output *create_out(char **str)
+t_output	*create_out(char **str, char *infile, char *outfile)
 {
 	t_output	*new;
 	int			i;
 
 	i = 0;
 	new = malloc(sizeof(t_output));
-	new->infile = NULL;
-	new->outfile = NULL;
+	new->infile = infile;
+	new->outfile = outfile;
 	if (str)
 		while (str[i])
 			i++;
@@ -329,7 +334,7 @@ t_output *create_out(char **str)
 	i = 0;
 	if (str)
 	{
-		while(str[i])
+		while (str[i])
 		{
 			new->args[i] = ft_strdup(str[i]);
 			i++;
@@ -339,21 +344,33 @@ t_output *create_out(char **str)
 	return (new);
 }
 
-t_output *parse(t_token *token)
+t_output	*parse(t_token *token)
 {
 	t_output	*back;
 	t_output	*tmp;
 	t_output	*for_args;
-	int		i;
+	int			i;
 
 	back = NULL;
 	tmp = NULL;
 	i = 0;
 	while (token)
 	{
+		if (token->type == HEREDOC)
+		{
+			if (token->next)
+				token = token->next->next;
+			else
+			{
+				g_exit_status = ft_errors(2, NULL, NULL);
+				return (NULL);
+			}
+		}
+		if (!token)
+			return (back);
 		if (!back)
 		{
-			tmp = create_out(NULL);
+			tmp = create_out(NULL, NULL, NULL);
 			i = 0;
 		}
 		else
@@ -361,7 +378,8 @@ t_output *parse(t_token *token)
 			for_args = back;
 			while (for_args->next)
 				for_args = for_args->next;
-				tmp = create_out(for_args->args);
+			tmp = create_out(for_args->args, for_args->infile,
+					for_args->outfile);
 		}
 		if (token->type == WORD)
 		{
@@ -388,27 +406,30 @@ t_output *parse(t_token *token)
 		else if (token->type == PIPE)
 		{
 			tmp->args[i] = NULL;
-			cmdfun(&back,tmp);
+			cmdfun(&back, tmp);
 			tmp = NULL;
 		}
 		token = token->next;
-		cmdfun(&back,tmp);
+		cmdfun(&back, tmp);
 	}
 	return (back);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_token	*token;
-	int		cd_result;
-	char	*line;
-	char	**env;
-	pid_t	cha;
-	char	*path;
-	static int		signal1;
-	char	**my_p;
+	t_token		*token;
+	t_token		*ttmp;
+	int			cd_result;
+	char		*line;
+	char		**env;
+	pid_t		cha;
+	char		*path;
+	static int	signal1;
+	char		**my_p;
 	t_output	*cmd;
-	// int stdout1;
+	int			stdout1;
+	int			stdin1;
+	int			fd;
 
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
@@ -417,62 +438,89 @@ int main(int argc, char **argv, char **envp)
 	env = ft_copy_env(envp);
 	path = get_path(envp);
 	my_p = ft_split(path, ':');
-	// stdout1 = dup(STDOUT_FILENO);
+	fd = 0;
 	while (1)
 	{
+		stdout1 = dup(STDOUT_FILENO);
+		stdin1 = dup(STDIN_FILENO);
 		line = readline("minishell$ ");
 		if (!line)
-			break;
+			break ;
 		if (*line)
 			add_history(line);
 		token = my_tok(line);
+		ttmp = token;
+		while (ttmp)
+		{
+			if (ttmp->type == HEREDOC && ttmp->next)
+				heredoc(ttmp->next->value);
+			ttmp = ttmp->next;
+		}
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
 			free(line);
-			break;
+			break ;
 		}
 		cmd = parse(token);
-		//print_token(token);
-		//printf("\n\n");
-		//print_cmd(cmd);
-		if (!cmd->args)
-			exit (1);
+		// print_token(token);
+		// printf("\n\n");
+		// print_cmd(cmd);
+		if (!cmd || !cmd->args)
+		{
+			if (g_exit_status)
+			{
+				close(stdin1);
+				close(stdout1);
+			}
+			continue ;
+		}
 		while (cmd->next)
 			cmd = cmd->next;
-		exit_status = big_crt(cmd);
-		// if (dup(STDOUT_FILENO) != stdout1)
-		// 	dup2(dup(STDOUT_FILENO), stdout1);
-		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
+		if (cmd->outfile)
+			g_exit_status = big_crt(cmd, &fd);
+		else if (cmd->infile)
+			g_exit_status = small(cmd, &fd);
+		if (!g_exit_status)
 		{
-			cd_result = ft_cd(cmd->args, env);
-			if (cd_result == 100)
-				exit_status = ft_errors(100, cmd->args);
-			else if (cd_result == 1)
-				exit_status = ft_errors(1, cmd->args);
-		}
-		else if (!(ft_strncmp(cmd->args[0], "export", 7)))
-			env = ft_export(env, cmd->args);
-		else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-			env = ft_unset(env, cmd->args);
-		else
-		{
-			cha = fork();
-			if (cha == 0)
-			{	
-				while (cmd->next)
-					cmd = cmd->next;
-				check_f(cmd->args, env, my_p);
-			}
-			else if (cha > 0)
+			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 			{
-				waitpid(cha, &signal1, 0);
-				exit_status = WEXITSTATUS(signal1);
+				cd_result = ft_cd(cmd->args, env);
+				if (cd_result == 100)
+					g_exit_status = ft_errors(100, cmd->args, NULL);
+				else if (cd_result == 1)
+					g_exit_status = ft_errors(1, cmd->args, NULL);
 			}
+			else if (!(ft_strncmp(cmd->args[0], "export", 7)))
+				env = ft_export(env, cmd->args);
+			else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+				env = ft_unset(env, cmd->args);
 			else
-				perror("fork");
+			{
+				cha = fork();
+				if (cha == 0)
+				{
+					while (cmd->next)
+						cmd = cmd->next;
+					check_f(cmd->args, env, my_p);
+				}
+				else if (cha > 0)
+				{
+					waitpid(cha, &signal1, 0);
+					g_exit_status = WEXITSTATUS(signal1);
+				}
+				else
+					perror("fork");
+			}
 		}
-		
-		//rl_redisplay();
+		dup2(stdout1, STDOUT_FILENO);
+		dup2(stdin1, STDIN_FILENO);
+		if (stdout1)
+			close(stdout1);
+		if (stdin1)
+			close(stdin1);
+		if (fd)
+			close(fd);
+		// rl_redisplay();
 	}
 	// free_split(env);
 	// free_split(my_p);
