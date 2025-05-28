@@ -9,7 +9,7 @@ OBJS = $(SRCS:%.c=%.o)
 LIBFT = libft/libft.a
 
 CC = cc
-READLINE_FLAGS = -lreadline
+READLINE_FLAGS = -lreadline -g3
 
 RM = rm -rf
 

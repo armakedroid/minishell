@@ -116,6 +116,18 @@ void	check_f(char **back, char **envp, char **path)
 	exit(g_exit_status);
 }
 
+void free_tokens(t_token *tokens)
+{
+	while (tokens)
+	{
+	t_token *next = tokens->next;
+	free(tokens->value);
+	free(tokens);
+	tokens = next;
+	}
+}
+
+
 void	free_split(char **back)
 {
 	int	i;
@@ -192,6 +204,24 @@ static void	ft_lstadd_back1(t_token **lst, t_token *new)
 	while (back->next)
 		back = back->next;
 	back->next = new;
+}
+
+void free_cmd(t_output *cmd)
+{
+	t_output	*next;
+
+	while (cmd)
+	{
+		next = cmd->next;
+		if (cmd->args)
+			free_split(cmd->args);
+		if (cmd->infile)
+			free(cmd->infile);
+		if (cmd->outfile)
+			free(cmd->outfile);
+		free(cmd);
+		cmd = next;
+	}
 }
 
 void	add_token(t_token **token, char *str, int i)
@@ -431,6 +461,7 @@ int	main(int argc, char **argv, char **envp)
 	int			stdin1;
 	int			fd;
 
+	(void)argv;
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
@@ -521,9 +552,12 @@ int	main(int argc, char **argv, char **envp)
 		if (fd)
 			close(fd);
 		// rl_redisplay();
+		free_cmd(cmd);
+		//free_tokens(token);
+		free(line);
 	}
-	// free_split(env);
-	// free_split(my_p);
-	// free(line);
+	free_split(env);
+	free_split(my_p);
+	free(path);
 	return (0);
 }
