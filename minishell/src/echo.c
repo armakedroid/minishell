@@ -1,17 +1,17 @@
 #include "../includes/minishell.h"
 
-static int	need_change(char *back)
-{
-	int	i;
+// static int	need_change(char *back)
+// {
+// 	int	i;
 
-	i = 0;
-	if (back[0] == '\"')
-	{
-		if (back[1] && back[1] == '\'')
-			return (1);
-	}
-	return (0);
-}
+// 	i = 0;
+// 	if (back[0] == '\"')
+// 	{
+// 		if (back[1] && back[1] == '\'')
+// 			return (1);
+// 	}
+// 	return (0);
+// }
 
 // char *get_my_env(char *str, char **env)
 // {

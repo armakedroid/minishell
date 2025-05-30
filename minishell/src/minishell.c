@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/28 20:59:47 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/30 21:04:38 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,13 +120,12 @@ void free_tokens(t_token *tokens)
 {
 	while (tokens)
 	{
-	t_token *next = tokens->next;
-	free(tokens->value);
-	free(tokens);
-	tokens = next;
+		t_token *next = tokens->next;
+		free(tokens->value);
+		free(tokens);
+		tokens = next;
 	}
 }
-
 
 void	free_split(char **back)
 {
@@ -141,7 +140,25 @@ void	free_split(char **back)
 	free(back);
 }
 
-void	handle_sigint(int x)
+void free_cmd(t_output *cmd)
+{
+	t_output	*next;
+
+	while (cmd)
+	{
+		next = cmd->next;
+		if (cmd->args)
+			free_split(cmd->args);
+		if (cmd->infile)
+			free(cmd->infile);
+		if (cmd->outfile)
+			free(cmd->outfile);
+		free(cmd);
+		cmd = next;
+	}
+}
+
+void	handle_sigint()
 {
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
@@ -153,7 +170,6 @@ void	handle_sigint(int x)
 char	**ft_copy_env(char **envp)
 {
 	char	**tmp;
-	char	*shl;
 	int		i;
 
 	i = 0;
@@ -204,24 +220,6 @@ static void	ft_lstadd_back1(t_token **lst, t_token *new)
 	while (back->next)
 		back = back->next;
 	back->next = new;
-}
-
-void free_cmd(t_output *cmd)
-{
-	t_output	*next;
-
-	while (cmd)
-	{
-		next = cmd->next;
-		if (cmd->args)
-			free_split(cmd->args);
-		if (cmd->infile)
-			free(cmd->infile);
-		if (cmd->outfile)
-			free(cmd->outfile);
-		free(cmd);
-		cmd = next;
-	}
 }
 
 void	add_token(t_token **token, char *str, int i)
@@ -417,27 +415,35 @@ t_output	*parse(t_token *token)
 			i++;
 			tmp->args[i] = NULL;
 		}
-		else if (token->type == IN && token->next)
-		{
-			token = token->next;
-			tmp->infile = ft_strdup(token->value);
-		}
-		else if (token->type == OUT && token->next)
-		{
-			token = token->next;
-			tmp->outfile = ft_strdup(token->value);
-		}
-		else if (token->type == APPEND && token->next)
-		{
-			token = token->next;
-			tmp->outfile = ft_strdup(token->value);
-			tmp->num = 1;
-		}
 		else if (token->type == PIPE)
 		{
 			tmp->args[i] = NULL;
 			cmdfun(&back, tmp);
 			tmp = NULL;
+		}
+		else if (token->next)
+		{
+			if (token->type == IN)
+			{
+				token = token->next;
+				tmp->infile = ft_strdup(token->value);
+			}
+			else if (token->type == OUT)
+			{
+				token = token->next;
+				tmp->outfile = ft_strdup(token->value);
+			}
+			else if (token->type == APPEND)
+			{
+				token = token->next;
+				tmp->outfile = ft_strdup(token->value);
+				tmp->num = 1;
+			}
+		}
+		else
+		{
+			g_exit_status = ft_errors(2, NULL, NULL);
+			return (NULL);
 		}
 		token = token->next;
 		cmdfun(&back, tmp);
@@ -461,13 +467,13 @@ int	main(int argc, char **argv, char **envp)
 	int			stdin1;
 	int			fd;
 
-	(void)argv;
+	(void) argv;
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 	env = ft_copy_env(envp);
-	path = get_path(envp);
+	path = get_path(env);
 	my_p = ft_split(path, ':');
 	fd = 0;
 	while (1)
@@ -511,38 +517,38 @@ int	main(int argc, char **argv, char **envp)
 			g_exit_status = big_crt(cmd, &fd);
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
-		if (!g_exit_status)
+		// if (!cmd->outfile)
+		// {
+		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 		{
-			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
-			{
-				cd_result = ft_cd(cmd->args, env);
-				if (cd_result == 100)
-					g_exit_status = ft_errors(100, cmd->args, NULL);
-				else if (cd_result == 1)
-					g_exit_status = ft_errors(1, cmd->args, NULL);
-			}
-			else if (!(ft_strncmp(cmd->args[0], "export", 7)))
-				env = ft_export(env, cmd->args);
-			else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-				env = ft_unset(env, cmd->args);
-			else
-			{
-				cha = fork();
-				if (cha == 0)
-				{
-					while (cmd->next)
-						cmd = cmd->next;
-					check_f(cmd->args, env, my_p);
-				}
-				else if (cha > 0)
-				{
-					waitpid(cha, &signal1, 0);
-					g_exit_status = WEXITSTATUS(signal1);
-				}
-				else
-					perror("fork");
-			}
+			cd_result = ft_cd(cmd->args, env);
+			if (cd_result == 100)
+				g_exit_status = ft_errors(100, cmd->args, NULL);
+			else if (cd_result == 1)
+				g_exit_status = ft_errors(1, cmd->args, NULL);
 		}
+		else if (!(ft_strncmp(cmd->args[0], "export", 7)))
+			env = ft_export(env, cmd->args);
+		else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+			env = ft_unset(env, cmd->args);
+		else
+		{
+			cha = fork();
+			if (cha == 0)
+			{
+				while (cmd->next)
+					cmd = cmd->next;
+				check_f(cmd->args, env, my_p);
+			}
+			else if (cha > 0)
+			{
+				waitpid(cha, &signal1, 0);
+				g_exit_status = WEXITSTATUS(signal1);
+			}
+			else
+				perror("fork");
+		}
+		// }
 		dup2(stdout1, STDOUT_FILENO);
 		dup2(stdin1, STDIN_FILENO);
 		if (stdout1)
@@ -551,13 +557,13 @@ int	main(int argc, char **argv, char **envp)
 			close(stdin1);
 		if (fd)
 			close(fd);
-		// rl_redisplay();
-		free_cmd(cmd);
-		//free_tokens(token);
+		// free_cmd(cmd);
 		free(line);
+		// free_tokens(token);
+		// rl_redisplay();
 	}
-	free_split(env);
-	free_split(my_p);
-	free(path);
+	// free_split(env);
+	// free_split(my_p);
+	free(line);
 	return (0);
 }

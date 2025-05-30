@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/28 21:00:47 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/29 20:44:45 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void	print_env(char **envp)
 char	**ft_export(char **envp, char **back)
 {
 	int		i;
-	int		e;
 	int		a;
 	char	*tmp;
 	char	**env;

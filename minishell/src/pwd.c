@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:34:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/27 19:34:52 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/29 19:50:23 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*ft_pwd(char **envp)
+char	*ft_pwd()
 {
 	char	path[1024];
 

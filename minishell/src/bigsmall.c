@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/28 21:01:05 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/29 20:26:28 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	small(t_output *back, int *fd)
 	close(*fd);
 	return (0);
 }
-void	here_doc_u(char **line, char ***back)
+void here_doc_u(char **line, char ***back)
 {
 	*back = ft_split(*line, '\n');
 	if (!*back || !**back)
