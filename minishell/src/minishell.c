@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/30 21:04:38 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/31 18:45:29 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,7 +399,6 @@ t_output	*parse(t_token *token)
 		if (!back)
 		{
 			tmp = create_out(NULL, NULL, NULL);
-			i = 0;
 		}
 		else
 		{
@@ -418,8 +417,11 @@ t_output	*parse(t_token *token)
 		else if (token->type == PIPE)
 		{
 			tmp->args[i] = NULL;
+			tmp->is_p = 1;
 			cmdfun(&back, tmp);
 			tmp = NULL;
+			token = token->next;
+			continue ;
 		}
 		else if (token->next)
 		{
@@ -466,6 +468,9 @@ int	main(int argc, char **argv, char **envp)
 	int			stdout1;
 	int			stdin1;
 	int			fd;
+	int			df[2];
+	int			proc1;
+	int			proc2;
 
 	(void) argv;
 	if (argc != 1)
@@ -517,8 +522,16 @@ int	main(int argc, char **argv, char **envp)
 			g_exit_status = big_crt(cmd, &fd);
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
-		// if (!cmd->outfile)
-		// {
+		/*if (cmd->is_p)
+		{
+			if (pipe(df) == -1)
+				return (write(2, "wrong df\n", 9));
+			proc1 = fork();
+				g_exit_status = m_pipe(cmd, &df, 1);
+			proc2 = fork();
+				g_exit_status = m_pipe(cmd, &df, 1);
+		}
+		*/
 		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 		{
 			cd_result = ft_cd(cmd->args, env);
@@ -548,7 +561,6 @@ int	main(int argc, char **argv, char **envp)
 			else
 				perror("fork");
 		}
-		// }
 		dup2(stdout1, STDOUT_FILENO);
 		dup2(stdin1, STDIN_FILENO);
 		if (stdout1)
@@ -558,12 +570,15 @@ int	main(int argc, char **argv, char **envp)
 		if (fd)
 			close(fd);
 		// free_cmd(cmd);
-		free(line);
 		// free_tokens(token);
 		// rl_redisplay();
+		//close(df[0]);
+		//close(df[1]);
+		//waitpid(proc1, NULL, 0);
+		//waitpid(proc2, NULL, 0);
 	}
-	// free_split(env);
-	// free_split(my_p);
-	free(line);
+	free_split(env);
+	free_split(my_p);
+	//free(line);
 	return (0);
 }

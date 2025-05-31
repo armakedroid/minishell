@@ -7,10 +7,6 @@ int	ft_errors(int signal, char **back, char *infile)
 	int		i;
 
 	i = 0;
-	// if (outfile)
-	// 	return (big_crt(cmd, &fd));
-	// else if (infile)
-	// 	return (cmd, &fd);
 	if ((signal == 127 && back[0][0] == '.') || (signal == 1))
 	{
 		if (signal == 1)

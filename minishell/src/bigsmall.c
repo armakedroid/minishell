@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/29 20:26:28 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/05/31 18:17:37 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,3 +85,52 @@ int	big_crt(t_output *back, int *fd)
 	close(*fd);
 	return (0);
 }
+/*
+ int	open_fi(char *file, int flag)
+{
+	int	fd;
+
+	if (flag == 0)
+		fd = open(file, O_RDONLY, 0444);
+	else if (flag == 1)
+		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	else
+		return(ft_errors(1, NULL, 1));
+	if (fd == -1)
+		return(ft_errors(1, NULL, 1));
+	return (fd);
+}
+
+int m_pipe(t_output *back, int *df, int is_child)
+{
+	int	infile;
+	int	outfile;
+
+	if (is_child)
+	{
+		infile = open_fi(back->args, 0);
+		if (infile == 1)
+			return (1);
+		if (dup2(infile, STDIN_FILENO) == -1)
+			return (ft_errors(1, NULL, 0));
+		if (dup2(df[1], STDOUT_FILENO) == -1)
+			return (ft_errors(1, NULL, 0));
+		close(df[0]);
+		close(df[1]);
+		close(infile);
+	}
+	else
+	{
+		outfile = open_fi(back->args, 1);
+		if (outfile == 1)
+			return (1);
+		if (dup2(df[0], STDIN_FILENO) == -1)
+			return (ft_errors(1, NULL, 0));
+		if (dup2(outfile, STDOUT_FILENO) == -1)
+			return (ft_errors(1, NULL, 0));
+		close(df[0]);
+		close(df[1]);
+		close(outfile);
+	}
+	return (0);
+}*/

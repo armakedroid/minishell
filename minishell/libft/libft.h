@@ -6,7 +6,7 @@
 /*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/18 22:09:04 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/25 16:27:36 by argharag         ###   ########.fr       */
+/*   Updated: 2025/05/31 16:06:55 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct	s_output
 	char *outfile;
 	char **args;
 	int	num;
+	int	is_p;
 	struct s_output *next;
 }	t_output;
 

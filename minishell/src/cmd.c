@@ -38,17 +38,5 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 			i++;
 		}
 	}
-	/*if (back[0][0] == '.' && back[0][1] == '/')
-		perror(cmd);
-	else
-	{
-		all = ft_strjoin("bash: command not found: ", cmd);
-		all1 = ft_strjoin(all, "\n");
-		ft_putstr_fd(all1, 2);
-		free(all);
-		free(all1);
-		free(all);
-	}*/
 	return (ft_errors(127, cmd, NULL));
-	// free_split(back);
 }

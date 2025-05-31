@@ -27,5 +27,6 @@ char	*get_path(char **env)
 		}
 		i++;
 	}
+	free(back);
 	return (NULL);
 }
