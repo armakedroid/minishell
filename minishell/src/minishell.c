@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/31 18:45:29 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/02 21:39:08 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ void	print_cmd(t_output *token)
 		tmp = token;
 		while (tmp)
 		{
-			printf("infile: %s, outfile: %s, next: %d, ", tmp->infile,
-				tmp->outfile, !(!(tmp->next)));
+			printf("infile: %s, outfile: %s, is_p: %d, next: %d, ", tmp->infile,
+				tmp->outfile, tmp->is_p, !(!(tmp->next)));
 			print_str(tmp->args, "args");
 			printf("\n");
 			tmp = tmp->next;
@@ -116,11 +116,13 @@ void	check_f(char **back, char **envp, char **path)
 	exit(g_exit_status);
 }
 
-void free_tokens(t_token *tokens)
+void	free_tokens(t_token *tokens)
 {
+	t_token	*next;
+
 	while (tokens)
 	{
-		t_token *next = tokens->next;
+		next = tokens->next;
 		free(tokens->value);
 		free(tokens);
 		tokens = next;
@@ -140,7 +142,7 @@ void	free_split(char **back)
 	free(back);
 }
 
-void free_cmd(t_output *cmd)
+void	free_cmd(t_output *cmd)
 {
 	t_output	*next;
 
@@ -158,8 +160,9 @@ void free_cmd(t_output *cmd)
 	}
 }
 
-void	handle_sigint()
+void	handle_sigint(int sl)
 {
+	(void)sl;
 	rl_replace_line("", 0);
 	write(1, "\n", 1);
 	rl_on_new_line();
@@ -408,20 +411,24 @@ t_output	*parse(t_token *token)
 			tmp = create_out(for_args->args, for_args->infile,
 					for_args->outfile);
 		}
-		if (token->type == WORD)
+		if (token->next && token->type == PIPE)
+		{
+			// tmp->args[i] = token->value;
+			// i++;
+			// tmp->args[i] = NULL;
+			tmp->is_p = 1;
+			cmdfun(&back, tmp);
+			token = token->next;
+			while (i > 0)
+				tmp->args[i--] = NULL;
+			tmp = NULL;
+			continue ;
+		}
+		else if (token->type == WORD)
 		{
 			tmp->args[i] = token->value;
 			i++;
 			tmp->args[i] = NULL;
-		}
-		else if (token->type == PIPE)
-		{
-			tmp->args[i] = NULL;
-			tmp->is_p = 1;
-			cmdfun(&back, tmp);
-			tmp = NULL;
-			token = token->next;
-			continue ;
 		}
 		else if (token->next)
 		{
@@ -472,7 +479,7 @@ int	main(int argc, char **argv, char **envp)
 	int			proc1;
 	int			proc2;
 
-	(void) argv;
+	(void)argv;
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
@@ -516,22 +523,21 @@ int	main(int argc, char **argv, char **envp)
 			}
 			continue ;
 		}
-		while (cmd->next)
+		while (cmd->next && cmd->next->is_p != 1)
 			cmd = cmd->next;
 		if (cmd->outfile)
 			g_exit_status = big_crt(cmd, &fd);
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
-		/*if (cmd->is_p)
-		{
-			if (pipe(df) == -1)
-				return (write(2, "wrong df\n", 9));
-			proc1 = fork();
-				g_exit_status = m_pipe(cmd, &df, 1);
-			proc2 = fork();
-				g_exit_status = m_pipe(cmd, &df, 1);
-		}
-		*/
+		// if (cmd->is_p)
+		// {
+		// 	if (pipe(df) == -1)
+		// 		return (write(2, "wrong df\n", 9));
+		// 	proc1 = fork();
+		// 	g_exit_status = m_pipe(cmd, &df, 1);
+		// 	proc2 = fork();
+		// 	g_exit_status = m_pipe(cmd, &df, 0);
+		// }
 		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 		{
 			cd_result = ft_cd(cmd->args, env);
@@ -561,6 +567,11 @@ int	main(int argc, char **argv, char **envp)
 			else
 				perror("fork");
 		}
+		if (cmd->next->is_p)
+		{
+			cmd = cmd->next->next;
+			continue ;
+		}
 		dup2(stdout1, STDOUT_FILENO);
 		dup2(stdin1, STDIN_FILENO);
 		if (stdout1)
@@ -572,13 +583,13 @@ int	main(int argc, char **argv, char **envp)
 		// free_cmd(cmd);
 		// free_tokens(token);
 		// rl_redisplay();
-		//close(df[0]);
-		//close(df[1]);
-		//waitpid(proc1, NULL, 0);
-		//waitpid(proc2, NULL, 0);
+		// close(df[0]);
+		// close(df[1]);
+		// waitpid(proc1, NULL, 0);
+		// waitpid(proc2, NULL, 0);
 	}
 	free_split(env);
 	free_split(my_p);
-	//free(line);
+	// free(line);
 	return (0);
 }
