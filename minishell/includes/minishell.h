@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/02 20:11:31 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/03 19:37:43 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,17 @@
 # include <unistd.h>
 # define TMP "/tmp/here_doc"
 
-int		m_pipe(t_output *back, int *df, int is_child);
+typedef struct s_pipe
+{
+	int	in;
+	int	out;
+	int	fd[2];
+ 	int	in_fd;
+	pid_t	pid;
+}	t_pipe;
+
+void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
+void	check_f(char **back, char **envp, char **path);
 void	here_doc_u(char **line, char ***back);
 void	heredoc(const char *li);
 int		have_a_var(char **envp, char **back);

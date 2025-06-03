@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/31 18:17:37 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/03 21:03:36 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,38 +99,66 @@ int	big_crt(t_output *back, int *fd)
 	if (fd == -1)
 		return(ft_errors(1, NULL, 1));
 	return (fd);
-}
-
-int m_pipe(t_output *back, int *df, int is_child)
-{
-	int	infile;
-	int	outfile;
-
-	if (is_child)
-	{
-		infile = open_fi(back->args, 0);
-		if (infile == 1)
-			return (1);
-		if (dup2(infile, STDIN_FILENO) == -1)
-			return (ft_errors(1, NULL, 0));
-		if (dup2(df[1], STDOUT_FILENO) == -1)
-			return (ft_errors(1, NULL, 0));
-		close(df[0]);
-		close(df[1]);
-		close(infile);
-	}
-	else
-	{
-		outfile = open_fi(back->args, 1);
-		if (outfile == 1)
-			return (1);
-		if (dup2(df[0], STDIN_FILENO) == -1)
-			return (ft_errors(1, NULL, 0));
-		if (dup2(outfile, STDOUT_FILENO) == -1)
-			return (ft_errors(1, NULL, 0));
-		close(df[0]);
-		close(df[1]);
-		close(outfile);
-	}
-	return (0);
 }*/
+void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
+{
+	int	out_fd;
+
+	write(1, "1\n", 2);
+	out_fd = STDOUT_FILENO;
+	val->in_fd = STDIN_FILENO;
+	while (cmds)
+	{
+		if (cmds->next)
+			pipe(val->fd);
+		val->pid = fork();
+		if (val->pid == 0)
+		{
+			dup2(val->in_fd, STDIN_FILENO);
+			if (cmds->next)
+				dup2(val->fd[1], STDOUT_FILENO);
+			if (cmds->infile)
+			{
+				val->in = open(cmds->infile, O_RDONLY);
+				if (val->in != -1)
+					dup2(val->in, STDIN_FILENO);
+			}
+ 			if (cmds->outfile)
+			{
+				if (cmds->num == 1)
+					val->out = open(cmds->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666);
+			else
+				val->out = open(cmds->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+				if (val->out != -1)
+					dup2(val->out, STDOUT_FILENO);
+			}
+			if (cmds->next)
+			{
+				close(val->fd[0]);
+				close(val->fd[1]);
+			}
+			if (val->in_fd != STDIN_FILENO)
+				close(val->in_fd);
+			write(1, "2\n", 2);
+			check_f(cmds->args, env, my_p);
+			write(1, "3\n", 2);
+			exit(0);
+		}
+		else
+		{
+			waitpid(val->pid, NULL, 0);
+			printf("\nwaitpidi tak\n");
+			if (val->in_fd != STDIN_FILENO)
+				close(val->in_fd);
+			if (cmds->next)
+			{
+				close(val->fd[1]);
+				val->in_fd = val->fd[0];
+			}
+		}
+		//dup2(val->fd[0], out_fd);
+		//close(out_fd);
+		cmds = cmds->next;
+	}
+	write(1, "4\n", 2);
+}

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/02 21:39:08 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/03 21:14:58 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,16 +411,10 @@ t_output	*parse(t_token *token)
 			tmp = create_out(for_args->args, for_args->infile,
 					for_args->outfile);
 		}
-		if (token->next && token->type == PIPE)
+		if (token->type == PIPE)
 		{
-			// tmp->args[i] = token->value;
-			// i++;
-			// tmp->args[i] = NULL;
 			tmp->is_p = 1;
 			cmdfun(&back, tmp);
-			token = token->next;
-			while (i > 0)
-				tmp->args[i--] = NULL;
 			tmp = NULL;
 			continue ;
 		}
@@ -478,6 +472,7 @@ int	main(int argc, char **argv, char **envp)
 	int			df[2];
 	int			proc1;
 	int			proc2;
+	t_pipe	val;
 
 	(void)argv;
 	if (argc != 1)
@@ -523,21 +518,18 @@ int	main(int argc, char **argv, char **envp)
 			}
 			continue ;
 		}
-		while (cmd->next && cmd->next->is_p != 1)
+		while (cmd->next && cmd->is_p != 1)
 			cmd = cmd->next;
 		if (cmd->outfile)
 			g_exit_status = big_crt(cmd, &fd);
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
-		// if (cmd->is_p)
-		// {
-		// 	if (pipe(df) == -1)
-		// 		return (write(2, "wrong df\n", 9));
-		// 	proc1 = fork();
-		// 	g_exit_status = m_pipe(cmd, &df, 1);
-		// 	proc2 = fork();
-		// 	g_exit_status = m_pipe(cmd, &df, 0);
-		// }
+		if (cmd->is_p && cmd->next)
+			my_pipe(cmd, &val ,env, my_p);
+		else
+		{
+			write (1,"barev\n",6);
+
 		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 		{
 			cd_result = ft_cd(cmd->args, env);
@@ -567,11 +559,11 @@ int	main(int argc, char **argv, char **envp)
 			else
 				perror("fork");
 		}
-		if (cmd->next->is_p)
+		/*if (cmd->next->is_p)
 		{
 			cmd = cmd->next->next;
 			continue ;
-		}
+		}*/
 		dup2(stdout1, STDOUT_FILENO);
 		dup2(stdin1, STDIN_FILENO);
 		if (stdout1)
@@ -587,6 +579,7 @@ int	main(int argc, char **argv, char **envp)
 		// close(df[1]);
 		// waitpid(proc1, NULL, 0);
 		// waitpid(proc2, NULL, 0);
+		}
 	}
 	free_split(env);
 	free_split(my_p);
