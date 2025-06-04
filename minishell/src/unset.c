@@ -12,11 +12,19 @@
 
 #include "../includes/minishell.h"
 
+int	mykey(char *env, char *key)
+{
+	int	i;
+
+	i = 0;
+	while (env[i] && env[i] != '=')
+		i++;
+	return (ft_strncmp(env, key, i) == 0 && ft_strlen(key) == i);
+}
+
 char	**ft_unset(char **envp, char **back)
 {
 	int	i;
-	int	j;
-	int	a;
 
 	i = 0;
 	if (have_a_var(envp, back) == -1)
@@ -24,13 +32,9 @@ char	**ft_unset(char **envp, char **back)
 		printf("unset: %s: invalid parameter name\n", back[1]);
 		return (envp);
 	}
-	a = ft_strlen(back[1]);
 	while (envp[i])
 	{
-		j = 0;
-		while (envp[i][j] && envp[i][j] != '=')
-			j++;
-		if (ft_strncmp(back[1], envp[i], j) == 0 && a == j)
+		if (mykey(envp[i], back[1]))
 		{
 			while (envp[i + 1])
 			{
@@ -38,7 +42,7 @@ char	**ft_unset(char **envp, char **back)
 				i++;
 			}
 			envp[i] = NULL;
-			return (envp);
+			break;
 		}
 		i++;
 	}

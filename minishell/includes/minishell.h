@@ -43,7 +43,7 @@ int		ft_cd(char **str, char **envp);
 int		ft_echo(char **back, int signal);
 int		ft_env(char **envp);
 char	**ft_unset(char **envp, char **back);
-char	*ft_pwd(char **envp);
+char	*ft_pwd();
 int		cmdfile(char **cmd, char **path, char **envp, int *exit_status);
 char	*get_path(char **env);
 void	free_split(char **back);
