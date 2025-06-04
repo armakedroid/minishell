@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/03 21:03:36 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/04 20:34:42 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 {
 	int	out_fd;
 
-	write(1, "1\n", 2);
 	out_fd = STDOUT_FILENO;
 	val->in_fd = STDIN_FILENO;
 	while (cmds)
@@ -123,12 +122,14 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 				if (val->in != -1)
 					dup2(val->in, STDIN_FILENO);
 			}
- 			if (cmds->outfile)
+			if (cmds->outfile)
 			{
 				if (cmds->num == 1)
-					val->out = open(cmds->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666);
-			else
-				val->out = open(cmds->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+					val->out = 
+						open(cmds->outfile, O_RDWR | O_CREAT | O_APPEND, 0666);
+				else
+					val->out = 
+						open(cmds->outfile, O_RDWR | O_CREAT | O_TRUNC, 0666);
 				if (val->out != -1)
 					dup2(val->out, STDOUT_FILENO);
 			}

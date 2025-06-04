@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/03 21:14:58 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/04 20:28:32 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ char	**ft_copy_env(char **envp)
 	i = 0;
 	while (envp[i])
 		i++;
-	tmp = malloc((i) * sizeof(char *));
+	tmp = malloc((i + 1) * sizeof(char *));
 	i = 0;
 	while (envp[i])
 	{
@@ -469,12 +469,13 @@ int	main(int argc, char **argv, char **envp)
 	int			stdout1;
 	int			stdin1;
 	int			fd;
-	int			df[2];
-	int			proc1;
-	int			proc2;
+	// int			df[2];
+	// int			proc1;
+	// int			proc2;
 	t_pipe	val;
 
 	(void)argv;
+	my_p = NULL;
 	if (argc != 1)
 		return (write(1, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
@@ -502,7 +503,8 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
-			free(line);
+			if (line)
+				free(line);
 			break ;
 		}
 		cmd = parse(token);
@@ -528,37 +530,35 @@ int	main(int argc, char **argv, char **envp)
 			my_pipe(cmd, &val ,env, my_p);
 		else
 		{
-			write (1,"barev\n",6);
-
-		if (!(ft_strncmp(cmd->args[0], "cd", 3)))
-		{
-			cd_result = ft_cd(cmd->args, env);
-			if (cd_result == 100)
-				g_exit_status = ft_errors(100, cmd->args, NULL);
-			else if (cd_result == 1)
-				g_exit_status = ft_errors(1, cmd->args, NULL);
-		}
-		else if (!(ft_strncmp(cmd->args[0], "export", 7)))
-			env = ft_export(env, cmd->args);
-		else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-			env = ft_unset(env, cmd->args);
-		else
-		{
-			cha = fork();
-			if (cha == 0)
+			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 			{
-				while (cmd->next)
-					cmd = cmd->next;
-				check_f(cmd->args, env, my_p);
+				cd_result = ft_cd(cmd->args, env);
+				if (cd_result == 100)
+					g_exit_status = ft_errors(100, cmd->args, NULL);
+				else if (cd_result == 1)
+					g_exit_status = ft_errors(1, cmd->args, NULL);
 			}
-			else if (cha > 0)
-			{
-				waitpid(cha, &signal1, 0);
-				g_exit_status = WEXITSTATUS(signal1);
-			}
+			else if (!(ft_strncmp(cmd->args[0], "export", 7)))
+				env = ft_export(env, cmd->args);
+			else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
+				env = ft_unset(env, cmd->args);
 			else
-				perror("fork");
-		}
+			{
+				cha = fork();
+				if (cha == 0)
+				{
+					while (cmd->next)
+						cmd = cmd->next;
+					check_f(cmd->args, env, my_p);
+				}
+				else if (cha > 0)
+				{
+					waitpid(cha, &signal1, 0);
+					g_exit_status = WEXITSTATUS(signal1);
+				}
+				else
+					perror("fork");
+			}
 		/*if (cmd->next->is_p)
 		{
 			cmd = cmd->next->next;

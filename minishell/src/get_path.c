@@ -15,7 +15,7 @@ char	*get_path(char **env)
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 		{
 			e = ft_strlen(env[i] + 5);
-			back = malloc(e + 1);
+			back = malloc((e + 1) * sizeof(char));
 			e = 0;
 			while (env[i][m])
 			{
@@ -27,6 +27,5 @@ char	*get_path(char **env)
 		}
 		i++;
 	}
-	free(back);
 	return (NULL);
 }
