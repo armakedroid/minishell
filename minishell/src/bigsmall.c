@@ -20,11 +20,11 @@ int	small(t_output *back, int *fd)
 	{
 		*fd = open(back->infile, O_RDONLY, 0444);
 		if (*fd == -1)
-			return (ft_errors(1, back->args, back->infile));
+			return (ft_errors1(1, back->args, back->infile));
 	}
 	dup_res = dup2(*fd, STDIN_FILENO);
 	if (dup_res == -1)
-		return (ft_errors(127, back->args, NULL));
+		return (ft_errors1(127, back->args, NULL));
 	close(*fd);
 	return (0);
 }
@@ -71,17 +71,17 @@ int	big_crt(t_output *back, int *fd)
 	{
 		*fd = open(back->outfile, O_WRONLY | O_CREAT | O_APPEND, 0666);
 		if (*fd == -1)
-			return (ft_errors(1, back->args, NULL));
+			return (ft_errors1(1, back->args, NULL));
 	}
 	else if (back->outfile)
 	{
 		*fd = open(back->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 		if (*fd == -1)
-			return (ft_errors(1, back->args, NULL));
+			return (ft_errors1(1, back->args, NULL));
 	}
 	dup_res = dup2(*fd, STDOUT_FILENO);
 	if (dup_res == -1)
-		return (ft_errors(127, back->args, NULL));
+		return (ft_errors1(127, back->args, NULL));
 	close(*fd);
 	return (0);
 }
@@ -95,9 +95,9 @@ int	big_crt(t_output *back, int *fd)
 	else if (flag == 1)
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	else
-		return(ft_errors(1, NULL, 1));
+		return(ft_errors_1(1, NULL, 1));
 	if (fd == -1)
-		return(ft_errors(1, NULL, 1));
+		return(ft_errors_1(1, NULL, 1));
 	return (fd);
 }*/
 void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)

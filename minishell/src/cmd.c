@@ -15,7 +15,7 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 	{
 		if (access(cmd[0], X_OK) == 0)
 			execve(cmd[0], cmd, envp);
-		*exit_status = ft_errors(126, cmd, NULL);
+		*exit_status = ft_errors126(126, cmd, NULL);
 	}
 	else
 	{
@@ -31,7 +31,7 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 				if (access(all, X_OK) == 0)
 					execve(all, cmd, envp);
 				free_split(cmd);
-				*exit_status = ft_errors(126, cmd, NULL);
+				*exit_status = ft_errors126(126, cmd, NULL);
 			}
 			free(all);
 			all = NULL;

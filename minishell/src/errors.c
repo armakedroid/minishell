@@ -1,12 +1,7 @@
 #include "../includes/minishell.h"
 
-int	ft_errors(int signal, char **back, char *infile)
+int	ft_errors1(int signal, char **back, char *infile)
 {
-	char	*line;
-	int		fd;
-	int		i;
-
-	i = 0;
 	if ((signal == 127 && back[0][0] == '.') || (signal == 1))
 	{
 		if (signal == 1)
@@ -26,7 +21,17 @@ int	ft_errors(int signal, char **back, char *infile)
 		printf("bash : %s: command not found\n", back[0]);
 		return (127);
 	}
-	else if (signal == 126)
+	return (signal);
+}
+
+int	ft_errors126(int signal, char **back, char *infile)
+{
+	char	*line;
+	int		fd;
+	int		i;
+
+	i = 0;
+	if (signal == 126)
 	{
 		fd = open(back[0], O_RDONLY);
 		if (fd == -1)
@@ -48,7 +53,11 @@ int	ft_errors(int signal, char **back, char *infile)
 		close(fd);
 		free(line);
 	}
-	else if (signal == 139)
+}
+
+int	ft_errors(int signal, char **back, char *infile)
+{
+	if (signal == 139)
 	{
 		printf("Segmentation fault (core dumped)\n");
 		return (139);

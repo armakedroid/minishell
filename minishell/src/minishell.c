@@ -536,7 +536,7 @@ int	main(int argc, char **argv, char **envp)
 				if (cd_result == 100)
 					g_exit_status = ft_errors(100, cmd->args, NULL);
 				else if (cd_result == 1)
-					g_exit_status = ft_errors(1, cmd->args, NULL);
+					g_exit_status = ft_errors1(1, cmd->args, NULL);
 			}
 			else if (!(ft_strncmp(cmd->args[0], "export", 7)))
 				env = ft_export(env, cmd->args);
