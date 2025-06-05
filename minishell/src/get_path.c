@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_path.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/05 18:40:06 by argharag          #+#    #+#             */
+/*   Updated: 2025/06/05 18:41:02 by argharag         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 char	*get_path(char **env)
@@ -10,7 +22,7 @@ char	*get_path(char **env)
 	e = 0;
 	m = 5;
 	i = 0;
-	while (env[i])
+	while (env[i++])
 	{
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 		{
@@ -19,13 +31,11 @@ char	*get_path(char **env)
 			e = 0;
 			while (env[i][m])
 			{
-				back[e] = env[i][m];
-				e++;
+				back[e++] = env[i][m];
 				m++;
 			}
 			return (back);
 		}
-		i++;
 	}
 	return (NULL);
 }

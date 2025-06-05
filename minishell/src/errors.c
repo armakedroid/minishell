@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   errors.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/05 18:49:51 by argharag          #+#    #+#             */
+/*   Updated: 2025/06/05 18:51:42 by argharag         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 int	ft_errors1(int signal, char **back, char *infile)
@@ -10,7 +22,6 @@ int	ft_errors1(int signal, char **back, char *infile)
 				printf("bash : %s: No such file or directory\n", infile);
 			else
 				printf("bash : %s: No such file or directory\n", back[1]);
-
 		}
 		else
 			printf("bash : %s: No such file or directory\n", back[0]);
@@ -35,10 +46,7 @@ int	ft_errors126(int signal, char **back, char *infile)
 	{
 		fd = open(back[0], O_RDONLY);
 		if (fd == -1)
-		{
-			printf("bash: %s: Permission denied\n", back[0]);
-			return (126);
-		}
+			return (printf("bash: %s: Permission denied\n", back[0]), 126);
 		line = get_next_line(fd);
 		if (line && line[0] == '#' && line[1] == '!')
 		{
@@ -46,13 +54,11 @@ int	ft_errors126(int signal, char **back, char *infile)
 			printf("bad interpreter: No such file or directory\n");
 		}
 		else
-		{
-			printf("bash : %s: Permission denied\n", back[0]);
-			return (126);
-		}
+			return (printf("bash : %s: Permission denied\n", back[0]), 126);
 		close(fd);
 		free(line);
 	}
+	return (126);
 }
 
 int	ft_errors(int signal, char **back, char *infile)

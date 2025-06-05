@@ -1,8 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
+/*   Updated: 2025/06/05 19:31:26 by argharag         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
+
+void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
+{
+	char	*all;
+
+	all = ft_strjoin(path, "/");
+	if (cmd[0][0] != '/')
+		all = ft_strjoin(all, cmd[0]);
+	else
+		all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
+	if (access(all, F_OK) == 0)
+	{
+		if (access(all, X_OK) == 0)
+			execve(all, cmd, envp);
+		free_split(cmd);
+		*exit_status = ft_errors126(126, cmd, NULL);
+	}
+	free(all);
+	all = NULL;
+}
 
 int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 {
-	char	*all;
 	int		i;
 
 	i = 0;
@@ -21,20 +52,7 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 	{
 		while (path[i])
 		{
-			all = ft_strjoin(path[i], "/");
-			if (cmd[0][0] != '/')
-				all = ft_strjoin(all, cmd[0]);
-			else
-				all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
-			if (access(all, F_OK) == 0)
-			{
-				if (access(all, X_OK) == 0)
-					execve(all, cmd, envp);
-				free_split(cmd);
-				*exit_status = ft_errors126(126, cmd, NULL);
-			}
-			free(all);
-			all = NULL;
+			cmd_ut(cmd, path[i], envp, exit_status);
 			i++;
 		}
 	}

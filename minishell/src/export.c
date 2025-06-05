@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/29 20:44:45 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/05 19:06:47 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,31 @@ void	print_env(char **envp)
 	}
 }
 
+char	**helper_ex(char **envp, char **back)
+{
+	int		i;
+	char	**env;
+
+	i = 0;
+	while (envp[i])
+		i++;
+	env = malloc((i + 1) * sizeof(char *));
+	i = 0;
+	while (envp[i])
+	{
+		env[i] = ft_strdup(envp[i]);
+		i++;
+	}
+	env[i] = ft_strdup(back[1]);
+	env[i + 1] = NULL;
+	return (env);
+}
+
 char	**ft_export(char **envp, char **back)
 {
 	int		i;
 	int		a;
 	char	*tmp;
-	char	**env;
 
 	i = 0;
 	a = 0;
@@ -103,17 +122,5 @@ char	**ft_export(char **envp, char **back)
 		}
 		return (envp);
 	}
-	i = 0;
-	while (envp[i])
-		i++;
-	env = malloc((i + 1) * sizeof(char *));
-	i = 0;
-	while (envp[i])
-	{
-		env[i] = ft_strdup(envp[i]);
-		i++;
-	}
-	env[i] = ft_strdup(back[1]);
-	env[i + 1] = NULL;
-	return (env);
+	return (helper_ex(envp, back));
 }
