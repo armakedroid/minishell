@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/29 21:11:59 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/05 20:01:55 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,34 @@ char	*get_old_path(char **envp)
 	return (NULL);
 }
 
+int	cd_utils(char **str, char **envp, char *home)
+{
+	if (str[2])
+		return (100);
+	if (str[1][0] == '-' && ft_strlen(str[1]) == 1)
+	{
+		home = get_old_path(envp);
+		if (home)
+		{
+			printf("%s\n", home);
+			if (chdir(home) == -1)
+				return (1);
+		}
+	}
+	update_smth(envp, "OLDPWD=", ft_pwd(envp));
+	if (str[1][0] == '~')
+	{
+		if (home)
+		{
+			if (chdir(home) == -1)
+				return (1);
+			if (chdir(str[1] + 2) == -1)
+				return (1);
+		}
+	}
+	return (0);
+}
+
 int	ft_cd(char **str, char **envp)
 {
 	char	*home;
@@ -58,34 +86,11 @@ int	ft_cd(char **str, char **envp)
 	}
 	else if (str[1])
 	{
-		if (str[2])
-			return (100);
-		if (str[1][0] == '-' && ft_strlen(str[1]) == 1)
-		{
-			home = get_old_path(envp);
-			if (home)
-			{
-				printf("%s\n", home);
-				if (chdir(home) == -1)
-					return (1);
-			}
-		}
-		update_smth(envp, "OLDPWD=", ft_pwd(envp));
-		if (str[1][0] == '~')
-		{
-			if (home)
-			{
-				if (chdir(home) == -1)
-					return (1);
-				if (chdir(str[1] + 2) == -1)
-					return (1);
-			}
-		}
-		else if (str[1] && str[1][0] != '-' && str[1][0] != '~')
+		if (str[1] && str[1][0] != '-' && str[1][0] != '~')
 			if (chdir(str[1]) == -1)
 				return (1);
 		update_smth(envp, "PWD=", ft_pwd(envp));
-		return (0);
+		return(cd_utils(str, envp, home));
 	}
 	return (1);
 }
