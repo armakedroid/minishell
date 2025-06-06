@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/06 19:05:13 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/06 19:06:46 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -496,7 +496,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	my_p = NULL;
 	if (argc != 1)
-		return (write(1, "Error: You must run only ./minishell\n", 37));
+		return (write(2, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 	env = ft_copy_env(envp);
