@@ -91,7 +91,7 @@ int	ft_echo(char **argv, int signal)
 				else
 					printf("%s", back[j]);
 			}
-			if (back[j + 1] || str)
+			if ((back[j + 1] || str) && n != 1)
 				printf(" ");
 			j++;
 		}

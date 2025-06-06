@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/05 20:01:55 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/06 18:07:15 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,12 @@ int	cd_utils(char **str, char **envp, char *home)
 		home = get_old_path(envp);
 		if (home)
 		{
+			update_smth(envp, "OLDPWD=", ft_pwd(envp));
 			printf("%s\n", home);
 			if (chdir(home) == -1)
 				return (1);
+			update_smth(envp, "PWD=", ft_pwd(envp));
+			return (0);
 		}
 	}
 	update_smth(envp, "OLDPWD=", ft_pwd(envp));
@@ -87,9 +90,13 @@ int	ft_cd(char **str, char **envp)
 	else if (str[1])
 	{
 		if (str[1] && str[1][0] != '-' && str[1][0] != '~')
+		{
+			update_smth(envp, "OLDPWD=", ft_pwd(envp));
 			if (chdir(str[1]) == -1)
 				return (1);
-		update_smth(envp, "PWD=", ft_pwd(envp));
+			update_smth(envp, "PWD=", ft_pwd(envp));
+			return (0);
+		}
 		return(cd_utils(str, envp, home));
 	}
 	return (1);

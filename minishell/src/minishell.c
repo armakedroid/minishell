@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/04 20:28:32 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/06 19:05:13 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,7 @@ t_token	*my_tok(char *line)
 {
 	int		i;
 	int		start;
+	int		quote_d;
 	t_token	*token;
 
 	i = 0;
@@ -251,6 +252,7 @@ t_token	*my_tok(char *line)
 	token = NULL;
 	while (line[i])
 	{
+		quote_d = 0;
 		if (line[i] == ' ')
 			i++;
 		else if (line[i] == '|')
@@ -292,8 +294,25 @@ t_token	*my_tok(char *line)
 		else
 		{
 			start = i;
-			while (line[i] && !is_operator(line[i]) && !is_space(line[i]))
+			while (line[i] && !is_operator(line[i]) && !is_space(line[i])
+				&& !quote_d)
+			{
+				if (line[i] == '\"')
+					quote_d = 1;
 				i++;
+			}
+			while (line[i] && line[i] != '\"')
+			{
+				i++;
+				if (line[i] == '\"')
+				{
+					quote_d = 0;
+					start = 1;
+					break ;
+				}
+			}
+			if (line[start] == '\"' && (i - start) == 1)
+				break ;
 			add_token(&token, ft_substr(line, start, i - start), WORD);
 		}
 	}
@@ -469,11 +488,11 @@ int	main(int argc, char **argv, char **envp)
 	int			stdout1;
 	int			stdin1;
 	int			fd;
+	t_pipe		val;
+
 	// int			df[2];
 	// int			proc1;
 	// int			proc2;
-	t_pipe	val;
-
 	(void)argv;
 	my_p = NULL;
 	if (argc != 1)
@@ -527,7 +546,7 @@ int	main(int argc, char **argv, char **envp)
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
 		if (cmd->is_p && cmd->next)
-			my_pipe(cmd, &val ,env, my_p);
+			my_pipe(cmd, &val, env, my_p);
 		else
 		{
 			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
@@ -559,26 +578,26 @@ int	main(int argc, char **argv, char **envp)
 				else
 					perror("fork");
 			}
-		/*if (cmd->next->is_p)
-		{
-			cmd = cmd->next->next;
-			continue ;
-		}*/
-		dup2(stdout1, STDOUT_FILENO);
-		dup2(stdin1, STDIN_FILENO);
-		if (stdout1)
-			close(stdout1);
-		if (stdin1)
-			close(stdin1);
-		if (fd)
-			close(fd);
-		// free_cmd(cmd);
-		// free_tokens(token);
-		// rl_redisplay();
-		// close(df[0]);
-		// close(df[1]);
-		// waitpid(proc1, NULL, 0);
-		// waitpid(proc2, NULL, 0);
+			/*if (cmd->next->is_p)
+			{
+				cmd = cmd->next->next;
+				continue ;
+			}*/
+			dup2(stdout1, STDOUT_FILENO);
+			dup2(stdin1, STDIN_FILENO);
+			if (stdout1)
+				close(stdout1);
+			if (stdin1)
+				close(stdin1);
+			if (fd)
+				close(fd);
+			// free_cmd(cmd);
+			// free_tokens(token);
+			// rl_redisplay();
+			// close(df[0]);
+			// close(df[1]);
+			// waitpid(proc1, NULL, 0);
+			// waitpid(proc2, NULL, 0);
 		}
 	}
 	free_split(env);
