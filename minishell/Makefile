@@ -22,6 +22,9 @@ $(NAME): $(OBJS)
 %.o: %.c
 	@$(CC) -c $< -o $@
 
+check:
+	@cd minishell-checker && bash check.sh
+
 clean:
 	@make clean -C libft
 	@$(RM) $(OBJS)

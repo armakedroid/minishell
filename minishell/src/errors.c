@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:49:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/05 18:51:42 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/07 18:29:37 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,11 @@ int	ft_errors126(int signal, char **back, char *infile)
 
 int	ft_errors(int signal, char **back, char *infile)
 {
-	if (signal == 139)
+	if (signal == 127)
+		return (ft_errors1(signal, back, infile));
+	else if (signal == 126)
+		return (ft_errors126(signal, back, infile));
+	else if (signal == 139)
 	{
 		printf("Segmentation fault (core dumped)\n");
 		return (139);

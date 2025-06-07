@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/06 19:06:46 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/07 20:41:56 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,11 @@ void	check_f(char **back, char **envp, char **path)
 	if (!ft_strncmp(back[0], "echo", 5))
 		g_exit_status = ft_echo(back, g_exit_status);
 	else if (!ft_strncmp(back[0], "pwd", 4))
-		printf("%s\n", ft_pwd(envp));
+	{
+		line = ft_pwd(envp);
+		if (line)
+			printf("%s\n", line);
+	}
 	else if (!ft_strncmp(back[0], "env", 4))
 		g_exit_status = ft_env(envp);
 	else
@@ -298,20 +302,22 @@ t_token	*my_tok(char *line)
 				&& !quote_d)
 			{
 				if (line[i] == '\"')
+				{
 					quote_d = 1;
+					start = i + 1;
+				}
 				i++;
 			}
-			while (line[i] && line[i] != '\"')
+			while (line[i] && line[i] != '\"' && quote_d)
 			{
 				i++;
 				if (line[i] == '\"')
 				{
 					quote_d = 0;
-					start = 1;
 					break ;
 				}
 			}
-			if (line[start] == '\"' && (i - start) == 1)
+			if ((line[start] == '\"' && (i - start) == 1) || !(i - start))
 				break ;
 			add_token(&token, ft_substr(line, start, i - start), WORD);
 		}
@@ -433,11 +439,10 @@ t_output	*parse(t_token *token)
 		if (token->type == PIPE)
 		{
 			tmp->is_p = 1;
-			cmdfun(&back, tmp);
 			tmp = NULL;
-			continue ;
+			break ;
 		}
-		else if (token->type == WORD)
+		if (token->type == WORD)
 		{
 			tmp->args[i] = token->value;
 			i++;
@@ -490,9 +495,6 @@ int	main(int argc, char **argv, char **envp)
 	int			fd;
 	t_pipe		val;
 
-	// int			df[2];
-	// int			proc1;
-	// int			proc2;
 	(void)argv;
 	my_p = NULL;
 	if (argc != 1)
@@ -522,6 +524,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (ft_strncmp(line, "exit", 4) == 0)
 		{
+			printf("exit\n");
 			if (line)
 				free(line);
 			break ;
@@ -578,17 +581,10 @@ int	main(int argc, char **argv, char **envp)
 				else
 					perror("fork");
 			}
-			/*if (cmd->next->is_p)
-			{
-				cmd = cmd->next->next;
-				continue ;
-			}*/
 			dup2(stdout1, STDOUT_FILENO);
 			dup2(stdin1, STDIN_FILENO);
-			if (stdout1)
-				close(stdout1);
-			if (stdin1)
-				close(stdin1);
+			close(stdout1);
+			close(stdin1);
 			if (fd)
 				close(fd);
 			// free_cmd(cmd);

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/06 18:07:15 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/07 18:47:48 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	*get_old_path(char **envp)
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "OLDPWD=", 7))
-			return (envp[i] + 7);
+			return (ft_strdup(envp[i] + 7));
 		i++;
 	}
 	return (NULL);
@@ -53,6 +53,7 @@ int	cd_utils(char **str, char **envp, char *home)
 			printf("%s\n", home);
 			if (chdir(home) == -1)
 				return (1);
+			free(home);
 			update_smth(envp, "PWD=", ft_pwd(envp));
 			return (0);
 		}

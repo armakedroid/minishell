@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/04 20:34:42 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/07 20:06:00 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,11 @@ int	big_crt(t_output *back, int *fd)
 void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 {
 	int	out_fd;
+	int	in_fd;
 
-	out_fd = STDOUT_FILENO;
-	val->in_fd = STDIN_FILENO;
+	out_fd = dup(STDOUT_FILENO);
+	in_fd = dup(STDIN_FILENO);
+	val->in_fd = in_fd;
 	while (cmds)
 	{
 		if (cmds->next)
@@ -138,18 +140,15 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 				close(val->fd[0]);
 				close(val->fd[1]);
 			}
-			if (val->in_fd != STDIN_FILENO)
+			if (val->in_fd != in_fd)
 				close(val->in_fd);
-			write(1, "2\n", 2);
 			check_f(cmds->args, env, my_p);
-			write(1, "3\n", 2);
 			exit(0);
 		}
 		else
 		{
 			waitpid(val->pid, NULL, 0);
-			printf("\nwaitpidi tak\n");
-			if (val->in_fd != STDIN_FILENO)
+			if (val->in_fd != in_fd)
 				close(val->in_fd);
 			if (cmds->next)
 			{
@@ -157,9 +156,10 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 				val->in_fd = val->fd[0];
 			}
 		}
-		//dup2(val->fd[0], out_fd);
-		//close(out_fd);
+		dup2(in_fd, STDIN_FILENO);
+		dup2(out_fd, STDOUT_FILENO);
+		close(in_fd);
+		close(out_fd);
 		cmds = cmds->next;
 	}
-	write(1, "4\n", 2);
 }
