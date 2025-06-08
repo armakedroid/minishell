@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/08 14:55:59 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/08 15:42:09 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ t_token	*my_tok(char *line)
 	while (line[i])
 	{
 		quote_d = 0;
-		if (line[i] == ' ')
+		if (line[i] == ' ' || (line[i] == '\"' && line[i + 1] == ' '))
 			i++;
 		else if (line[i] == '|')
 		{
@@ -289,11 +289,6 @@ t_token	*my_tok(char *line)
 				add_token(&token, "<", IN);
 				i++;
 			}
-		}
-		else if (line[i] == '|')
-		{
-			add_token(&token, "|", PIPE);
-			i++;
 		}
 		else
 		{
@@ -439,8 +434,10 @@ t_output	*parse(t_token *token)
 		if (token->type == PIPE)
 		{
 			tmp->is_p = 1;
-			tmp = NULL;
-			break ;
+			token = token->next;
+			cmdfun(&back, tmp);
+			i = 0;
+			continue ;
 		}
 		if (token->type == WORD)
 		{
@@ -542,13 +539,13 @@ int	main(int argc, char **argv, char **envp)
 			}
 			continue ;
 		}
-		while (cmd->next && cmd->is_p != 1)
+		while (cmd->next && cmd->next->is_p != 1)
 			cmd = cmd->next;
 		if (cmd->outfile)
 			g_exit_status = big_crt(cmd, &fd);
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
-		if (cmd->is_p && cmd->next)
+		if (cmd && cmd->next && cmd->next->next && cmd->next->is_p)
 			my_pipe(cmd, &val, env, my_p);
 		else
 		{

@@ -23,6 +23,8 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 		all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
 	if (access(all, F_OK) == 0)
 	{
+		
+		printf("es cmd_uti mej em\n");
 		if (access(all, X_OK) == 0)
 			execve(all, cmd, envp);
 		free_split(cmd);

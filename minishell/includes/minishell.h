@@ -57,5 +57,6 @@ int		ft_errors126(int signal, char **back, char *infile);
 int		big_crt(t_output *back, int *fd);
 int		small(t_output *back, int *fd);
 void	print_str(char **str, char *type);
+void	print_cmd(t_output *token);
 
 #endif
