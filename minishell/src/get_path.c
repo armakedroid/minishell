@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:40:06 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/05 18:41:02 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/08 14:37:03 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*get_path(char **env)
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 		{
 			e = ft_strlen(env[i] + 5);
-			back = malloc((e + 1) * sizeof(char));
+			back = ft_calloc((e + 1) * sizeof(char), 1);
 			e = 0;
 			while (env[i][m])
 			{
