@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/03 19:37:43 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/09 21:58:57 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ typedef struct s_pipe
 	pid_t	pid;
 }	t_pipe;
 
-void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
-void	check_f(char **back, char **envp, char **path);
+int		my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
+void	check_f(char **back, char **envp, char **path, int flag);
 void	here_doc_u(char **line, char ***back);
 void	heredoc(const char *li);
 int		have_a_var(char **envp, char **back);
@@ -45,6 +45,7 @@ int		ft_env(char **envp);
 char	**ft_unset(char **envp, char **back);
 char	*ft_pwd();
 int		cmdfile(char **cmd, char **path, char **envp, int *exit_status);
+int		cmd_unexit(char **cmd, char **path, char **envp, int *exit_status);
 char	*get_path(char **env);
 void	free_split(char **back);
 char	*ft_merge(char *a, char *b);

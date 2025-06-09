@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/08 15:42:09 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/09 21:59:15 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ char	**command_s(char *line)
 	return (back);
 }
 
-void	check_f(char **back, char **envp, char **path)
+void	check_f(char **back, char **envp, char **path, int flag)
 {
 	char	*line;
 	int		i;
@@ -116,7 +116,12 @@ void	check_f(char **back, char **envp, char **path)
 	else if (!ft_strncmp(back[0], "env", 4))
 		g_exit_status = ft_env(envp);
 	else
-		cmdfile(back, path, envp, &g_exit_status);
+	{
+		if (flag)
+			cmdfile(back, path, envp, &g_exit_status);
+		else
+			cmd_unexit(back, path, envp, &g_exit_status);
+	}
 	exit(g_exit_status);
 }
 
@@ -378,6 +383,7 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 	new = malloc(sizeof(t_output));
 	new->infile = infile;
 	new->outfile = outfile;
+	new->is_p = 0;
 	if (str)
 		while (str[i])
 			i++;
@@ -504,6 +510,7 @@ int	main(int argc, char **argv, char **envp)
 	fd = 0;
 	while (1)
 	{
+		g_exit_status = 0;
 		stdout1 = dup(STDOUT_FILENO);
 		stdin1 = dup(STDIN_FILENO);
 		line = readline("minishell$ ");
@@ -546,7 +553,7 @@ int	main(int argc, char **argv, char **envp)
 		else if (cmd->infile)
 			g_exit_status = small(cmd, &fd);
 		if (cmd && cmd->next && cmd->next->next && cmd->next->is_p)
-			my_pipe(cmd, &val, env, my_p);
+			g_exit_status = my_pipe(cmd, &val, env, my_p);
 		else
 		{
 			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
@@ -568,7 +575,7 @@ int	main(int argc, char **argv, char **envp)
 				{
 					while (cmd->next)
 						cmd = cmd->next;
-					check_f(cmd->args, env, my_p);
+					check_f(cmd->args, env, my_p, 1);
 				}
 				else if (cha > 0)
 				{

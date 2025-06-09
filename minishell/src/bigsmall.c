@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/08 19:52:09 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/09 21:57:49 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	small(t_output *back, int *fd)
 	close(*fd);
 	return (0);
 }
-void here_doc_u(char **line, char ***back)
+void	here_doc_u(char **line, char ***back)
 {
 	*back = ft_split(*line, '\n');
 	if (!*back || !**back)
@@ -89,6 +89,8 @@ int	big_crt(t_output *back, int *fd)
  int	open_fi(char *file, int flag)
 {
 	int	fd;
+	int	out_fd;
+	int	input_fd;
 
 	if (flag == 0)
 		fd = open(file, O_RDONLY, 0444);
@@ -100,13 +102,9 @@ int	big_crt(t_output *back, int *fd)
 		return(ft_errors_1(1, NULL, 1));
 	return (fd);
 }*/
-
 /*
-void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
+void	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 {
-	int	out_fd;
-	int	input_fd;
-
 	out_fd = dup(STDOUT_FILENO);
 	input_fd = dup(STDIN_FILENO);
 	val->in_fd = input_fd;
@@ -140,10 +138,10 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			if (cmds->outfile)
 			{
 				if (cmds->num == 1)
-					val->out = 
+					val->out =
 						open(cmds->outfile, O_RDWR | O_CREAT | O_APPEND, 0666);
 				else
-					val->out = 
+					val->out =
 						open(cmds->outfile, O_RDWR | O_CREAT | O_TRUNC, 0666);
 				if (val->out != -1)
 					dup2(val->out, STDOUT_FILENO);
@@ -178,7 +176,6 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			}
 		}
 		printf("14\n");
-		
 		printf("15\n");
 		printf("16\n");
 		// if (cmds->next && !cmds->next->next)
@@ -197,79 +194,123 @@ void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 	close(out_fd);
 }
 	*/
-void my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
+int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 {
-    int  saved_stdin;
-    int  saved_stdout; 
-    int  in_fd;
-    int  fd[2];
-    pid_t pid;
-    
+	int		saved_stdin;
+	int		saved_stdout;
+	int		in_fd;
+	int		fd[2];
+	pid_t	pid;
+	int		errors;
+	int		errors1;
+	int		inf;
+	int		flags;
+	int		outf;
+	t_output	*str;
+
+
+	errors = 0;
+	errors1 = 0;
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
+	str = cmds;
+	while (str->next)
+		str = str->next;
+	inf = open("/dev/null", O_RDWR, 0666);
+	dup2(inf, STDOUT_FILENO);
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		exit(EXIT_FAILURE);
+	}
+	if (pid == 0)
+		check_f(str->args, env, my_p, 0);
+	else
+	{
+		waitpid(pid, &errors, 0);
+		if (errors)
+			errors1 = WEXITSTATUS(errors);
+		if (errors1)
+		{
+			dup2(saved_stdout, STDOUT_FILENO);
+			ft_errors(errors1, str->args, NULL);
+			close(inf);
+			return (errors1);
+		}
+	}
+	if (inf)
+		close(inf);
+	dup2(saved_stdout, STDOUT_FILENO);
 	in_fd = saved_stdin;
-    while (cmds)
-    {
-        if (cmds->next)
-            if (pipe(fd) == -1)
-                perror("pipe");
-        
-        pid = fork();
-        if (pid == -1)
-        {
-            perror("fork");
-            exit(EXIT_FAILURE);
-        }
-        if (pid == 0)
-        {
-            dup2(in_fd, STDIN_FILENO);
-            if (cmds->next)
-                dup2(fd[1], STDOUT_FILENO);
-            if (cmds->infile)
-            {
-                int inf = open(cmds->infile, O_RDONLY);
-                if (inf == -1)
-                    perror(cmds->infile), exit(EXIT_FAILURE);
-                dup2(inf, STDIN_FILENO);
-                close(inf);
-            }
-            if (cmds->outfile)
-            {
-                int flags = (cmds->num == 1)
-                          ? (O_RDWR | O_CREAT | O_APPEND)
-                          : (O_RDWR | O_CREAT | O_TRUNC);
-                int outf = open(cmds->outfile, flags, 0666);
-                if (outf == -1)
-                    perror(cmds->outfile), exit(EXIT_FAILURE);
-                dup2(outf, STDOUT_FILENO);
-                close(outf);
-            }
-            if (cmds->next)
-            {
-                close(fd[0]);
-                close(fd[1]);
-            }
-            if (in_fd != saved_stdin)
-                close(in_fd);
-            check_f(cmds->args, env, my_p);
-            exit(EXIT_FAILURE);
-        }
-        else
-        {
-            waitpid(pid, NULL, 0);
-            if (in_fd != saved_stdin)
-                close(in_fd);
-            if (cmds->next)
-            {
+	errors = 0;
+	errors1 = 0;
+	while (cmds)
+	{
+		while (cmds->next && !(cmds->is_p))
+			cmds = cmds->next;
+		if (cmds->next)
+			if (pipe(fd) == -1)
+				perror("pipe");
+		pid = fork();
+
+		if (pid == 0)
+		{
+			dup2(in_fd, STDIN_FILENO);
+			if (cmds->next)
+				dup2(fd[1], STDOUT_FILENO);
+			if (cmds->infile)
+			{
+				inf = open(cmds->infile, O_RDONLY);
+				if (inf == -1)
+					perror(cmds->infile), exit(EXIT_FAILURE);
+				dup2(inf, STDIN_FILENO);
+				close(inf);
+			}
+			if (cmds->outfile)
+			{
+				flags = (cmds->num == 1) ? (O_RDWR | O_CREAT | O_APPEND) : (O_RDWR | O_CREAT | O_TRUNC);
+				outf = open(cmds->outfile, flags, 0666);
+				if (outf == -1)
+					perror(cmds->outfile), exit(EXIT_FAILURE);
+				dup2(outf, STDOUT_FILENO);
+				close(outf);
+			}
+			if (cmds->next)
+			{
+				close(fd[0]);
 				close(fd[1]);
-                in_fd = fd[0];
-            }
-        }
-        
-        cmds = cmds->next;
-    }
-    dup2(saved_stdin, STDIN_FILENO);
-    dup2(saved_stdout, STDOUT_FILENO);
-    close(saved_stdin);
-    close(saved_stdout);
+			}
+			if (in_fd != saved_stdin)
+				close(in_fd);
+			check_f(cmds->args, env, my_p, 1);
+			exit(EXIT_FAILURE);
+		}
+		else
+		{
+			waitpid(pid, &errors, 0);
+			if (errors)
+				errors1 = WEXITSTATUS(errors);
+			if (in_fd != saved_stdin)
+				close(in_fd);
+			if (cmds->next)
+			{
+				close(fd[1]);
+				in_fd = fd[0];
+			}
+			if (errors1 && cmds->next)
+			{
+				ft_errors(errors1, cmds->args, NULL);
+				errors1 = 0;
+			}
+		}
+		cmds = cmds->next;
+		if (cmds && cmds->next && cmds->is_p)
+			cmds = cmds->next;
+	}
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+	return (errors1);
 }
