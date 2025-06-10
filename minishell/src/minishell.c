@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/09 21:59:15 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/10 19:21:37 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,9 @@ void	check_f(char **back, char **envp, char **path, int flag)
 
 	i = 0;
 	line = NULL;
-	if (!ft_strncmp(back[0], "echo", 5))
+	if (ft_strncmp(back[0], "exit", 5) == 0)
+		g_exit_status = 0;
+	else if (!ft_strncmp(back[0], "echo", 5))
 		g_exit_status = ft_echo(back, g_exit_status);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 	{
@@ -526,7 +528,7 @@ int	main(int argc, char **argv, char **envp)
 				heredoc(ttmp->next->value);
 			ttmp = ttmp->next;
 		}
-		if (ft_strncmp(line, "exit", 4) == 0)
+		if (ft_strncmp(line, "exit", 5) == 0)
 		{
 			printf("exit\n");
 			if (line)

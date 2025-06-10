@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/09 21:56:52 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/10 19:07:27 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 		all = ft_strjoin(all, cmd[0]);
 	else
 		all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
+	printf("all = %s\n", all);
 	if (access(all, F_OK) == 0)
 	{
 		if (access(all, X_OK) == 0)
@@ -86,6 +87,7 @@ int	cmd_unexit(char **cmd, char **path, char **envp, int *exit_status)
 	int		i;
 
 	i = 0;
+	printf("all = %s\n", cmd[0]);
 	if (!cmd || !*cmd)
 	{
 		*exit_status = 127;

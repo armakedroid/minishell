@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/09 21:57:49 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/10 22:24:33 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,23 +194,51 @@ void	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 	close(out_fd);
 }
 	*/
+
+int cmd_count(t_output *cmds)
+{
+	int	count;
+
+	count = 0;
+	while (cmds)
+	{
+		if (cmds->is_p)
+			count++;
+		cmds = cmds->next;
+	}
+	return (count + 1);
+}
+
 int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 {
 	int		saved_stdin;
 	int		saved_stdout;
 	int		in_fd;
-	int		fd[2];
-	pid_t	pid;
+	int		**fd;
+	// pid_t	pid;
 	int		errors;
 	int		errors1;
 	int		inf;
 	int		flags;
 	int		outf;
+	pid_t	*pid;
+	int		a;
+	int		cmd_nbr;
 	t_output	*str;
-
 
 	errors = 0;
 	errors1 = 0;
+	a = 0;
+	cmd_nbr = cmd_count(cmds);
+	in_fd = cmd_nbr - 1;
+	pid = malloc(sizeof(pid_t) * cmd_nbr);
+	fd = malloc(sizeof(int*) * (cmd_nbr - 1));
+	while (in_fd > 0)
+	{
+		fd[in_fd - 1] = malloc(sizeof(int) * 2);
+		in_fd--;
+	}
+	in_fd = 0;
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
 	str = cmds;
@@ -218,17 +246,17 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 		str = str->next;
 	inf = open("/dev/null", O_RDWR, 0666);
 	dup2(inf, STDOUT_FILENO);
-	pid = fork();
-	if (pid == -1)
+	pid[a] = fork();
+	if (pid[a] == -1)
 	{
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
-	if (pid == 0)
+	if (pid[a] == 0)
 		check_f(str->args, env, my_p, 0);
 	else
 	{
-		waitpid(pid, &errors, 0);
+		waitpid(pid[a], &errors, 0);
 		if (errors)
 			errors1 = WEXITSTATUS(errors);
 		if (errors1)
@@ -242,6 +270,7 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 	if (inf)
 		close(inf);
 	dup2(saved_stdout, STDOUT_FILENO);
+	str = cmds;
 	in_fd = saved_stdin;
 	errors = 0;
 	errors1 = 0;
@@ -250,15 +279,14 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 		while (cmds->next && !(cmds->is_p))
 			cmds = cmds->next;
 		if (cmds->next)
-			if (pipe(fd) == -1)
+			if (pipe(fd[a]) == -1)
 				perror("pipe");
-		pid = fork();
-
-		if (pid == 0)
+		pid[a] = fork();
+		if (pid[a] == 0)
 		{
 			dup2(in_fd, STDIN_FILENO);
 			if (cmds->next)
-				dup2(fd[1], STDOUT_FILENO);
+				dup2(fd[a][1], STDOUT_FILENO);
 			if (cmds->infile)
 			{
 				inf = open(cmds->infile, O_RDONLY);
@@ -269,7 +297,10 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			}
 			if (cmds->outfile)
 			{
-				flags = (cmds->num == 1) ? (O_RDWR | O_CREAT | O_APPEND) : (O_RDWR | O_CREAT | O_TRUNC);
+				if (cmds->num == 1)
+					flags = (O_RDWR | O_CREAT | O_APPEND);
+				else
+					flags = (O_RDWR | O_CREAT | O_TRUNC);
 				outf = open(cmds->outfile, flags, 0666);
 				if (outf == -1)
 					perror(cmds->outfile), exit(EXIT_FAILURE);
@@ -278,8 +309,8 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			}
 			if (cmds->next)
 			{
-				close(fd[0]);
-				close(fd[1]);
+				close(fd[a][0]);
+				close(fd[a][1]);
 			}
 			if (in_fd != saved_stdin)
 				close(in_fd);
@@ -288,25 +319,30 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 		}
 		else
 		{
-			waitpid(pid, &errors, 0);
-			if (errors)
-				errors1 = WEXITSTATUS(errors);
 			if (in_fd != saved_stdin)
 				close(in_fd);
 			if (cmds->next)
 			{
-				close(fd[1]);
-				in_fd = fd[0];
+				close(fd[a][1]);
+				in_fd = fd[a][0];
 			}
-			if (errors1 && cmds->next)
-			{
-				ft_errors(errors1, cmds->args, NULL);
-				errors1 = 0;
-			}
+			a++;
 		}
 		cmds = cmds->next;
-		if (cmds && cmds->next && cmds->is_p)
-			cmds = cmds->next;
+	}
+	in_fd = cmd_nbr;
+	while (in_fd > 0 && str)
+	{
+		waitpid(pid[in_fd % cmd_nbr], &errors, 0);
+		if (errors && str->is_p)
+			errors1 = WEXITSTATUS(errors);
+		if (errors1)
+		{
+			ft_errors(errors1, str->args, NULL);
+			errors1 = 0;
+		}
+		in_fd--;
+		str = str->next;
 	}
 	dup2(saved_stdin, STDIN_FILENO);
 	dup2(saved_stdout, STDOUT_FILENO);
