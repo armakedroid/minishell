@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/10 19:21:37 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:48:48 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ void	check_f(char **back, char **envp, char **path, int flag)
 		line = ft_pwd(envp);
 		if (line)
 			printf("%s\n", line);
+		free(line);
 	}
 	else if (!ft_strncmp(back[0], "env", 4))
 		g_exit_status = ft_env(envp);
@@ -144,6 +145,8 @@ void	free_split(char **back)
 {
 	int	i;
 
+	if (!back)
+		return;
 	i = 0;
 	while (back[i])
 	{
@@ -160,7 +163,7 @@ void	free_cmd(t_output *cmd)
 	while (cmd)
 	{
 		next = cmd->next;
-		if (cmd->args)
+		if (cmd->args && cmd->args[0])
 			free_split(cmd->args);
 		if (cmd->infile)
 			free(cmd->infile);
@@ -209,7 +212,7 @@ t_token	*create_t(char *str, int i)
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->value = ft_strdup(str);
+	token->value = str;
 	token->type = i;
 	token->q_type = DOUBLE;
 	if (str[0] == '\'')
@@ -268,14 +271,14 @@ t_token	*my_tok(char *line)
 			i++;
 		else if (line[i] == '|')
 		{
-			add_token(&token, "|", PIPE);
+			add_token(&token, ft_strdup("|"), PIPE);
 			i++;
 		}
 		else if (line[i] == '>')
 		{
 			if (line[i + 1] == '>')
 			{
-				add_token(&token, ">>", APPEND);
+				add_token(&token, ft_strdup(">>"), APPEND);
 				i += 2;
 			}
 			else
@@ -288,12 +291,12 @@ t_token	*my_tok(char *line)
 		{
 			if (line[i + 1] == '<')
 			{
-				add_token(&token, "<<", HEREDOC);
+				add_token(&token, ft_strdup("<<"), HEREDOC);
 				i += 2;
 			}
 			else
 			{
-				add_token(&token, "<", IN);
+				add_token(&token, ft_strdup("<"), IN);
 				i++;
 			}
 		}
@@ -327,36 +330,6 @@ t_token	*my_tok(char *line)
 	return (token);
 }
 
-// void check_word(t_token *token, char **env)
-// {
-// 	int	i;
-// 	char	*str;
-
-// 	str = token->value;
-// 	i = 0;
-// 	if (!(ft_strncmp(str, "cd", 3)))
-// 	{
-// 		i = ft_cd(token, env);
-// 		if (i == 100)
-// 		{
-// 			printf("Too many arguments: Signal 1\n");
-// 		}
-// 		else if (i == 1)
-// 		{
-// 			printf("No such file or directory: Signal 1\n");
-// 		}
-// 	}
-// 	// else if (ft_strncmp(back[0], "echo", 5) == 0)
-// 		// ft_echo(back);
-// 	else if (ft_strncmp(str, "pwd", 4) == 0)
-// 		printf("%s\n", ft_pwd(env));
-// 	// else if (ft_strncmp(str, "export", 7) == 0)
-// 		// envp = ft_export(envp, back);
-// 	else if (!ft_strncmp(str, "env", 4))
-// 		ft_env(env);
-// 	// else if (ft_strncmp(str, "unset", 6) == 0)
-// 	// 	ft_unset(env, str);
-// }
 
 void	cmdfun(t_output **lst, t_output *new)
 {
@@ -428,11 +401,10 @@ t_output	*parse(t_token *token)
 		if (!token)
 			return (back);
 		if (!back)
-		{
 			tmp = create_out(NULL, NULL, NULL);
-		}
 		else
 		{
+			// free_cmd(tmp);
 			for_args = back;
 			while (for_args->next)
 				for_args = for_args->next;
@@ -444,12 +416,14 @@ t_output	*parse(t_token *token)
 			tmp->is_p = 1;
 			token = token->next;
 			cmdfun(&back, tmp);
+			// free_cmd(tmp);
+			// tmp = NULL;
 			i = 0;
 			continue ;
 		}
 		if (token->type == WORD)
 		{
-			tmp->args[i] = token->value;
+			tmp->args[i] = ft_strdup(token->value);
 			i++;
 			tmp->args[i] = NULL;
 		}
@@ -479,7 +453,11 @@ t_output	*parse(t_token *token)
 		}
 		token = token->next;
 		cmdfun(&back, tmp);
+		// free_cmd(tmp);
+		// tmp = NULL;
 	}
+	// print_cmd(tmp);
+	// free(tmp->args[0]);
 	return (back);
 }
 
@@ -495,6 +473,7 @@ int	main(int argc, char **argv, char **envp)
 	static int	signal1;
 	char		**my_p;
 	t_output	*cmd;
+	t_output	*cmd_start;
 	int			stdout1;
 	int			stdin1;
 	int			fd;
@@ -531,11 +510,14 @@ int	main(int argc, char **argv, char **envp)
 		if (ft_strncmp(line, "exit", 5) == 0)
 		{
 			printf("exit\n");
-			if (line)
-				free(line);
+			free(line);
+			free_tokens(token);
 			break ;
 		}
 		cmd = parse(token);
+		cmd_start = cmd;
+		free_tokens(token);
+		free(line);
 		// print_token(token);
 		// printf("\n\n");
 		// print_cmd(cmd);
@@ -593,17 +575,16 @@ int	main(int argc, char **argv, char **envp)
 			close(stdin1);
 			if (fd)
 				close(fd);
-			// free_cmd(cmd);
-			// free_tokens(token);
-			// rl_redisplay();
-			// close(df[0]);
-			// close(df[1]);
-			// waitpid(proc1, NULL, 0);
-			// waitpid(proc2, NULL, 0);
+				// close(df[0]);
+				// close(df[1]);
+				// waitpid(proc1, NULL, 0);
+				// waitpid(proc2, NULL, 0);
+			}
+			free_cmd(cmd_start);
+			//print_cmd(cmd);
 		}
-	}
-	free_split(env);
-	free_split(my_p);
-	// free(line);
+		free(path);
+		free_split(env);
+		free_split(my_p);
 	return (0);
 }

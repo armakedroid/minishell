@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/09 21:58:57 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:45:24 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,24 @@ typedef struct s_pipe
 	pid_t	pid;
 }	t_pipe;
 
+// typedef struct s_mini
+// {
+// 	t_token		*token;
+// 	t_token		*ttmp;
+// 	int			cd_result;
+// 	char		*line;
+// 	char		**env;
+// 	pid_t		cha;
+// 	char		*path;
+// 	static int	signal1;
+// 	char		**my_p;
+// 	t_output	*cmd;
+// 	int			stdout1;
+// 	int			stdin1;
+// 	int			fd;
+// 	t_pipe		val;
+// }	t_mini;
+
 int		my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
 void	check_f(char **back, char **envp, char **path, int flag);
 void	here_doc_u(char **line, char ***back);
@@ -47,6 +65,8 @@ char	*ft_pwd();
 int		cmdfile(char **cmd, char **path, char **envp, int *exit_status);
 int		cmd_unexit(char **cmd, char **path, char **envp, int *exit_status);
 char	*get_path(char **env);
+void	free_cmd(t_output *cmd);
+void	free_tokens(t_token *tokens);
 void	free_split(char **back);
 char	*ft_merge(char *a, char *b);
 char	*ft_fill(char **str);

@@ -24,7 +24,11 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 	if (access(all, F_OK) == 0)
 	{
 		if (access(all, X_OK) == 0)
+		{
 			execve(all, cmd, envp);
+			perror("execve failed");
+			exit(126);
+		}
 		free_split(cmd);
 		*exit_status = ft_errors126(126, cmd, NULL);
 	}
