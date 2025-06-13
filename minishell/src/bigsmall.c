@@ -200,7 +200,7 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 				// if (outf == -1)
 				// 	perror(cmds->outfile), exit(EXIT_FAILURE);
 				// dup2(outf, STDOUT_FILENO);
-				//close(outf);
+				// close(outf);
 			}
 			if (cmds->next)
 			{

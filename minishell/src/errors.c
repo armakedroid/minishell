@@ -67,6 +67,11 @@ int	ft_errors(int signal, char **back, char *infile)
 		return (ft_errors1(signal, back, infile));
 	else if (signal == 126)
 		return (ft_errors126(signal, back, infile));
+	else if (signal == 130)
+	{
+		printf("\n");
+		return (130);
+	}
 	else if (signal == 139)
 	{
 		printf("Segmentation fault (core dumped)\n");
