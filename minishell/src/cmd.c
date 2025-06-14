@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/10 19:07:27 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/14 21:30:28 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 			exit(126);
 		}
 		free_split(cmd);
-		*exit_status = ft_errors126(126, cmd, NULL);
+		*exit_status = ft_errors(126, cmd, NULL);
 	}
 	free(all);
 	all = NULL;
@@ -50,7 +50,7 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 	{
 		if (access(cmd[0], X_OK) == 0)
 			execve(cmd[0], cmd, envp);
-		*exit_status = ft_errors126(126, cmd, NULL);
+		*exit_status = ft_errors(126, cmd, NULL);
 	}
 	else
 	{
@@ -68,6 +68,7 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 {
 	char	*all;
 
+	(void) envp;
 	all = ft_strjoin(path, "/");
 	if (cmd[0][0] != '/')
 		all = ft_strjoin(all, cmd[0]);

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:49:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/10 20:07:06 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/14 21:30:51 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int	ft_errors126(int signal, char **back, char *infile)
 	int		i;
 
 	i = 0;
+	(void) infile;
 	if (signal == 126)
 	{
 		fd = open(back[0], O_RDONLY);
@@ -82,9 +83,9 @@ int	ft_errors(int signal, char **back, char *infile)
 		printf("bash : %s: too many arguments\n", back[0]);
 		return (1);
 	}
-	else if (signal == 2 && !back)
+	else if (signal == 2)
 	{
-		printf("bash: syntax error near unexpected token `newline'\n");
+		printf("bash: syntax error near unexpected token `%s'\n", *back);
 		return (2);
 	}
 	return (signal);

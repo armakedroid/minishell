@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/12 18:48:48 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/14 22:06:50 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
-int g_exit_status = 0;
+int			g_exit_status = 0;
 
-void print_str(char **str, char *type)
+void	print_str(char **str, char *type)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (str || *str)
@@ -34,16 +34,16 @@ void print_str(char **str, char *type)
 	}
 }
 
-void print_cmd(t_output *token)
+void	print_cmd(t_output *token)
 {
-	t_output *tmp;
-	char *str;
-	int i;
+	t_output	*tmp;
+	char		*str;
+	int			i;
 
 	i = 0;
 	str = NULL;
 	if (!token)
-		return;
+		return ;
 	while (token->args[i])
 	{
 		str = ft_strjoin(str, token->args[i]);
@@ -55,7 +55,7 @@ void print_cmd(t_output *token)
 		while (tmp)
 		{
 			printf("infile: %s, outfile: %s, is_p: %d, next: %d, ", tmp->infile,
-				   tmp->outfile, tmp->is_p, !(!(tmp->next)));
+				tmp->outfile, tmp->is_p, !(!(tmp->next)));
 			print_str(tmp->args, "args");
 			printf("\n");
 			tmp = tmp->next;
@@ -63,38 +63,38 @@ void print_cmd(t_output *token)
 	}
 }
 
-void print_token(t_token *token)
+void	print_token(t_token *token)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	if (!token)
-		return;
+		return ;
 	tmp = token;
 	while (tmp)
 	{
 		printf("token value: %s, token type: %d, token quote: %d\n", tmp->value,
-			   tmp->type, tmp->q_type);
+			tmp->type, tmp->q_type);
 		tmp = tmp->next;
 	}
 }
 
-int is_space(char c)
+int	is_space(char c)
 {
-	if (c == ' ')
+	if (c == ' ' || (c >= 9 && c <= 11))
 		return (1);
 	return (0);
 }
 
-int is_operator(char c)
+int	is_operator(char c)
 {
 	if (c == '|' || c == '>' || c == '<' || c == '&')
 		return (1);
 	return (0);
 }
 
-char **command_s(char *line)
+char	**command_s(char *line)
 {
-	char **back;
+	char	**back;
 
 	back = ft_split(line, ' ');
 	if (!back)
@@ -102,10 +102,10 @@ char **command_s(char *line)
 	return (back);
 }
 
-void check_f(char **back, char **envp, char **path, int flag)
+void	check_f(char **back, char **envp, char **path, int flag)
 {
-	char *line;
-	int i;
+	char	*line;
+	int		i;
 
 	i = 0;
 	line = NULL;
@@ -132,9 +132,9 @@ void check_f(char **back, char **envp, char **path, int flag)
 	exit(g_exit_status);
 }
 
-void free_tokens(t_token *tokens)
+void	free_tokens(t_token *tokens)
 {
-	t_token *next;
+	t_token	*next;
 
 	if (tokens)
 	{
@@ -150,12 +150,12 @@ void free_tokens(t_token *tokens)
 	}
 }
 
-void free_split(char **back)
+void	free_split(char **back)
 {
-	int i;
+	int	i;
 
 	if (!back)
-		return;
+		return ;
 	i = 0;
 	while (back[i])
 	{
@@ -165,9 +165,9 @@ void free_split(char **back)
 	free(back);
 }
 
-void free_cmd(t_output *cmd)
+void	free_cmd(t_output *cmd)
 {
-	t_output *next;
+	t_output	*next;
 
 	if (cmd)
 	{
@@ -186,31 +186,27 @@ void free_cmd(t_output *cmd)
 	}
 }
 
-void handle_sigint(int sl)
+void	free_var(void *var)
+{
+	if (var)
+		free(var);
+}
+
+void	handle_sigint(int sl)
 {
 	(void)sl;
+	g_exit_status = 130;
+	write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);
-	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_redisplay();
 	return ;
 }
 
-void handle_sigint1(int sl)
+char	**ft_copy_env(char **envp)
 {
-	(void)sl;
-	printf("Artur\n");
-	rl_replace_line("", 0);
-	// write(1, "\n", 1);
-	// rl_on_new_line();
-	// rl_redisplay();
-	exit(130) ;
-}
-
-char **ft_copy_env(char **envp)
-{
-	char **tmp;
-	int i;
+	char	**tmp;
+	int		i;
 
 	i = 0;
 	while (envp[i])
@@ -228,9 +224,9 @@ char **ft_copy_env(char **envp)
 	return (tmp);
 }
 
-t_token *create_t(char *str, int i)
+t_token	*create_t(char *str, int i)
 {
-	t_token *token;
+	t_token	*token;
 
 	token = malloc(sizeof(t_token));
 	if (!token)
@@ -244,17 +240,17 @@ t_token *create_t(char *str, int i)
 	return (token);
 }
 
-static void ft_lstadd_back1(t_token **lst, t_token *new)
+static void	ft_lstadd_back1(t_token **lst, t_token *new)
 {
-	t_token *back;
+	t_token	*back;
 
 	back = NULL;
 	if (!lst || !new)
-		return;
+		return ;
 	if (*lst == NULL)
 	{
 		*lst = new;
-		return;
+		return ;
 	}
 	back = *lst;
 	while (back->next)
@@ -262,33 +258,35 @@ static void ft_lstadd_back1(t_token **lst, t_token *new)
 	back->next = new;
 }
 
-void add_token(t_token **token, char *str, int i)
+void	add_token(t_token **token, char *str, int i)
 {
-	t_token *new;
-	t_token *tmp;
+	t_token	*new;
+	t_token	*tmp;
 
 	new = create_t(str, i);
 	tmp = *token;
 	if (!new)
-		return;
+		return ;
 	if (!*token)
 		*token = new;
 	else
 		ft_lstadd_back1(token, new);
 }
 
-t_token *my_tok(char *line)
+t_token	*my_tok(char *line)
 {
-	int i;
-	int start;
-	int quote_d;
-	t_token *token;
+	int		i;
+	int		start;
+	int		quote_d;
+	t_token	*token;
 
 	i = 0;
 	start = 0;
 	token = NULL;
 	while (line[i])
 	{
+		while (is_space(line[i]))
+			i++;
 		quote_d = 0;
 		if (line[i] == ' ' || (line[i] == '\"' && line[i + 1] == ' '))
 			i++;
@@ -326,7 +324,8 @@ t_token *my_tok(char *line)
 		else
 		{
 			start = i;
-			while (line[i] && !is_operator(line[i]) && !is_space(line[i]) && !quote_d)
+			while (line[i] && !is_operator(line[i]) && !is_space(line[i])
+				&& !quote_d)
 			{
 				if (line[i] == '\"')
 				{
@@ -341,28 +340,28 @@ t_token *my_tok(char *line)
 				if (line[i] == '\"')
 				{
 					quote_d = 0;
-					break;
+					break ;
 				}
 			}
 			if ((line[start] == '\"' && (i - start) == 1) || !(i - start))
-				break;
+				break ;
 			add_token(&token, ft_substr(line, start, i - start), WORD);
 		}
 	}
 	return (token);
 }
 
-void cmdfun(t_output **lst, t_output *new)
+void	cmdfun(t_output **lst, t_output *new)
 {
-	t_output *back;
+	t_output	*back;
 
 	back = NULL;
 	if (!new || !lst)
-		return;
+		return ;
 	if (*lst == NULL)
 	{
 		*lst = new;
-		return;
+		return ;
 	}
 	back = *lst;
 	while (back->next)
@@ -370,10 +369,10 @@ void cmdfun(t_output **lst, t_output *new)
 	back->next = new;
 }
 
-t_output *create_out(char **str, char *infile, char *outfile)
+t_output	*create_out(char **str, char *infile, char *outfile)
 {
-	t_output *new;
-	int i;
+	t_output	*new;
+	int			i;
 
 	i = 0;
 	new = malloc(sizeof(t_output));
@@ -383,7 +382,7 @@ t_output *create_out(char **str, char *infile, char *outfile)
 	if (str)
 		while (str[i])
 			i++;
-	new->args = ft_calloc(sizeof(char *), i + 1);
+	new->args = ft_calloc((i + 1), sizeof(char *));
 	i = 0;
 	if (str)
 	{
@@ -393,34 +392,37 @@ t_output *create_out(char **str, char *infile, char *outfile)
 			i++;
 		}
 	}
+	new->args[i] = NULL;
 	new->next = NULL;
 	return (new);
 }
 
-t_output *parse(t_token *token)
+t_output	*parse(t_token *token)
 {
-	t_output *back;
-	t_output *tmp;
-	t_output *for_args;
-	int i;
+	t_output	*back;
+	t_output	*tmp;
+	t_output	*for_args;
+	int			i;
+	char		*str;
 
 	back = NULL;
 	tmp = NULL;
 	i = 0;
 	while (token)
 	{
+		if (!token)
+			return (back);
 		if (token->type == HEREDOC)
 		{
 			if (token->next)
 				token = token->next->next;
 			else
 			{
-				g_exit_status = ft_errors(2, NULL, NULL);
+				str = "newline";
+				g_exit_status = ft_errors(2, &str, NULL);
 				return (NULL);
 			}
 		}
-		if (!token)
-			return (back);
 		if (!back)
 			tmp = create_out(NULL, NULL, NULL);
 		else
@@ -430,8 +432,8 @@ t_output *parse(t_token *token)
 			while (for_args->next)
 				for_args = for_args->next;
 			if (!(for_args->is_p))
-				tmp = create_out(for_args->args, for_args->infile, 
-					for_args->outfile);
+				tmp = create_out(for_args->args, for_args->infile,
+						for_args->outfile);
 			else
 				tmp = create_out(for_args->args, NULL, NULL);
 		}
@@ -443,7 +445,7 @@ t_output *parse(t_token *token)
 			// free_cmd(tmp);
 			// tmp = NULL;
 			i = 0;
-			continue;
+			continue ;
 		}
 		if (token->type == WORD)
 		{
@@ -472,7 +474,8 @@ t_output *parse(t_token *token)
 		}
 		else
 		{
-			g_exit_status = ft_errors(2, NULL, NULL);
+			str = "newline";
+			g_exit_status = ft_errors(2, &str, NULL);
 			return (NULL);
 		}
 		token = token->next;
@@ -485,23 +488,25 @@ t_output *parse(t_token *token)
 	return (back);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_token *token;
-	t_token *ttmp;
-	int cd_result;
-	char *line;
-	char **env;
-	pid_t cha;
-	char *path;
-	static int signal1;
-	char **my_p;
-	t_output *cmd;
-	t_output *cmd_start;
-	int stdout1;
-	int stdin1;
-	int fd;
-	t_pipe val;
+	t_token			*token;
+	t_token			*ttmp;
+	int				cd_result;
+	char			*line;
+	char			**env;
+	pid_t			cha;
+	char			*path;
+	static int		signal1;
+	char			**my_p;
+	t_output		*cmd;
+	t_output		*cmd_start;
+	int				stdout1;
+	int				stdin1;
+	int				fd;
+	t_pipe			val;
+	int				k;
+	struct termios	orig_termios;
 
 	(void)argv;
 	my_p = NULL;
@@ -513,16 +518,32 @@ int main(int argc, char **argv, char **envp)
 	path = get_path(env);
 	my_p = ft_split(path, ':');
 	fd = 0;
+	g_exit_status = 0;
+	tcgetattr(STDIN_FILENO, &orig_termios);
 	while (1)
 	{
-		g_exit_status = 0;
+		tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
 		stdout1 = dup(STDOUT_FILENO);
 		stdin1 = dup(STDIN_FILENO);
 		line = readline("minishell$ ");
 		if (!line)
-			break;
+			break ;
 		if (*line)
 			add_history(line);
+		k = 0;
+		while (line[k])
+		{
+			while (is_space(line[k]))
+				k++;
+			if (line[k] == '|')
+			{
+				path = "|";
+				ft_errors(2, &path, NULL);
+			}
+			break ;
+		}
+		if (line[k] == '|')
+			continue ;
 		token = my_tok(line);
 		ttmp = token;
 		while (ttmp)
@@ -536,7 +557,7 @@ int main(int argc, char **argv, char **envp)
 			printf("exit\n");
 			free(line);
 			free_tokens(token);
-			break;
+			break ;
 		}
 		cmd = parse(token);
 		cmd_start = cmd;
@@ -547,13 +568,12 @@ int main(int argc, char **argv, char **envp)
 		// print_cmd(cmd);
 		if (!cmd || !cmd->args)
 		{
-
 			if (g_exit_status)
 			{
 				close(stdin1);
 				close(stdout1);
 			}
-			continue;
+			continue ;
 		}
 		while (cmd->next && cmd->next->is_p != 1)
 			cmd = cmd->next;
@@ -584,18 +604,24 @@ int main(int argc, char **argv, char **envp)
 				cha = fork();
 				if (cha == 0)
 				{
-					signal(SIGINT, handle_sigint1);
+					signal(SIGINT, SIG_DFL);
+					signal(SIGQUIT, SIG_DFL);
 					while (cmd->next)
 						cmd = cmd->next;
 					check_f(cmd->args, env, my_p, 1);
 				}
 				else if (cha > 0)
 				{
+					signal(SIGINT, SIG_IGN);
 					waitpid(cha, &signal1, 0);
-					if (signal1 >= 256)
-						g_exit_status = WEXITSTATUS(signal1);
+					dup2(stdout1, STDOUT_FILENO);
+					dup2(stdin1, STDIN_FILENO);
+					signal(SIGINT, handle_sigint);
+					if (signal1 < 256 && signal1)
+						g_exit_status = ft_errors(WTERMSIG(signal1) + 128, NULL,
+								NULL);
 					else
-						g_exit_status = signal1 + 128;
+						g_exit_status = WEXITSTATUS(signal1);
 				}
 				else
 					perror("fork");
@@ -606,10 +632,6 @@ int main(int argc, char **argv, char **envp)
 			close(stdin1);
 			if (fd)
 				close(fd);
-			// close(df[0]);
-			// close(df[1]);
-			// waitpid(proc1, NULL, 0);
-			// waitpid(proc2, NULL, 0);
 		}
 		free_cmd(cmd_start);
 		// print_cmd(cmd);

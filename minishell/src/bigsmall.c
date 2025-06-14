@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/10 22:24:33 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/14 21:31:55 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,13 +110,13 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 	int		errors;
 	int		errors1;
 	int		inf;
-	int		flags;
 	int		outf;
 	pid_t	*pid;
 	int		a;
 	int		cmd_nbr;
 	t_output	*str;
 
+	(void) val;
 	errors = 0;
 	errors1 = 0;
 	a = 0;

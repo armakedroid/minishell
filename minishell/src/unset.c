@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:35:22 by argharag          #+#    #+#             */
-/*   Updated: 2025/05/27 19:35:40 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/14 21:29:58 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	mykey(char *env, char *key)
 	i = 0;
 	while (env[i] && env[i] != '=')
 		i++;
-	return (ft_strncmp(env, key, i) == 0 && ft_strlen(key) == i);
+	return (ft_strncmp(env, key, i) == 0 && (int)ft_strlen(key) == i);
 }
 
 char	**ft_unset(char **envp, char **back)
