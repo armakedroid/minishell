@@ -68,8 +68,9 @@ int	ft_echo(char **argv, int signal)
 				{
 					if (back[j][1] == '?')
 					{
-						printf("%d\n", signal);
-						return (0);
+						printf("%d", signal);
+						// free_split(back);
+						// return (0);
 					}
 					str = getenv(back[j] + 1);
 					if (str)
@@ -84,8 +85,9 @@ int	ft_echo(char **argv, int signal)
 				{
 					if (back[j][1] == '?')
 					{
-						printf("%d\n", signal);
-						return (0);
+						printf("%d", signal);
+						// free_split(back);
+						// return (0);
 					}
 					str = getenv(back[j] + 1);
 					if (str)
@@ -94,6 +96,7 @@ int	ft_echo(char **argv, int signal)
 				else
 					printf("%s", back[j]);
 			}
+			print_str(back, "back");
 			if ((back[j + 1] || str) && n != 1)
 				printf(" ");
 			j++;

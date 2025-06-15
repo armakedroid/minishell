@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/14 21:30:28 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/15 18:46:38 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,28 @@
 void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 {
 	char	*all;
+	char	*str;
 
 	all = ft_strjoin(path, "/");
 	if (cmd[0][0] != '/')
-		all = ft_strjoin(all, cmd[0]);
+		str = ft_strjoin(all, cmd[0]);
 	else
-		all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
-	if (access(all, F_OK) == 0)
+		str = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
+	free(all);
+	if (access(str, F_OK) == 0)
 	{
-		if (access(all, X_OK) == 0)
+		if (access(str, X_OK) == 0)
 		{
-			execve(all, cmd, envp);
+			execve(str, cmd, envp);
 			perror("execve failed");
-			exit(126);
+			free(str);
+			// exit(126);
 		}
 		free_split(cmd);
-		*exit_status = ft_errors(126, cmd, NULL);
+		*exit_status = ft_errors126(126, cmd, NULL);
 	}
-	free(all);
-	all = NULL;
+	free(str);
+	str = NULL;
 }
 
 int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
@@ -67,23 +70,27 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 {
 	char	*all;
+	char	*str;
 
 	(void) envp;
 	all = ft_strjoin(path, "/");
 	if (cmd[0][0] != '/')
-		all = ft_strjoin(all, cmd[0]);
+		str = ft_strjoin(all, cmd[0]);
 	else
-		all = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
-	printf("all = %s\n", all);
-	if (access(all, F_OK) == 0)
+		str = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
+	free(all);
+	if (access(str, F_OK) == 0)
 	{
-		if (access(all, X_OK) == 0)
-			return (0);
+		if (access(str, X_OK) == 0)
+		{
+			free(str);
+			exit (0);
+		}
 		free_split(cmd);
 		*exit_status = ft_errors126(126, cmd, NULL);
 	}
-	free(all);
-	all = NULL;
+	free(str);
+	str = NULL;
 	return (1);
 }
 
@@ -92,7 +99,6 @@ int	cmd_unexit(char **cmd, char **path, char **envp, int *exit_status)
 	int		i;
 
 	i = 0;
-	printf("all = %s\n", cmd[0]);
 	if (!cmd || !*cmd)
 	{
 		*exit_status = 127;

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/14 21:31:55 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/15 19:20:16 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	big_crt(t_output *back, int *fd)
 	return (0);
 }
 
-int cmd_count(t_output *cmds)
+int	cmd_count(t_output *cmds)
 {
 	int	count;
 
@@ -100,30 +100,40 @@ int cmd_count(t_output *cmds)
 	return (count + 1);
 }
 
+void free_fd(int **fd, int i)
+{
+	while (i > 0)
+	{
+		free(fd[i - 1]);
+		i--;
+	}
+	free(fd);
+}
+
 int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 {
-	int		saved_stdin;
-	int		saved_stdout;
-	int		in_fd;
-	int		**fd;
-	// pid_t	pid;
-	int		errors;
-	int		errors1;
-	int		inf;
-	int		outf;
-	pid_t	*pid;
-	int		a;
-	int		cmd_nbr;
+	int			saved_stdin;
+	int			saved_stdout;
+	int			in_fd;
+	int			**fd;
+	int			errors;
+	int			errors1;
+	int			inf;
+	int			outf;
+	pid_t		*pid;
+	int			a;
+	int			cmd_nbr;
 	t_output	*str;
 
-	(void) val;
+	// pid_t	pid;
+	(void)val;
 	errors = 0;
 	errors1 = 0;
 	a = 0;
 	cmd_nbr = cmd_count(cmds);
 	in_fd = cmd_nbr - 1;
 	pid = malloc(sizeof(pid_t) * cmd_nbr);
-	fd = malloc(sizeof(int*) * (cmd_nbr - 1));
+	fd = malloc(sizeof(int *) * (cmd_nbr - 1));
 	while (in_fd > 0)
 	{
 		fd[in_fd - 1] = malloc(sizeof(int) * 2);
@@ -144,17 +154,21 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 		exit(EXIT_FAILURE);
 	}
 	if (pid[a] == 0)
+	{
 		check_f(str->args, env, my_p, 0);
+	}
 	else
 	{
 		waitpid(pid[a], &errors, 0);
 		if (errors)
 			errors1 = WEXITSTATUS(errors);
-
 		if (errors1)
 		{
+			if (pid)
+				free(pid);
+			if (fd)
+				free_fd(fd, cmd_nbr - 1);
 			dup2(saved_stdout, STDOUT_FILENO);
-			ft_errors(errors1, str->args, NULL);
 			close(inf);
 			return (errors1);
 		}
@@ -245,5 +259,9 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);
 	close(saved_stdout);
+	if (pid)
+		free(pid);
+	if (fd)
+		free_fd(fd, cmd_nbr - 1);
 	return (errors1);
 }

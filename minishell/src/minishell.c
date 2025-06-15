@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/14 22:06:50 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/15 19:05:20 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ void	handle_sigint(int sl)
 {
 	(void)sl;
 	g_exit_status = 130;
-	write(STDOUT_FILENO, "\n", 1);
+	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
@@ -379,6 +379,7 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 	new->infile = infile;
 	new->outfile = outfile;
 	new->is_p = 0;
+	new->num = 0;
 	if (str)
 		while (str[i])
 			i++;
@@ -392,7 +393,8 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 			i++;
 		}
 	}
-	new->args[i] = NULL;
+	if (str && !infile && !outfile)
+		new->args[i] = NULL;
 	new->next = NULL;
 	return (new);
 }
@@ -435,23 +437,27 @@ t_output	*parse(t_token *token)
 				tmp = create_out(for_args->args, for_args->infile,
 						for_args->outfile);
 			else
-				tmp = create_out(for_args->args, NULL, NULL);
+				tmp = create_out(NULL, NULL, NULL);
 		}
 		if (token->type == PIPE)
 		{
+			// free_split(tmp->args);
+			// tmp->args = NULL;
 			tmp->is_p = 1;
 			token = token->next;
 			cmdfun(&back, tmp);
-			// free_cmd(tmp);
+			// free_split(tmp->args);
+			// tmp->args = ft_strdup("|");
 			// tmp = NULL;
 			i = 0;
 			continue ;
 		}
 		if (token->type == WORD)
 		{
+			// if (!(tmp->args))
 			tmp->args[i] = ft_strdup(token->value);
 			i++;
-			tmp->args[i] = NULL;
+			// tmp->args[i] = NULL;
 		}
 		else if (token->next)
 		{
@@ -525,7 +531,7 @@ int	main(int argc, char **argv, char **envp)
 		tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
 		stdout1 = dup(STDOUT_FILENO);
 		stdin1 = dup(STDIN_FILENO);
-		line = readline("minishell$ ");
+		line = readline("\n-------> minishell$ ");
 		if (!line)
 			break ;
 		if (*line)
@@ -577,16 +583,16 @@ int	main(int argc, char **argv, char **envp)
 		}
 		while (cmd->next && cmd->next->is_p != 1)
 			cmd = cmd->next;
-		if (cmd->outfile)
-		{
-			g_exit_status = big_crt(cmd, &fd);
-		}
-		else if (cmd->infile)
-			g_exit_status = small(cmd, &fd);
 		if (cmd && cmd->next && cmd->next->next && cmd->next->is_p)
+		{
 			g_exit_status = my_pipe(cmd, &val, env, my_p);
+		}
 		else
 		{
+			if (cmd->outfile)
+				g_exit_status = big_crt(cmd, &fd);
+			else if (cmd->infile)
+				g_exit_status = small(cmd, &fd);
 			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
 			{
 				cd_result = ft_cd(cmd->args, env);
