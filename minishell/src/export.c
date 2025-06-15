@@ -99,11 +99,9 @@ char	**helper_ex(char **envp, char **back)
 char	**ft_export(char **envp, char **back)
 {
 	int		i;
-	int		a;
 	char	*tmp;
 
 	i = 0;
-	a = 0;
 	if (!back[1])
 	{
 		sort(envp);

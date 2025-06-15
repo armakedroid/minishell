@@ -105,9 +105,7 @@ char	**command_s(char *line)
 void	check_f(char **back, char **envp, char **path, int flag)
 {
 	char	*line;
-	int		i;
 
-	i = 0;
 	line = NULL;
 	if (ft_strncmp(back[0], "exit", 5) == 0)
 		g_exit_status = 0;
@@ -130,66 +128,6 @@ void	check_f(char **back, char **envp, char **path, int flag)
 			cmd_unexit(back, path, envp, &g_exit_status);
 	}
 	exit(g_exit_status);
-}
-
-void	free_tokens(t_token *tokens)
-{
-	t_token	*next;
-
-	if (tokens)
-	{
-		while (tokens)
-		{
-			next = tokens->next;
-			if (tokens->value)
-				free(tokens->value);
-			if (tokens)
-				free(tokens);
-			tokens = next;
-		}
-	}
-}
-
-void	free_split(char **back)
-{
-	int	i;
-
-	if (!back)
-		return ;
-	i = 0;
-	while (back[i])
-	{
-		free(back[i]);
-		i++;
-	}
-	free(back);
-}
-
-void	free_cmd(t_output *cmd)
-{
-	t_output	*next;
-
-	if (cmd)
-	{
-		while (cmd)
-		{
-			next = cmd->next;
-			if (cmd->args && cmd->args[0])
-				free_split(cmd->args);
-			if (cmd->infile)
-				free(cmd->infile);
-			if (cmd->outfile)
-				free(cmd->outfile);
-			free(cmd);
-			cmd = next;
-		}
-	}
-}
-
-void	free_var(void *var)
-{
-	if (var)
-		free(var);
 }
 
 void	handle_sigint(int sl)
@@ -261,10 +199,8 @@ static void	ft_lstadd_back1(t_token **lst, t_token *new)
 void	add_token(t_token **token, char *str, int i)
 {
 	t_token	*new;
-	t_token	*tmp;
 
 	new = create_t(str, i);
-	tmp = *token;
 	if (!new)
 		return ;
 	if (!*token)

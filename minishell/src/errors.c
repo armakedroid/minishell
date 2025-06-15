@@ -39,9 +39,7 @@ int	ft_errors126(int signal, char **back, char *infile)
 {
 	char	*line;
 	int		fd;
-	int		i;
 
-	i = 0;
 	(void) infile;
 	if (signal == 126)
 	{

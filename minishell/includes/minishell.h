@@ -65,9 +65,7 @@ char	*ft_pwd();
 int		cmdfile(char **cmd, char **path, char **envp, int *exit_status);
 int		cmd_unexit(char **cmd, char **path, char **envp, int *exit_status);
 char	*get_path(char **env);
-void	free_cmd(t_output *cmd);
 void	free_tokens(t_token *tokens);
-void	free_split(char **back);
 char	*ft_merge(char *a, char *b);
 char	*ft_fill(char **str);
 int		ft_sep(char *str, char c);
@@ -79,5 +77,8 @@ int		big_crt(t_output *back, int *fd);
 int		small(t_output *back, int *fd);
 void	print_str(char **str, char *type);
 void	print_cmd(t_output *token);
+void	free_var(void *var);
+void	free_cmd(t_output *cmd);
+void	free_split(char **back);
 
 #endif
