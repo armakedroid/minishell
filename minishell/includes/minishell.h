@@ -32,23 +32,26 @@ typedef struct s_pipe
 	pid_t	pid;
 }	t_pipe;
 
-// typedef struct s_mini
-// {
-// 	t_token		*token;
-// 	t_token		*ttmp;
-// 	int			cd_result;
-// 	char		*line;
-// 	char		**env;
-// 	pid_t		cha;
-// 	char		*path;
-// 	static int	signal1;
-// 	char		**my_p;
-// 	t_output	*cmd;
-// 	int			stdout1;
-// 	int			stdin1;
-// 	int			fd;
-// 	t_pipe		val;
-// }	t_mini;
+typedef struct s_mini
+{
+	t_token			*token;
+	t_token			*ttmp;
+	int				cd_result;
+	char			*line;
+	char			**env;
+	pid_t			cha;
+	char			*path;
+	int		signal1;
+	char			**my_p;
+	t_output		*cmd;
+	t_output		*cmd_start;
+	int				stdout1;
+	int				stdin1;
+	int				fd;
+	t_pipe			val;
+	int				k;
+	struct termios	orig_termios;
+}	t_mini;
 
 int		my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
 void	check_f(char **back, char **envp, char **path, int flag);

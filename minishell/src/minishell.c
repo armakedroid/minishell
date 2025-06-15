@@ -432,154 +432,139 @@ t_output	*parse(t_token *token)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_token			*token;
-	t_token			*ttmp;
-	int				cd_result;
-	char			*line;
-	char			**env;
-	pid_t			cha;
-	char			*path;
-	static int		signal1;
-	char			**my_p;
-	t_output		*cmd;
-	t_output		*cmd_start;
-	int				stdout1;
-	int				stdin1;
-	int				fd;
-	t_pipe			val;
-	int				k;
-	struct termios	orig_termios;
+	t_mini var;
 
 	(void)argv;
-	my_p = NULL;
+	//var.my_p = NULL;
 	if (argc != 1)
 		return (write(2, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
-	env = ft_copy_env(envp);
-	path = get_path(env);
-	my_p = ft_split(path, ':');
-	fd = 0;
+	var.env = ft_copy_env(envp);
+	var.path = get_path(var.env);
+	var.my_p = ft_split(var.path, ':');
+	var.fd = 0;
 	g_exit_status = 0;
-	tcgetattr(STDIN_FILENO, &orig_termios);
+	tcgetattr(STDIN_FILENO, &var.orig_termios);
 	while (1)
 	{
-		tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
-		stdout1 = dup(STDOUT_FILENO);
-		stdin1 = dup(STDIN_FILENO);
-		line = readline("\n-------> minishell$ ");
-		if (!line)
+		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
+		var.stdout1 = dup(STDOUT_FILENO);
+		var.stdin1 = dup(STDIN_FILENO);
+		var.line = readline("\n-------> minishell$ ");
+		if (!var.line)
 			break ;
-		if (*line)
-			add_history(line);
-		k = 0;
-		while (line[k])
+		if (*var.line)
+			add_history(var.line);
+		var.k = 0;
+		while (var.line[var.k])
 		{
-			while (is_space(line[k]))
-				k++;
-			if (line[k] == '|')
+			while (is_space(var.line[var.k]))
+				var.k++;
+			if (var.line[var.k] == '|')
 			{
-				path = "|";
-				ft_errors(2, &path, NULL);
+				var.path = "|";
+				ft_errors(2, &var.path, NULL);
 			}
 			break ;
 		}
-		if (line[k] == '|')
+		if (var.line[var.k] == '|')
 			continue ;
-		token = my_tok(line);
-		ttmp = token;
-		while (ttmp)
+		var.token = my_tok(var.line);
+		var.ttmp = var.token;
+		while (var.ttmp)
 		{
-			if (ttmp->type == HEREDOC && ttmp->next)
-				heredoc(ttmp->next->value);
-			ttmp = ttmp->next;
+
+			if (var.ttmp->type == HEREDOC && var.ttmp->next)
+				heredoc(var.ttmp->next->value);
+			var.ttmp = var.ttmp->next;
 		}
-		if (ft_strncmp(line, "exit", 5) == 0)
+		if (ft_strncmp(var.line, "exit", 5) == 0)
 		{
 			printf("exit\n");
-			free(line);
-			free_tokens(token);
+			free(var.line);
+			free_tokens(var.token);
 			break ;
 		}
-		cmd = parse(token);
-		cmd_start = cmd;
-		free_tokens(token);
-		free(line);
-		// print_token(token);
+		var.cmd = parse(var.token);
+		var.cmd_start = var.cmd;
+		free_tokens(var.token);
+		free(var.line);
+		// print_token(var.token);
 		// printf("\n\n");
-		// print_cmd(cmd);
-		if (!cmd || !cmd->args)
+		// print_cmd(var.cmd);
+		if (!var.cmd || !var.cmd->args)
 		{
 			if (g_exit_status)
 			{
-				close(stdin1);
-				close(stdout1);
+				close(var.stdin1);
+				close(var.stdout1);
 			}
 			continue ;
 		}
-		while (cmd->next && cmd->next->is_p != 1)
-			cmd = cmd->next;
-		if (cmd && cmd->next && cmd->next->next && cmd->next->is_p)
+		while (var.cmd->next && var.cmd->next->is_p != 1)
+			var.cmd = var.cmd->next;
+		if (var.cmd && var.cmd->next && var.cmd->next->next && var.cmd->next->is_p)
 		{
-			g_exit_status = my_pipe(cmd, &val, env, my_p);
+			g_exit_status = my_pipe(var.cmd, &var.val, var.env, var.my_p);
 		}
 		else
 		{
-			if (cmd->outfile)
-				g_exit_status = big_crt(cmd, &fd);
-			else if (cmd->infile)
-				g_exit_status = small(cmd, &fd);
-			if (!(ft_strncmp(cmd->args[0], "cd", 3)))
+			if (var.cmd->outfile)
+				g_exit_status = big_crt(var.cmd, &var.fd);
+			else if (var.cmd->infile)
+				g_exit_status = small(var.cmd, &var.fd);
+			if (!(ft_strncmp(var.cmd->args[0], "cd", 3)))
 			{
-				cd_result = ft_cd(cmd->args, env);
-				if (cd_result == 100)
-					g_exit_status = ft_errors(100, cmd->args, NULL);
-				else if (cd_result == 1)
-					g_exit_status = ft_errors1(1, cmd->args, NULL);
+				var.cd_result = ft_cd(var.cmd->args, var.env);
+				if (var.cd_result == 100)
+					g_exit_status = ft_errors(100, var.cmd->args, NULL);
+				else if (var.cd_result == 1)
+					g_exit_status = ft_errors1(1, var.cmd->args, NULL);
 			}
-			else if (!(ft_strncmp(cmd->args[0], "export", 7)))
-				env = ft_export(env, cmd->args);
-			else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-				env = ft_unset(env, cmd->args);
+			else if (!(ft_strncmp(var.cmd->args[0], "export", 7)))
+				var.env = ft_export(var.env, var.cmd->args);
+			else if (ft_strncmp(var.cmd->args[0], "unset", 6) == 0)
+				var.env = ft_unset(var.env, var.cmd->args);
 			else
 			{
-				cha = fork();
-				if (cha == 0)
+				var.cha = fork();
+				if (var.cha == 0)
 				{
 					signal(SIGINT, SIG_DFL);
 					signal(SIGQUIT, SIG_DFL);
-					while (cmd->next)
-						cmd = cmd->next;
-					check_f(cmd->args, env, my_p, 1);
+					while (var.cmd->next)
+						var.cmd = var.cmd->next;
+					check_f(var.cmd->args, var.env, var.my_p, 1);
 				}
-				else if (cha > 0)
+				else if (var.cha > 0)
 				{
 					signal(SIGINT, SIG_IGN);
-					waitpid(cha, &signal1, 0);
-					dup2(stdout1, STDOUT_FILENO);
-					dup2(stdin1, STDIN_FILENO);
+					waitpid(var.cha, &var.signal1, 0);
+					dup2(var.stdout1, STDOUT_FILENO);
+					dup2(var.stdin1, STDIN_FILENO);
 					signal(SIGINT, handle_sigint);
-					if (signal1 < 256 && signal1)
-						g_exit_status = ft_errors(WTERMSIG(signal1) + 128, NULL,
+					if (var.signal1 < 256 && var.signal1)
+						g_exit_status = ft_errors(WTERMSIG(var.signal1) + 128, NULL,
 								NULL);
 					else
-						g_exit_status = WEXITSTATUS(signal1);
+						g_exit_status = WEXITSTATUS(var.signal1);
 				}
 				else
 					perror("fork");
 			}
-			dup2(stdout1, STDOUT_FILENO);
-			dup2(stdin1, STDIN_FILENO);
-			close(stdout1);
-			close(stdin1);
-			if (fd)
-				close(fd);
+			dup2(var.stdout1, STDOUT_FILENO);
+			dup2(var.stdin1, STDIN_FILENO);
+			close(var.stdout1);
+			close(var.stdin1);
+			if (var.fd)
+				close(var.fd);
 		}
-		free_cmd(cmd_start);
-		// print_cmd(cmd);
+		free_cmd(var.cmd_start);
+		// print_cmd(var.cmd);
 	}
-	free(path);
-	free_split(env);
-	free_split(my_p);
+	free(var.path);
+	free_split(var.env);
+	free_split(var.my_p);
 	return (0);
 }
