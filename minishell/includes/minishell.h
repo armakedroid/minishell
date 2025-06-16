@@ -32,6 +32,24 @@ typedef struct s_pipe
 	pid_t	pid;
 }	t_pipe;
 
+typedef struct s_my_parse
+{
+	t_output	*back;
+	t_output	*tmp;
+	t_output	*for_args;
+	int			i;
+	char		*str;
+}	t_my_parse;
+
+typedef struct s_my_token
+{
+	int		i;
+	int		start;
+	int		quote_d;
+	int		quote_s;
+	t_token	*token;
+}	t_my_token;
+
 typedef struct s_mini
 {
 	t_token			*token;
@@ -65,6 +83,7 @@ int		ft_echo(char **back, int signal);
 int		ft_env(char **envp);
 char	**ft_unset(char **envp, char **back);
 char	*ft_pwd();
+void	handle_sigint(int sl);
 int		cmdfile(char **cmd, char **path, char **envp, int *exit_status);
 int		cmd_unexit(char **cmd, char **path, char **envp, int *exit_status);
 char	*get_path(char **env);
@@ -83,5 +102,8 @@ void	print_cmd(t_output *token);
 void	free_var(void *var);
 void	free_cmd(t_output *cmd);
 void	free_split(char **back);
+char	**command_s(char *line);
+int	is_operator(char c);
+int	is_space(char c);
 
 #endif

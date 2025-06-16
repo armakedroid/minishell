@@ -22,7 +22,7 @@ char	*get_path(char **env)
 	e = 0;
 	m = 5;
 	i = 0;
-	while (env[i++])
+	while (env[i])
 	{
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 		{
@@ -36,6 +36,7 @@ char	*get_path(char **env)
 			}
 			return (back);
 		}
+		i++;
 	}
 	return (NULL);
 }

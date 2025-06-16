@@ -57,11 +57,13 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 	}
 	else
 	{
-		while (path[i])
-		{
-			cmd_ut(cmd, path[i], envp, exit_status);
-			i++;
-		}
+
+		if (path && *path)
+			while (path[i])
+			{
+				cmd_ut(cmd, path[i], envp, exit_status);
+				i++;
+			}
 	}
 	*exit_status = ft_errors(127, cmd, NULL);
 	return (*exit_status);

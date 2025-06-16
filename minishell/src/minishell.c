@@ -214,11 +214,13 @@ t_token	*my_tok(char *line)
 	int		i;
 	int		start;
 	int		quote_d;
+	int		quote_s;
 	t_token	*token;
 
 	i = 0;
 	start = 0;
 	token = NULL;
+	quote_s = 0;
 	while (line[i])
 	{
 		while (is_space(line[i]))
@@ -260,6 +262,8 @@ t_token	*my_tok(char *line)
 		else
 		{
 			start = i;
+			if (line[0] == '\"')
+				quote_s = 1;
 			while (line[i] && !is_operator(line[i]) && !is_space(line[i])
 				&& !quote_d)
 			{
@@ -270,7 +274,16 @@ t_token	*my_tok(char *line)
 				}
 				i++;
 			}
-			while (line[i] && line[i] != '\"' && quote_d)
+			printf("i1 = %d\n", i);
+			if (line[i] == '\'')
+			{
+				add_token(&token, ft_substr(line, start, 1), WORD);
+				i += !(line[i + 1] != '\"') + 1;
+				start = i;
+			}
+			printf("start2 = %d\n", start);
+			printf("i2 = %d\n", i);
+			while (line[i] && line[i] != '\"' && quote_d && line[i] != '\'')
 			{
 				i++;
 				if (line[i] == '\"')
@@ -279,8 +292,11 @@ t_token	*my_tok(char *line)
 					break ;
 				}
 			}
-			if ((line[start] == '\"' && (i - start) == 1) || !(i - start))
+			printf("start3 = %d\n", start);
+			printf("i3 = %d\n", i);
+			if (line[start] == '\"' && ((i - start) == 1 || !(i - start)) && line[start] != '\'')
 				break ;
+			printf("i4 = %d\n", i);
 			add_token(&token, ft_substr(line, start, i - start), WORD);
 		}
 	}
@@ -320,15 +336,10 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 		while (str[i])
 			i++;
 	new->args = ft_calloc((i + 1), sizeof(char *));
-	i = 0;
+	i = -1;
 	if (str)
-	{
-		while (str[i])
-		{
+		while (str[++i])
 			new->args[i] = ft_strdup(str[i]);
-			i++;
-		}
-	}
 	if (str && !infile && !outfile)
 		new->args[i] = NULL;
 	new->next = NULL;
@@ -365,7 +376,6 @@ t_output	*parse(t_token *token)
 			tmp = create_out(NULL, NULL, NULL);
 		else
 		{
-			// free_cmd(tmp);
 			for_args = back;
 			while (for_args->next)
 				for_args = for_args->next;
@@ -377,23 +387,16 @@ t_output	*parse(t_token *token)
 		}
 		if (token->type == PIPE)
 		{
-			// free_split(tmp->args);
-			// tmp->args = NULL;
 			tmp->is_p = 1;
 			token = token->next;
 			cmdfun(&back, tmp);
-			// free_split(tmp->args);
-			// tmp->args = ft_strdup("|");
-			// tmp = NULL;
 			i = 0;
 			continue ;
 		}
 		if (token->type == WORD)
 		{
-			// if (!(tmp->args))
 			tmp->args[i] = ft_strdup(token->value);
 			i++;
-			// tmp->args[i] = NULL;
 		}
 		else if (token->next)
 		{
@@ -422,11 +425,7 @@ t_output	*parse(t_token *token)
 		}
 		token = token->next;
 		cmdfun(&back, tmp);
-		// free_cmd(tmp);
-		// tmp = NULL;
 	}
-	// print_cmd(tmp);
-	// free(tmp->args[0]);
 	return (back);
 }
 
@@ -435,19 +434,19 @@ int	main(int argc, char **argv, char **envp)
 	t_mini var;
 
 	(void)argv;
-	//var.my_p = NULL;
 	if (argc != 1)
 		return (write(2, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 	var.env = ft_copy_env(envp);
-	var.path = get_path(var.env);
-	var.my_p = ft_split(var.path, ':');
 	var.fd = 0;
 	g_exit_status = 0;
 	tcgetattr(STDIN_FILENO, &var.orig_termios);
 	while (1)
 	{
+		var.path = get_path(var.env);
+		if (var.path)
+			var.my_p = ft_split(var.path, ':');
 		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
 		var.stdout1 = dup(STDOUT_FILENO);
 		var.stdin1 = dup(STDIN_FILENO);
@@ -471,6 +470,7 @@ int	main(int argc, char **argv, char **envp)
 		if (var.line[var.k] == '|')
 			continue ;
 		var.token = my_tok(var.line);
+		print_token(var.token);
 		var.ttmp = var.token;
 		while (var.ttmp)
 		{
@@ -490,9 +490,6 @@ int	main(int argc, char **argv, char **envp)
 		var.cmd_start = var.cmd;
 		free_tokens(var.token);
 		free(var.line);
-		// print_token(var.token);
-		// printf("\n\n");
-		// print_cmd(var.cmd);
 		if (!var.cmd || !var.cmd->args)
 		{
 			if (g_exit_status)
@@ -561,10 +558,13 @@ int	main(int argc, char **argv, char **envp)
 				close(var.fd);
 		}
 		free_cmd(var.cmd_start);
-		// print_cmd(var.cmd);
+		if (var.path)
+		{
+			free(var.path);
+			free_split(var.my_p);
+			var.my_p = NULL;
+		}	
 	}
-	free(var.path);
 	free_split(var.env);
-	free_split(var.my_p);
 	return (0);
 }

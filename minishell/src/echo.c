@@ -29,13 +29,13 @@
 // 	}
 // }
 
-int	ft_echo(char **argv, int signal)
+int ft_echo(char **argv, int signal)
 {
-	int		i;
-	int		j;
-	int		n;
-	char	*str;
-	char	**back;
+	int i;
+	int j;
+	int n;
+	char *str;
+	char **back;
 
 	n = 0;
 	i = 1;
@@ -52,13 +52,15 @@ int	ft_echo(char **argv, int signal)
 		{
 			if (back[j][0] == '\'' || back[j][ft_strlen(back[j]) - 1] == '\'')
 			{
-				str = ft_strtrim(back[j], "'");
+				if (ft_strlen(back[j]) != 1)
+					str = ft_strtrim(back[j], "'");
+				else
+					str = ft_strdup("'");
 				free(back[j]);
 				back[j] = str;
 				printf("%s", back[j]);
 			}
-			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j])
-				- 1] == '\"')
+			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j]) - 1] == '\"')
 			{
 				str = ft_strtrim(back[j], "\"");
 				free(back[j]);
@@ -67,11 +69,7 @@ int	ft_echo(char **argv, int signal)
 				if (back[j][0] == '$' && back[j][1])
 				{
 					if (back[j][1] == '?')
-					{
 						printf("%d", signal);
-						// free_split(back);
-						// return (0);
-					}
 					str = getenv(back[j] + 1);
 					if (str)
 						printf("%s", str);
@@ -84,21 +82,23 @@ int	ft_echo(char **argv, int signal)
 				if (back[j][0] == '$' && back[j][1])
 				{
 					if (back[j][1] == '?')
-					{
 						printf("%d", signal);
-						// free_split(back);
-						// return (0);
-					}
 					str = getenv(back[j] + 1);
 					if (str)
 						printf("%s", str);
 				}
 				else
-					printf("%s", back[j]);
+				{
+					if (back[j] && back)
+						printf("%s", back[j]);
+					else
+						write(1, "\n", 1);
+				}
 			}
-			print_str(back, "back");
-			if ((back[j + 1] || str) && n != 1)
-				printf(" ");
+			if ((back[j + 1] || str) && back[j][0] != '\'')
+				if ((argv[i + 1] && argv[i + 1][0] != '\'')
+					|| (back[j + 1] && back[j + 1][0] != '\''))
+					printf(" ");
 			j++;
 		}
 		free_split(back);

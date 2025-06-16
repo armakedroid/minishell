@@ -27,6 +27,8 @@ char	**ft_unset(char **envp, char **back)
 	int	i;
 
 	i = 0;
+	if (!back || !back[1])
+		return (envp);
 	if (have_a_var(envp, back) == -1)
 	{
 		printf("unset: %s: invalid parameter name\n", back[1]);
