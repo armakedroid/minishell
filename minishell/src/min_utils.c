@@ -9,6 +9,7 @@
 /*   Updated: 2025/06/16 21:28:59 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "../includes/minishell.h"
 
 int	is_space(char c)
 {
@@ -62,13 +63,3 @@ void	check_f(char **back, char **envp, char **path, int flag, int *g_exit_status
 	exit(*g_exit_status);
 }
 
-void	handle_sigint(int sl, int *g_exit_status)
-{
-	(void)sl;
-	*g_exit_status = 130;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	return ;
-}

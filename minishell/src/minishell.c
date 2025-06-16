@@ -78,58 +78,6 @@ void	print_token(t_token *token)
 	}
 }
 
-int	is_space(char c)
-{
-	if (c == ' ' || (c >= 9 && c <= 11))
-		return (1);
-	return (0);
-}
-
-int	is_operator(char c)
-{
-	if (c == '|' || c == '>' || c == '<' || c == '&')
-		return (1);
-	return (0);
-}
-
-char	**command_s(char *line)
-{
-	char	**back;
-
-	back = ft_split(line, ' ');
-	if (!back)
-		return (NULL);
-	return (back);
-}
-
-void	check_f(char **back, char **envp, char **path, int flag)
-{
-	char	*line;
-
-	line = NULL;
-	if (ft_strncmp(back[0], "exit", 5) == 0)
-		g_exit_status = 0;
-	else if (!ft_strncmp(back[0], "echo", 5))
-		g_exit_status = ft_echo(back, g_exit_status);
-	else if (!ft_strncmp(back[0], "pwd", 4))
-	{
-		line = ft_pwd(envp);
-		if (line)
-			printf("%s\n", line);
-		free(line);
-	}
-	else if (!ft_strncmp(back[0], "env", 4))
-		g_exit_status = ft_env(envp);
-	else
-	{
-		if (flag)
-			cmdfile(back, path, envp, &g_exit_status);
-		else
-			cmd_unexit(back, path, envp, &g_exit_status);
-	}
-	exit(g_exit_status);
-}
-
 void	handle_sigint(int sl)
 {
 	(void)sl;
@@ -209,99 +157,6 @@ void	add_token(t_token **token, char *str, int i)
 		ft_lstadd_back1(token, new);
 }
 
-t_token	*my_tok(char *line)
-{
-	int		i;
-	int		start;
-	int		quote_d;
-	int		quote_s;
-	t_token	*token;
-
-	i = 0;
-	start = 0;
-	token = NULL;
-	quote_s = 0;
-	while (line[i])
-	{
-		while (is_space(line[i]))
-			i++;
-		quote_d = 0;
-		if (line[i] == ' ' || (line[i] == '\"' && line[i + 1] == ' '))
-			i++;
-		else if (line[i] == '|')
-		{
-			add_token(&token, ft_strdup("|"), PIPE);
-			i++;
-		}
-		else if (line[i] == '>')
-		{
-			if (line[i + 1] == '>')
-			{
-				add_token(&token, ft_strdup(">>"), APPEND);
-				i += 2;
-			}
-			else
-			{
-				add_token(&token, ft_strdup(">"), OUT);
-				i++;
-			}
-		}
-		else if (line[i] == '<')
-		{
-			if (line[i + 1] == '<')
-			{
-				add_token(&token, ft_strdup("<<"), HEREDOC);
-				i += 2;
-			}
-			else
-			{
-				add_token(&token, ft_strdup("<"), IN);
-				i++;
-			}
-		}
-		else
-		{
-			start = i;
-			if (line[0] == '\"')
-				quote_s = 1;
-			while (line[i] && !is_operator(line[i]) && !is_space(line[i])
-				&& !quote_d)
-			{
-				if (line[i] == '\"')
-				{
-					quote_d = 1;
-					start = i + 1;
-				}
-				i++;
-			}
-			printf("i1 = %d\n", i);
-			if (line[i] == '\'')
-			{
-				add_token(&token, ft_substr(line, start, 1), WORD);
-				i += !(line[i + 1] != '\"') + 1;
-				start = i;
-			}
-			printf("start2 = %d\n", start);
-			printf("i2 = %d\n", i);
-			while (line[i] && line[i] != '\"' && quote_d && line[i] != '\'')
-			{
-				i++;
-				if (line[i] == '\"')
-				{
-					quote_d = 0;
-					break ;
-				}
-			}
-			printf("start3 = %d\n", start);
-			printf("i3 = %d\n", i);
-			if (line[start] == '\"' && ((i - start) == 1 || !(i - start)) && line[start] != '\'')
-				break ;
-			printf("i4 = %d\n", i);
-			add_token(&token, ft_substr(line, start, i - start), WORD);
-		}
-	}
-	return (token);
-}
 
 void	cmdfun(t_output **lst, t_output *new)
 {
@@ -336,10 +191,15 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 		while (str[i])
 			i++;
 	new->args = ft_calloc((i + 1), sizeof(char *));
-	i = -1;
+	i = 0;
 	if (str)
-		while (str[++i])
+	{
+		while (str[i])
+		{
 			new->args[i] = ft_strdup(str[i]);
+			i++;
+		}
+	}
 	if (str && !infile && !outfile)
 		new->args[i] = NULL;
 	new->next = NULL;
@@ -376,6 +236,7 @@ t_output	*parse(t_token *token)
 			tmp = create_out(NULL, NULL, NULL);
 		else
 		{
+			// free_cmd(tmp);
 			for_args = back;
 			while (for_args->next)
 				for_args = for_args->next;
@@ -387,16 +248,23 @@ t_output	*parse(t_token *token)
 		}
 		if (token->type == PIPE)
 		{
+			// free_split(tmp->args);
+			// tmp->args = NULL;
 			tmp->is_p = 1;
 			token = token->next;
 			cmdfun(&back, tmp);
+			// free_split(tmp->args);
+			// tmp->args = ft_strdup("|");
+			// tmp = NULL;
 			i = 0;
 			continue ;
 		}
 		if (token->type == WORD)
 		{
+			// if (!(tmp->args))
 			tmp->args[i] = ft_strdup(token->value);
 			i++;
+			// tmp->args[i] = NULL;
 		}
 		else if (token->next)
 		{
@@ -425,28 +293,32 @@ t_output	*parse(t_token *token)
 		}
 		token = token->next;
 		cmdfun(&back, tmp);
+		// free_cmd(tmp);
+		// tmp = NULL;
 	}
+	// print_cmd(tmp);
+	// free(tmp->args[0]);
 	return (back);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_mini var;
+	t_mini	var;
 
 	(void)argv;
+	var.my_p = NULL;
 	if (argc != 1)
 		return (write(2, "Error: You must run only ./minishell\n", 37));
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 	var.env = ft_copy_env(envp);
+	var.path = get_path(var.env);
+	var.my_p = ft_split(var.path, ':');
 	var.fd = 0;
 	g_exit_status = 0;
 	tcgetattr(STDIN_FILENO, &var.orig_termios);
 	while (1)
 	{
-		var.path = get_path(var.env);
-		if (var.path)
-			var.my_p = ft_split(var.path, ':');
 		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
 		var.stdout1 = dup(STDOUT_FILENO);
 		var.stdin1 = dup(STDIN_FILENO);
@@ -470,11 +342,9 @@ int	main(int argc, char **argv, char **envp)
 		if (var.line[var.k] == '|')
 			continue ;
 		var.token = my_tok(var.line);
-		print_token(var.token);
 		var.ttmp = var.token;
 		while (var.ttmp)
 		{
-
 			if (var.ttmp->type == HEREDOC && var.ttmp->next)
 				heredoc(var.ttmp->next->value);
 			var.ttmp = var.ttmp->next;
@@ -490,6 +360,9 @@ int	main(int argc, char **argv, char **envp)
 		var.cmd_start = var.cmd;
 		free_tokens(var.token);
 		free(var.line);
+		// print_token(var.token);
+		// printf("\n\n");
+		// print_cmd(var.cmd);
 		if (!var.cmd || !var.cmd->args)
 		{
 			if (g_exit_status)
@@ -532,7 +405,7 @@ int	main(int argc, char **argv, char **envp)
 					signal(SIGQUIT, SIG_DFL);
 					while (var.cmd->next)
 						var.cmd = var.cmd->next;
-					check_f(var.cmd->args, var.env, var.my_p, 1);
+					check_f(var.cmd->args, var.env, var.my_p, 1, &g_exit_status);
 				}
 				else if (var.cha > 0)
 				{
@@ -558,13 +431,10 @@ int	main(int argc, char **argv, char **envp)
 				close(var.fd);
 		}
 		free_cmd(var.cmd_start);
-		if (var.path)
-		{
-			free(var.path);
-			free_split(var.my_p);
-			var.my_p = NULL;
-		}	
+		// print_cmd(var.cmd);
 	}
+	free(var.path);
 	free_split(var.env);
+	free_split(var.my_p);
 	return (0);
 }
