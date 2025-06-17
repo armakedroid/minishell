@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/12 18:45:24 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/17 19:04:26 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,7 @@ int	is_space(char c);
 int	is_operator(char c);
 char	**command_s(char *line);
 t_token	*my_tok(char *line);
+void	print_token(t_token *token);
+void	parse_ut(t_output **tmp, t_token **token);
 
 #endif

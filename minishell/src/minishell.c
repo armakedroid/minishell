@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/15 19:05:20 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/17 18:39:38 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,65 +18,6 @@
 #include <sys/wait.h>
 
 int			g_exit_status = 0;
-
-void	print_str(char **str, char *type)
-{
-	int	i;
-
-	i = 0;
-	if (str || *str)
-	{
-		while (str[i])
-		{
-			printf("%s = %s\n", type, str[i]);
-			i++;
-		}
-	}
-}
-
-void	print_cmd(t_output *token)
-{
-	t_output	*tmp;
-	char		*str;
-	int			i;
-
-	i = 0;
-	str = NULL;
-	if (!token)
-		return ;
-	while (token->args[i])
-	{
-		str = ft_strjoin(str, token->args[i]);
-		i++;
-	}
-	if (token)
-	{
-		tmp = token;
-		while (tmp)
-		{
-			printf("infile: %s, outfile: %s, is_p: %d, next: %d, ", tmp->infile,
-				tmp->outfile, tmp->is_p, !(!(tmp->next)));
-			print_str(tmp->args, "args");
-			printf("\n");
-			tmp = tmp->next;
-		}
-	}
-}
-
-void	print_token(t_token *token)
-{
-	t_token	*tmp;
-
-	if (!token)
-		return ;
-	tmp = token;
-	while (tmp)
-	{
-		printf("token value: %s, token type: %d, token quote: %d\n", tmp->value,
-			tmp->type, tmp->q_type);
-		tmp = tmp->next;
-	}
-}
 
 void	handle_sigint(int sl)
 {
@@ -236,7 +177,6 @@ t_output	*parse(t_token *token)
 			tmp = create_out(NULL, NULL, NULL);
 		else
 		{
-			// free_cmd(tmp);
 			for_args = back;
 			while (for_args->next)
 				for_args = for_args->next;
@@ -248,43 +188,19 @@ t_output	*parse(t_token *token)
 		}
 		if (token->type == PIPE)
 		{
-			// free_split(tmp->args);
-			// tmp->args = NULL;
 			tmp->is_p = 1;
 			token = token->next;
 			cmdfun(&back, tmp);
-			// free_split(tmp->args);
-			// tmp->args = ft_strdup("|");
-			// tmp = NULL;
 			i = 0;
 			continue ;
 		}
 		if (token->type == WORD)
 		{
-			// if (!(tmp->args))
 			tmp->args[i] = ft_strdup(token->value);
 			i++;
-			// tmp->args[i] = NULL;
 		}
 		else if (token->next)
-		{
-			if (token->type == IN)
-			{
-				token = token->next;
-				tmp->infile = ft_strdup(token->value);
-			}
-			else if (token->type == OUT)
-			{
-				token = token->next;
-				tmp->outfile = ft_strdup(token->value);
-			}
-			else if (token->type == APPEND)
-			{
-				token = token->next;
-				tmp->outfile = ft_strdup(token->value);
-				tmp->num = 1;
-			}
-		}
+			parse_ut(&tmp, &token);
 		else
 		{
 			str = "newline";
@@ -293,11 +209,8 @@ t_output	*parse(t_token *token)
 		}
 		token = token->next;
 		cmdfun(&back, tmp);
-		// free_cmd(tmp);
-		// tmp = NULL;
+
 	}
-	// print_cmd(tmp);
-	// free(tmp->args[0]);
 	return (back);
 }
 
