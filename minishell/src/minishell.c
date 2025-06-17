@@ -149,50 +149,31 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 
 t_output	*parse(t_token *token)
 {
-	t_output	*back;
-	t_output	*tmp;
-	t_output	*for_args;
-	int			i;
-	char		*str;
+	t_parse		parse;
 
-	back = NULL;
-	tmp = NULL;
-	i = 0;
+	parse.back = NULL;
+	parse.tmp = NULL;
+	parse.i = 0;
 	while (token)
 	{
 		if (!token)
-			return (back);
-		if (token->type == HEREDOC)
+			return (parse.back);
+		if(!parse_heredoc(&token, &g_exit_status))
+			return (NULL);
+		if (my_parse_ut(&parse.back, &parse.tmp, &token, &parse.for_args) == 1)
 		{
-			if (token->next)
-				token = token->next->next;
-			else
-			{
-				str = "newline";
-				g_exit_status = ft_errors(2, &str, NULL);
-				return (NULL);
-			}
-		}
-		if (my_parse_ut(&back, &tmp, &token, &i, &for_args) == 1)
+			parse.i = 0;
 			continue;
-		if (token->type == WORD)
-		{
-			tmp->args[i] = ft_strdup(token->value);
-			i++;
 		}
-		else if (token->next)
-			parse_ut(&tmp, &token);
-		else
+		if (parse_wrd(&token, &parse.tmp, &parse.i, &g_exit_status) == 1)
 		{
-			str = "newline";
-			g_exit_status = ft_errors(2, &str, NULL);
+			parse.i = 1;
 			return (NULL);
 		}
 		token = token->next;
-		cmdfun(&back, tmp);
-
+		cmdfun(&parse.back, parse.tmp);
 	}
-	return (back);
+	return (parse.back);
 }
 
 int	main(int argc, char **argv, char **envp)

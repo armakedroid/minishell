@@ -12,6 +12,26 @@
 
 #include "../includes/minishell.h"
 
+int parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status)
+{
+	char	*str;
+
+	str = NULL;
+if ((*token)->type == WORD)
+{
+	(*tmp)->args[*i] = ft_strdup((*token)->value);
+	(*i)++;
+}
+else if ((*token)->next)
+	parse_ut(&(*tmp), &(*token));
+else
+{
+	str = "newline";
+	*g_exit_status = ft_errors(2, &str, NULL);
+	return (1);
+}
+return (0);
+}
 void	parse_ut(t_output **tmp, t_token **token)
 {
 	if ((*token)->type == IN)
@@ -31,7 +51,7 @@ void	parse_ut(t_output **tmp, t_token **token)
 		(*tmp)->num = 1;
 	}
 }
-int my_parse_ut(t_output **back, t_output **tmp, t_token **token, int *i, t_output **for_args)
+int my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args)
 {
 if (!(*back))
 	*tmp = create_out(NULL, NULL, NULL);
@@ -51,8 +71,26 @@ if ((*token)->type == PIPE)
 (*tmp)->is_p = 1;
 (*token) = (*token)->next;
 cmdfun(&(*back), *tmp);
-*i = 0;
 return (1);
 }
 return (0);
+}
+
+int parse_heredoc(t_token **token, int *g_exit_status)
+{
+	char *str;
+
+	str = NULL;
+if ((*token)->type == HEREDOC)
+{
+	if ((*token)->next)
+		(*token) = (*token)->next->next;
+	else
+	{
+		str = "newline";
+		*g_exit_status = ft_errors(2, &str, NULL);
+		return (0);
+	}
+}
+return (1);
 }

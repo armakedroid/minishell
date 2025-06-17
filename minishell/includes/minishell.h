@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/17 19:39:32 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/17 20:35:45 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,18 @@ typedef struct s_mini
 	struct termios	orig_termios;
 }	t_mini;
 
+
+typedef struct s_parse
+{
+	t_output	*back;
+	t_output	*tmp;
+	t_output	*for_args;
+	int			i;
+}	t_parse;
+
 t_output	*create_out(char **str, char *infile, char *outfile);
 void	cmdfun(t_output **lst, t_output *new);
-int my_parse_ut(t_output **back, t_output **tmp, t_token **token, int *i, t_output **for_args);
+int my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args);
 void	add_token(t_token **token, char *str, int i);
 int		my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
 void	check_f(char **back, char **envp, char **path, int flag, int *g_exit_status);
@@ -93,5 +102,7 @@ char	**command_s(char *line);
 t_token	*my_tok(char *line);
 void	print_token(t_token *token);
 void	parse_ut(t_output **tmp, t_token **token);
+int		parse_heredoc(t_token **token, int *g_exit_status);
+int parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status);
 
 #endif
