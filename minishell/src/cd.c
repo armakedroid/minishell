@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/07 18:47:48 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:30:33 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	ft_cd(char **str, char **envp)
 			update_smth(envp, "PWD=", ft_pwd(envp));
 			return (0);
 		}
-		return(cd_utils(str, envp, home));
+		return (cd_utils(str, envp, home));
 	}
 	return (1);
 }

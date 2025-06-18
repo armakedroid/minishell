@@ -24,24 +24,51 @@ int	tok_oper(char *line, int *i, t_token **token)
 	return (1);
 }
 
-
 int	tok_quote(char *line, int *i, t_token **token)
 {
-	int	start = *i;
-	int	quote = 0;
+	int	start;
+	int	quote;
+	int	sng_qut;
 
+	start = *i;
+	quote = 1;
+	sng_qut = 0;
 	while (line[*i] && !is_space(line[*i]) && !is_operator(line[*i]))
 	{
-		if (line[*i] == '\"' && !quote)
-			quote = 1, start = ++(*i);
-		else if (line[*i] == '\"' && quote)
-			quote = 0, (*i)++;
+		if (line[0] == '\'')
+			sng_qut = 1;
+		if (line[*i] == '\"' && quote && !sng_qut)
+		{
+			quote = 0;
+			start = ++(*i);
+		}
+		else if (line[*i] == '\"' && !quote && !sng_qut)
+		{
+			quote = 2;
+			(*i)++;
+		}
 		else
 			(*i)++;
+		if (line[*i] && line[*i + 1] && line[(*i)] == '\'' && !quote
+			&& !sng_qut)
+		{
+			add_token(token, ft_strdup("'"), WORD);
+			(*i)++;
+			start = *i;
+			while (line[*i] && line[*i] != '\'')
+				(*i)++;
+			add_token(token, ft_substr(line, start, *i - start), WORD);
+			(*i)++;
+			add_token(token, ft_strdup("'"), WORD);
+			(*i)++;
+			if (!line[*i] || line[*i] == '\"')
+				return (1);
+			continue ;
+		}
 	}
-	if ((line[start] == '\"' && (*i - start) == 1) || !(*i - start))
+	if ((line[start] == '\"' && ((*i - start) == 1 || !(*i - start))))
 		return (0);
-	add_token(token, ft_substr(line, start, *i - start), WORD);
+	add_token(token, ft_substr(line, start, *i - start - !(quote % 2)), WORD);
 	return (1);
 }
 
@@ -59,9 +86,9 @@ t_token	*my_tok(char *line)
 		while (is_space(line[i]))
 			i++;
 		if (tok_oper(line, &i, &token))
-			continue;
-		if (tok_quote(line, &i, &token))
-			continue;
+			continue ;
+		else if (tok_quote(line, &i, &token))
+			continue ;
 	}
 	return (token);
 }

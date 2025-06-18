@@ -6,13 +6,13 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:34:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/07 20:40:03 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:30:46 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*ft_pwd()
+char	*ft_pwd(void)
 {
 	char	path[1024];
 

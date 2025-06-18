@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/15 19:20:16 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:30:55 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	cmd_count(t_output *cmds)
 	return (count + 1);
 }
 
-void free_fd(int **fd, int i)
+void	free_fd(int **fd, int i)
 {
 	while (i > 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/17 18:39:38 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/18 22:22:07 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int	main(int argc, char **argv, char **envp)
 		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
 		var.stdout1 = dup(STDOUT_FILENO);
 		var.stdin1 = dup(STDIN_FILENO);
-		var.line = readline("\n-------> minishell$ ");
+		var.line = readline("-------> minishell$ ");
 		if (!var.line)
 			break ;
 		if (*var.line)

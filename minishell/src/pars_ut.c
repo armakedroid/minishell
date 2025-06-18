@@ -3,35 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   pars_ut.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 18:48:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/17 19:06:14 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:31:29 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status)
+int	parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status)
 {
 	char	*str;
 
 	str = NULL;
-if ((*token)->type == WORD)
-{
-	(*tmp)->args[*i] = ft_strdup((*token)->value);
-	(*i)++;
+	if ((*token)->type == WORD)
+	{
+		(*tmp)->args[*i] = ft_strdup((*token)->value);
+		(*i)++;
+	}
+	else if ((*token)->next)
+		parse_ut(&(*tmp), &(*token));
+	else
+	{
+		str = "newline";
+		*g_exit_status = ft_errors(2, &str, NULL);
+		return (1);
+	}
+	return (0);
 }
-else if ((*token)->next)
-	parse_ut(&(*tmp), &(*token));
-else
-{
-	str = "newline";
-	*g_exit_status = ft_errors(2, &str, NULL);
-	return (1);
-}
-return (0);
-}
+
 void	parse_ut(t_output **tmp, t_token **token)
 {
 	if ((*token)->type == IN)
@@ -51,46 +52,48 @@ void	parse_ut(t_output **tmp, t_token **token)
 		(*tmp)->num = 1;
 	}
 }
-int my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args)
+
+int	my_parse_ut(t_output **back, t_output **tmp, t_token **token,
+		t_output **for_args)
 {
-if (!(*back))
-	*tmp = create_out(NULL, NULL, NULL);
-else
-{
-(*for_args) = (*back);
-while ((*for_args)->next)
-	(*for_args) = (*for_args)->next;
-if (!((*for_args)->is_p))
-	*tmp = create_out((*for_args)->args, (*for_args)->infile,
-			(*for_args)->outfile);
-else
-	*tmp = create_out(NULL, NULL, NULL);
-}
-if ((*token)->type == PIPE)
-{
-(*tmp)->is_p = 1;
-(*token) = (*token)->next;
-cmdfun(&(*back), *tmp);
-return (1);
-}
-return (0);
+	if (!(*back))
+		*tmp = create_out(NULL, NULL, NULL);
+	else
+	{
+		(*for_args) = (*back);
+		while ((*for_args)->next)
+			(*for_args) = (*for_args)->next;
+		if (!((*for_args)->is_p))
+			*tmp = create_out((*for_args)->args, (*for_args)->infile,
+					(*for_args)->outfile);
+		else
+			*tmp = create_out(NULL, NULL, NULL);
+	}
+	if ((*token)->type == PIPE)
+	{
+		(*tmp)->is_p = 1;
+		(*token) = (*token)->next;
+		cmdfun(&(*back), *tmp);
+		return (1);
+	}
+	return (0);
 }
 
-int parse_heredoc(t_token **token, int *g_exit_status)
+int	parse_heredoc(t_token **token, int *g_exit_status)
 {
 	char *str;
 
 	str = NULL;
-if ((*token)->type == HEREDOC)
-{
-	if ((*token)->next)
-		(*token) = (*token)->next->next;
-	else
+	if ((*token)->type == HEREDOC)
 	{
-		str = "newline";
-		*g_exit_status = ft_errors(2, &str, NULL);
-		return (0);
+		if ((*token)->next)
+			(*token) = (*token)->next->next;
+		else
+		{
+			str = "newline";
+			*g_exit_status = ft_errors(2, &str, NULL);
+			return (0);
+		}
 	}
-}
-return (1);
+	return (1);
 }

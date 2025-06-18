@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:49:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/14 21:30:51 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:38:13 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,10 @@ int	ft_errors(int signal, char **back, char *infile)
 		return (ft_errors1(signal, back, infile));
 	else if (signal == 126)
 		return (ft_errors126(signal, back, infile));
-	else if (signal == 130)
+	else if (signal == 130 || signal == 131)
 	{
 		printf("\n");
-		return (130);
+		return (signal);
 	}
 	else if (signal == 139)
 	{
