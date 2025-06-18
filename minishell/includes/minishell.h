@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/17 20:35:45 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/18 19:04:57 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,9 @@ typedef struct s_parse
 	int			i;
 }	t_parse;
 
+t_token	*create_t(char *str, int i);
+char	**ft_copy_env(char **envp);
+void	ft_lstadd_back1(t_token **lst, t_token *new);
 t_output	*create_out(char **str, char *infile, char *outfile);
 void	cmdfun(t_output **lst, t_output *new);
 int my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args);
