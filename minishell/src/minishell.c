@@ -98,7 +98,6 @@ void	add_token(t_token **token, char *str, int i)
 		ft_lstadd_back1(token, new);
 }
 
-
 void	cmdfun(t_output **lst, t_output *new)
 {
 	t_output	*back;
@@ -132,14 +131,11 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 		while (str[i])
 			i++;
 	new->args = ft_calloc((i + 1), sizeof(char *));
-	i = 0;
+	i = -1;
 	if (str)
 	{
-		while (str[i])
-		{
+		while (str[++i])
 			new->args[i] = ft_strdup(str[i]);
-			i++;
-		}
 	}
 	if (str && !infile && !outfile)
 		new->args[i] = NULL;
@@ -249,7 +245,8 @@ int	main(int argc, char **argv, char **envp)
 		}
 		while (var.cmd->next && var.cmd->next->is_p != 1)
 			var.cmd = var.cmd->next;
-		if (var.cmd && var.cmd->next && var.cmd->next->next && var.cmd->next->is_p)
+		if (var.cmd && var.cmd->next && var.cmd->next->next 
+				&& var.cmd->next->is_p)
 		{
 			g_exit_status = my_pipe(var.cmd, &var.val, var.env, var.my_p);
 		}
@@ -280,7 +277,8 @@ int	main(int argc, char **argv, char **envp)
 					signal(SIGQUIT, SIG_DFL);
 					while (var.cmd->next)
 						var.cmd = var.cmd->next;
-					check_f(var.cmd->args, var.env, var.my_p, 1, &g_exit_status);
+					check_f(var.cmd->args, var.env, 
+							var.my_p, 1, &g_exit_status);
 				}
 				else if (var.cha > 0)
 				{
@@ -290,8 +288,8 @@ int	main(int argc, char **argv, char **envp)
 					dup2(var.stdin1, STDIN_FILENO);
 					signal(SIGINT, handle_sigint);
 					if (var.signal1 < 256 && var.signal1)
-						g_exit_status = ft_errors(WTERMSIG(var.signal1) + 128, NULL,
-								NULL);
+						g_exit_status = ft_errors(WTERMSIG(var.signal1)
+							+ 128, NULL, NULL);
 					else
 						g_exit_status = WEXITSTATUS(var.signal1);
 				}
@@ -306,7 +304,6 @@ int	main(int argc, char **argv, char **envp)
 				close(var.fd);
 		}
 		free_cmd(var.cmd_start);
-		// print_cmd(var.cmd);
 	}
 	free(var.path);
 	free_split(var.env);
