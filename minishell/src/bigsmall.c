@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/18 20:30:55 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/19 18:51:09 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	heredoc(const char *li)
 				break ;
 			}
 		}
-		write(fd, line, strlen(line));
+		write(fd, line, ft_strlen(line));
 		free(line);
 	}
 	close(fd);

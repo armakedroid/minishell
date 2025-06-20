@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 18:48:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/18 20:31:29 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/19 19:37:51 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,11 @@ int	parse_heredoc(t_token **token, int *g_exit_status)
 	char *str;
 
 	str = NULL;
-	if ((*token)->type == HEREDOC)
+	if ((*token)->type == HEREDOC && (*token)->next)
 	{
-		if ((*token)->next)
+		if ((*token) && (*token)->next)
 			(*token) = (*token)->next->next;
-		else
+		else if ((*token) && !(*token)->next)
 		{
 			str = "newline";
 			*g_exit_status = ft_errors(2, &str, NULL);

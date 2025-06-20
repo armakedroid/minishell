@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/18 22:22:07 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/19 19:29:15 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,14 @@ t_output	*parse(t_token *token)
 	{
 		if (!token)
 			return (parse.back);
-		if(!parse_heredoc(&token, &g_exit_status))
+		if (!parse_heredoc(&token, &g_exit_status))
 			return (NULL);
+		if (!token)
+			return (parse.back);
 		if (my_parse_ut(&parse.back, &parse.tmp, &token, &parse.for_args) == 1)
 		{
 			parse.i = 0;
-			continue;
+			continue ;
 		}
 		if (parse_wrd(&token, &parse.tmp, &parse.i, &g_exit_status) == 1)
 		{
@@ -145,8 +147,9 @@ int	main(int argc, char **argv, char **envp)
 		if (var.line[var.k] == '|')
 			continue ;
 		var.token = my_tok(var.line);
+		print_token(var.token);
 		var.ttmp = var.token;
-		while (var.ttmp)
+		while (var.ttmp->next)
 		{
 			if (var.ttmp->type == HEREDOC && var.ttmp->next)
 				heredoc(var.ttmp->next->value);
