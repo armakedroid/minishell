@@ -23,6 +23,8 @@
 # include <unistd.h>
 # define TMP "/tmp/here_doc"
 
+extern int g_exit_status;
+
 typedef struct s_pipe
 {
 	int	in;
@@ -63,6 +65,7 @@ typedef struct s_parse
 	int			i;
 }	t_parse;
 
+int exit_var(t_mini *var, int *g_exit_status);
 t_token	*create_t(char *str, int i);
 char	**ft_copy_env(char **envp);
 void	ft_lstadd_back1(t_token **lst, t_token *new);
@@ -103,10 +106,12 @@ void	free_split(char **back);
 int	is_space(char c);
 int	is_operator(char c);
 char	**command_s(char *line);
+t_output        *parse(t_token *token, int *g_exit_status);
 t_token	*my_tok(char *line);
 void	print_token(t_token *token);
 void	parse_ut(t_output **tmp, t_token **token);
 int		parse_heredoc(t_token **token, int *g_exit_status);
 int parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status);
+void    handle_sigint(int sl);
 
 #endif

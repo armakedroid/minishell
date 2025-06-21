@@ -100,12 +100,15 @@ char	**ft_export(char **envp, char **back)
 {
 	int		i;
 	char	*tmp;
+	char	**cp;
 
 	i = 0;
 	if (!back[1])
 	{
-		sort(envp);
-		print_env(envp);
+		cp = ft_copy_env(envp);
+		sort(cp);
+		print_env(cp);
+		free_split (cp);
 		return (envp);
 	}
 	else if (have_a_var(envp, back))
