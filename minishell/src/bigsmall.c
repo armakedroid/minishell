@@ -195,27 +195,9 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			if (cmds->next)
 				dup2(fd[a][1], STDOUT_FILENO);
 			if (cmds->infile)
-			{
 				small(cmds, &inf);
-				// inf = open(cmds->infile, O_RDONLY);
-				// if (inf == -1)
-				// 	perror(cmds->infile), exit(EXIT_FAILURE);
-				// dup2(inf, STDIN_FILENO);
-				// close(inf);
-			}
 			if (cmds->outfile)
-			{
 				big_crt(cmds, &outf);
-				// if (cmds->num == 1)
-				// 	flags = (O_RDWR | O_CREAT | O_APPEND);
-				// else
-				// 	flags = (O_RDWR | O_CREAT | O_TRUNC);
-				// outf = open(cmds->outfile, flags, 0666);
-				// if (outf == -1)
-				// 	perror(cmds->outfile), exit(EXIT_FAILURE);
-				// dup2(outf, STDOUT_FILENO);
-				// close(outf);
-			}
 			if (cmds->next)
 			{
 				close(fd[a][0]);
@@ -247,7 +229,9 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			str = str->next;
 		in_fd = waitpid(pid[a], &errors, 0);
 		if (errors)
+		{
 			errors1 = WEXITSTATUS(errors);
+		}
 		if (errors1)
 		{
 			ft_errors(errors1, str->args, NULL);

@@ -67,3 +67,11 @@ void	add_token(t_token **token, char *str, int i)
 	else
 		ft_lstadd_back1(token, new);
 }
+
+void initialization(t_mini *var, char **envp)
+{
+	(*var).env = ft_copy_env(envp);
+	(*var).path = get_path((*var).env);
+	(*var).my_p = ft_split((*var).path, ':');
+	(*var).fd = 0;
+}

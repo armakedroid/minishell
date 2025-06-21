@@ -65,6 +65,10 @@ typedef struct s_parse
 	int			i;
 }	t_parse;
 
+void initialization(t_mini *var, char **envp);
+int parse_and_pipe(t_mini *var);
+int	space_token(t_mini *var);
+int	main_main(t_mini *var);
 int exit_var(t_mini *var, int *g_exit_status);
 t_token	*create_t(char *str, int i);
 char	**ft_copy_env(char **envp);

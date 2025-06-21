@@ -63,3 +63,27 @@ void	check_f(char **back, char **envp, char **path, int flag, int *g_exit_status
 	exit(*g_exit_status);
 }
 
+int	main_main(t_mini *var)
+{
+(*var).stdout1 = dup(STDOUT_FILENO);
+(*var).stdin1 = dup(STDIN_FILENO);
+(*var).line1 = readline("-----> minishell$ ");
+if (!(*var).line1)
+	return (1) ;
+if (*(*var).line1)
+	add_history((*var).line1);
+(*var).line = ft_strtrim((*var).line1, " ");
+free((*var).line1);
+if (space_token(&(*var)))
+	return (2);
+if (!ft_strncmp((*var).line, "exit", 4))
+	if (exit_var(&(*var), &g_exit_status))
+	{
+		free((*var).line);
+		free_tokens((*var).token);
+		return (1) ;
+	}
+if (parse_and_pipe(&(*var)))
+	return (2) ;
+return (0);
+}

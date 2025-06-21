@@ -41,9 +41,7 @@ int ft_echo(char **argv, int signal)
 	i = 1;
 	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
 		n = ++i - 1;
-	// printf("\n");
-	// print_str(argv, "argv");
-	// printf("\n");
+
 	while (argv[i])
 	{
 		back = ft_split(argv[i], ' ');
