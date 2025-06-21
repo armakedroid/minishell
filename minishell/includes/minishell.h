@@ -78,7 +78,7 @@ void	cmdfun(t_output **lst, t_output *new);
 int my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args);
 void	add_token(t_token **token, char *str, int i);
 int		my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
-void	check_f(char **back, char **envp, char **path, int flag, int *g_exit_status);
+void	check_f(char **back, char **envp, char **path, int flag);
 void	here_doc_u(char **line, char ***back);
 void	heredoc(const char *li);
 int		have_a_var(char **envp, char **back);

@@ -35,15 +35,15 @@ char	**command_s(char *line)
 	return (back);
 }
 
-void	check_f(char **back, char **envp, char **path, int flag, int *g_exit_status)
+void	check_f(char **back, char **envp, char **path, int flag)
 {
 	char	*line;
 
 	line = NULL;
 	if (ft_strncmp(back[0], "exit", 5) == 0)
-		*g_exit_status = 0;
+		g_exit_status = 0;
 	else if (!ft_strncmp(back[0], "echo", 5))
-		*g_exit_status = ft_echo(back, *g_exit_status);
+		g_exit_status = ft_echo(back, g_exit_status);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 	{
 		line = ft_pwd(envp);
@@ -52,15 +52,15 @@ void	check_f(char **back, char **envp, char **path, int flag, int *g_exit_status
 		free(line);
 	}
 	else if (!ft_strncmp(back[0], "env", 4))
-		*g_exit_status = ft_env(envp);
+		g_exit_status = ft_env(envp);
 	else
 	{
 		if (flag)
-			cmdfile(back, path, envp, &*g_exit_status);
+			cmdfile(back, path, envp, &g_exit_status);
 		else
-			cmd_unexit(back, path, envp, &*g_exit_status);
+			cmd_unexit(back, path, envp, &g_exit_status);
 	}
-	exit(*g_exit_status);
+	exit(g_exit_status);
 }
 
 int	main_main(t_mini *var)

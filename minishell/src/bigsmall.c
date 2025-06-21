@@ -155,7 +155,7 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 	}
 	if (pid[a] == 0)
 	{
-		check_f(str->args, env, my_p, 0, 0);
+		check_f(str->args, env, my_p, 0);
 	}
 	else
 	{
@@ -205,7 +205,7 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 			}
 			if (in_fd != saved_stdin)
 				close(in_fd);
-			check_f(cmds->args, env, my_p, 1, 0);
+			check_f(cmds->args, env, my_p, 1);
 			exit(EXIT_FAILURE);
 		}
 		else

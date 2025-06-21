@@ -24,7 +24,7 @@ void main_ut(t_mini *var)
 		while ((*var).cmd->next)
 			(*var).cmd = (*var).cmd->next;
 		check_f((*var).cmd->args, (*var).env, 
-				(*var).my_p, 1, &g_exit_status);
+				(*var).my_p, 1);
 	}
 	else if ((*var).cha > 0)
 	{
