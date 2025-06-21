@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/19 19:29:15 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/21 18:16:14 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,53 @@ t_output	*parse(t_token *token)
 	return (parse.back);
 }
 
+int exit_var(t_mini *var)
+{
+	char	**str;
+	size_t		k;
+
+	k = 0;
+	if (ft_strlen(var->line) > 4)
+		if (var->line[4] != ' ')
+			return (0);
+	printf("exit\n");
+	str = ft_split(var->line, ' ');
+	if (!str)
+		return (1);
+	if (str && !str[1])
+	{
+		free_split(str);
+		return (1);
+	}
+	if (!ft_strncmp(str[1], "$?", 2))
+	{
+		free_split(str);
+		return (1);
+	}
+	while (str[1][k])
+	{
+		if (ft_isdigit(str[1][k]))
+			k++;
+		else
+			break ;
+	}
+	if (!ft_isdigit(ft_atoi(str[1])) && ft_strlen(str[1]) == k)
+	{
+		if (str[2])
+		{
+			g_exit_status = ft_errors(100, str, NULL);
+			free_split(str);
+			return (0);
+		}
+		g_exit_status = ft_atoi(str[1]);
+		free_split(str);
+		return (1);
+	}
+	g_exit_status = ft_errors(2, &str[1], str[0]);
+	free_split(str);
+	return (1);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_mini	var;
@@ -127,11 +174,13 @@ int	main(int argc, char **argv, char **envp)
 		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
 		var.stdout1 = dup(STDOUT_FILENO);
 		var.stdin1 = dup(STDIN_FILENO);
-		var.line = readline("-------> minishell$ ");
-		if (!var.line)
+		var.line1 = readline("-----> minishell$ ");
+		if (!var.line1)
 			break ;
-		if (*var.line)
-			add_history(var.line);
+		if (*var.line1)
+			add_history(var.line1);
+		var.line = ft_strtrim(var.line1, " ");
+		free(var.line1);
 		var.k = 0;
 		while (var.line[var.k])
 		{
@@ -147,7 +196,6 @@ int	main(int argc, char **argv, char **envp)
 		if (var.line[var.k] == '|')
 			continue ;
 		var.token = my_tok(var.line);
-		print_token(var.token);
 		var.ttmp = var.token;
 		while (var.ttmp->next)
 		{
@@ -155,13 +203,13 @@ int	main(int argc, char **argv, char **envp)
 				heredoc(var.ttmp->next->value);
 			var.ttmp = var.ttmp->next;
 		}
-		if (ft_strncmp(var.line, "exit", 5) == 0)
-		{
-			printf("exit\n");
-			free(var.line);
-			free_tokens(var.token);
-			break ;
-		}
+		if (!ft_strncmp(var.line, "exit", 4))
+			if (exit_var(&var))
+			{
+				free(var.line);
+				free_tokens(var.token);
+				break ;
+			}
 		var.cmd = parse(var.token);
 		var.cmd_start = var.cmd;
 		free_tokens(var.token);
@@ -243,5 +291,5 @@ int	main(int argc, char **argv, char **envp)
 	free(var.path);
 	free_split(var.env);
 	free_split(var.my_p);
-	return (0);
+	return (g_exit_status);
 }

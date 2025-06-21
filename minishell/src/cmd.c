@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/15 18:46:38 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/21 14:56:59 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,21 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 	char	*all;
 	char	*str;
 
-	all = ft_strjoin(path, "/");
 	if (cmd[0][0] != '/')
-		str = ft_strjoin(all, cmd[0]);
+	{
+		all = ft_strjoin("/", cmd[0]);
+		str = ft_strjoin(path, all);
+		free(all);
+	}
 	else
-		str = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
-	free(all);
-	if (access(str, F_OK) == 0)
+		str = ft_strdup(cmd[0]);
+	if (access(str, F_OK) == 0 && path)
 	{
 		if (access(str, X_OK) == 0)
 		{
 			execve(str, cmd, envp);
 			perror("execve failed");
 			free(str);
-			// exit(126);
 		}
 		free_split(cmd);
 		*exit_status = ft_errors126(126, cmd, NULL);
@@ -41,9 +42,9 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 
 int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 {
-	int		i;
+	int	i;
 
-	i = 0;
+	i = -1;
 	if (!cmd || !*cmd)
 	{
 		*exit_status = 127;
@@ -57,13 +58,11 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 	}
 	else
 	{
-
 		if (path && *path)
-			while (path[i])
-			{
+		{
+			while (path[i++])
 				cmd_ut(cmd, path[i], envp, exit_status);
-				i++;
-			}
+		}
 	}
 	*exit_status = ft_errors(127, cmd, NULL);
 	return (*exit_status);
@@ -74,7 +73,7 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 	char	*all;
 	char	*str;
 
-	(void) envp;
+	(void)envp;
 	all = ft_strjoin(path, "/");
 	if (cmd[0][0] != '/')
 		str = ft_strjoin(all, cmd[0]);
@@ -86,7 +85,7 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 		if (access(str, X_OK) == 0)
 		{
 			free(str);
-			exit (0);
+			exit(0);
 		}
 		free_split(cmd);
 		*exit_status = ft_errors126(126, cmd, NULL);
@@ -98,7 +97,7 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 
 int	cmd_unexit(char **cmd, char **path, char **envp, int *exit_status)
 {
-	int		i;
+	int i;
 
 	i = 0;
 	if (!cmd || !*cmd)

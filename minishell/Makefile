@@ -9,7 +9,7 @@ OBJS = $(SRCS:%.c=%.o)
 LIBFT = libft/libft.a
 
 CC = cc
-#CFLGS = -Wall -Wextra -Werror
+CFLGS = -Wall -Wextra -Werror
 
 READLINE_FLAGS = -lreadline -g3
 
@@ -22,10 +22,7 @@ $(NAME): $(OBJS)
 	@$(CC) $(OBJS) $(LIBFT) $(READLINE_FLAGS) -o $(NAME)
 
 %.o: %.c
-	@$(CC) -c $< -o $@
-
-check:
-	@cd minishell-checker && bash check.sh
+	@$(CC) $(CFLGS) -c $< -o $@
 
 clean:
 	@make clean -C libft

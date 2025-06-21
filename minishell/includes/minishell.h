@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/18 19:04:57 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/21 16:31:56 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_mini
 	t_token			*token;
 	t_token			*ttmp;
 	int				cd_result;
+	char			*line1;
 	char			*line;
 	char			**env;
 	pid_t			cha;
