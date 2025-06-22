@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/05 19:06:47 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:15:16 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ char	**ft_export(char **envp, char **back)
 		cp = ft_copy_env(envp);
 		sort(cp);
 		print_env(cp);
-		free_split (cp);
+		free_split(cp);
 		return (envp);
 	}
 	else if (have_a_var(envp, back))

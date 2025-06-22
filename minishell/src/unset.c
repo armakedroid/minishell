@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:35:22 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/14 21:29:58 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:19:16 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	**ft_unset(char **envp, char **back)
 				i++;
 			}
 			envp[i] = NULL;
-			break;
+			break ;
 		}
 		i++;
 	}

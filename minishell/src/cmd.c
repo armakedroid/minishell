@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/21 14:56:59 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:20:13 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 
 int	cmd_unexit(char **cmd, char **path, char **envp, int *exit_status)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!cmd || !*cmd)

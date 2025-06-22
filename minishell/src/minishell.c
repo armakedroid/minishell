@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/21 18:16:14 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:26:39 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 
 t_output	*parse(t_token *token)
 {
-	t_parse		parse;
+	t_parse	parse;
 
 	parse.back = NULL;
 	parse.tmp = NULL;
@@ -104,10 +104,10 @@ t_output	*parse(t_token *token)
 	return (parse.back);
 }
 
-int exit_var(t_mini *var, int *g_exit_status)
+int	exit_var(t_mini *var)
 {
 	char	**str;
-	size_t		k;
+	size_t	k;
 
 	k = 0;
 	if (ft_strlen(var->line) > 4)
@@ -138,16 +138,15 @@ int exit_var(t_mini *var, int *g_exit_status)
 	{
 		if (str[2])
 		{
-			(*g_exit_status) = ft_errors(100, str, NULL);
+			g_exit_status = ft_errors(100, str, NULL);
 			free_split(str);
 			return (0);
 		}
-		(*g_exit_status) = ft_atoi(str[1]);
+		g_exit_status = ft_atoi(str[1]);
 		free_split(str);
 		return (1);
 	}
-	(*g_exit_status) = ft_errors(2, &str[1], str[0]);
+	g_exit_status = ft_errors(2, &str[1], str[0]);
 	free_split(str);
 	return (1);
 }
-

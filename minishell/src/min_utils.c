@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   min_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 21:28:34 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/16 21:28:59 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:27:54 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 int	is_space(char c)
@@ -46,7 +47,7 @@ void	check_f(char **back, char **envp, char **path, int flag)
 		g_exit_status = ft_echo(back, g_exit_status);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 	{
-		line = ft_pwd(envp);
+		line = ft_pwd();
 		if (line)
 			printf("%s\n", line);
 		free(line);
@@ -65,25 +66,27 @@ void	check_f(char **back, char **envp, char **path, int flag)
 
 int	main_main(t_mini *var)
 {
-(*var).stdout1 = dup(STDOUT_FILENO);
-(*var).stdin1 = dup(STDIN_FILENO);
-(*var).line1 = readline("-----> minishell$ ");
-if (!(*var).line1)
-	return (1) ;
-if (*(*var).line1)
-	add_history((*var).line1);
-(*var).line = ft_strtrim((*var).line1, " ");
-free((*var).line1);
-if (space_token(&(*var)))
-	return (2);
-if (!ft_strncmp((*var).line, "exit", 4))
-	if (exit_var(&(*var), &g_exit_status))
+	(*var).stdout1 = dup(STDOUT_FILENO);
+	(*var).stdin1 = dup(STDIN_FILENO);
+	(*var).line1 = readline("-----> minishell$ ");
+	if (!(*var).line1)
+		return (1);
+	if (*(*var).line1)
+		add_history((*var).line1);
+	(*var).line = ft_strtrim((*var).line1, " ");
+	free((*var).line1);
+	if (space_token(&(*var)))
+		return (2);
+	if (!ft_strncmp((*var).line, "exit", 4))
 	{
-		free((*var).line);
-		free_tokens((*var).token);
-		return (1) ;
+		if (exit_var(var))
+		{
+			free((*var).line);
+			free_tokens((*var).token);
+			return (1);
+		}
 	}
-if (parse_and_pipe(&(*var)))
-	return (2) ;
-return (0);
+	if (parse_and_pipe(&(*var)))
+		return (2);
+	return (0);
 }

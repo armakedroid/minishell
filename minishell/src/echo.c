@@ -29,19 +29,18 @@
 // 	}
 // }
 
-int ft_echo(char **argv, int signal)
+int	ft_echo(char **argv, int signal)
 {
-	int i;
-	int j;
-	int n;
-	char *str;
-	char **back;
+	int		i;
+	int		j;
+	int		n;
+	char	*str;
+	char	**back;
 
 	n = 0;
 	i = 1;
 	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
 		n = ++i - 1;
-
 	while (argv[i])
 	{
 		back = ft_split(argv[i], ' ');
@@ -58,7 +57,8 @@ int ft_echo(char **argv, int signal)
 				back[j] = str;
 				printf("%s", back[j]);
 			}
-			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j]) - 1] == '\"')
+			else if (back[j][0] == '\"'
+				|| back[j][ft_strlen(back[j]) - 1] == '\"')
 			{
 				str = ft_strtrim(back[j], "\"");
 				free(back[j]);
@@ -94,8 +94,8 @@ int ft_echo(char **argv, int signal)
 				}
 			}
 			if ((back[j + 1] || str) && back[j][0] != '\'')
-				if ((argv[i + 1] && argv[i + 1][0] != '\'')
-					|| (back[j + 1] && back[j + 1][0] != '\''))
+				if ((argv[i + 1] && argv[i + 1][0] != '\'') || (back[j + 1]
+						&& back[j + 1][0] != '\''))
 					printf(" ");
 			j++;
 		}

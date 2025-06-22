@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:49:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/21 18:07:45 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/22 18:15:11 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	ft_errors126(int signal, char **back, char *infile)
 	char	*line;
 	int		fd;
 
-	(void) infile;
+	(void)infile;
 	if (signal == 126)
 	{
 		fd = open(back[0], O_RDONLY);
@@ -86,9 +86,11 @@ int	ft_errors(int signal, char **back, char *infile)
 		if (infile)
 		{
 			if (ft_strncmp(infile, "exit", 4))
-				printf("bash: syntax error near unexpected token `%s'\n", *back);
+				printf("bash: syntax error near unexpected token `%s'\n",
+					*back);
 			else
-				printf("bash: %s: %s: numeric argument required\n", infile, *back);
+				printf("bash: %s: %s: numeric argument required\n", infile,
+					*back);
 		}
 		else
 			printf("bash: syntax error near unexpected token `%s'\n", *back);
