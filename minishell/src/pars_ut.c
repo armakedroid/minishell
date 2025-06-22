@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status)
+int	parse_wrd(t_token **token, t_output **tmp, int *i)
 {
 	char	*str;
 
@@ -27,7 +27,7 @@ int	parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status)
 	else
 	{
 		str = "newline";
-		*g_exit_status = ft_errors(2, &str, NULL);
+		g_exit_status = ft_errors(2, &str, NULL);
 		return (1);
 	}
 	return (0);
@@ -79,7 +79,7 @@ int	my_parse_ut(t_output **back, t_output **tmp, t_token **token,
 	return (0);
 }
 
-int	parse_heredoc(t_token **token, int *g_exit_status)
+int	parse_heredoc(t_token **token)
 {
 	char *str;
 
@@ -91,7 +91,7 @@ int	parse_heredoc(t_token **token, int *g_exit_status)
 		else if ((*token) && !(*token)->next)
 		{
 			str = "newline";
-			*g_exit_status = ft_errors(2, &str, NULL);
+			g_exit_status = ft_errors(2, &str, NULL);
 			return (0);
 		}
 	}

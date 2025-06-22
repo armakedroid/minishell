@@ -83,10 +83,15 @@ int	ft_errors(int signal, char **back, char *infile)
 	}
 	else if (signal == 2)
 	{
-		if (ft_strncmp(infile, "exit", 4))
-			printf("bash: syntax error near unexpected token `%s'\n", *back);
+		if (infile)
+		{
+			if (ft_strncmp(infile, "exit", 4))
+				printf("bash: syntax error near unexpected token `%s'\n", *back);
+			else
+				printf("bash: %s: %s: numeric argument required\n", infile, *back);
+		}
 		else
-			printf("bash: %s: %s: numeric argument required\n", infile, *back);
+			printf("bash: syntax error near unexpected token `%s'\n", *back);
 		return (2);
 	}
 	return (signal);

@@ -110,12 +110,12 @@ void	free_split(char **back);
 int	is_space(char c);
 int	is_operator(char c);
 char	**command_s(char *line);
-t_output        *parse(t_token *token, int *g_exit_status);
+t_output        *parse(t_token *token);
 t_token	*my_tok(char *line);
 void	print_token(t_token *token);
 void	parse_ut(t_output **tmp, t_token **token);
-int		parse_heredoc(t_token **token, int *g_exit_status);
-int parse_wrd(t_token **token, t_output **tmp, int *i, int *g_exit_status);
+int		parse_heredoc(t_token **token);
+int parse_wrd(t_token **token, t_output **tmp, int *i);
 void    handle_sigint(int sl);
 
 #endif

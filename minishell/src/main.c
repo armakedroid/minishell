@@ -100,7 +100,7 @@ int	space_token(t_mini *var)
 
 int parse_and_pipe(t_mini *var)
 {
-	(*var).cmd = parse((*var).token, &g_exit_status);
+	(*var).cmd = parse((*var).token);
 	(*var).cmd_start = (*var).cmd;
 	free_tokens((*var).token);
 	free((*var).line);
@@ -147,11 +147,8 @@ int	main(int argc, char **argv, char **envp)
 		else if (i == 1)
 			break;
 	}
-	if (var.path)
-		free(var.path);
-	if (var.env)
-		free_split(var.env);
-	if (var.my_p)
-		free_split(var.my_p);
+	free(var.path);
+	free_split(var.env);
+	free_split(var.my_p);
 	return (g_exit_status);
 }

@@ -73,7 +73,7 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 	return (new);
 }
 
-t_output	*parse(t_token *token, int *g_exit_status)
+t_output	*parse(t_token *token)
 {
 	t_parse		parse;
 
@@ -84,7 +84,7 @@ t_output	*parse(t_token *token, int *g_exit_status)
 	{
 		if (!token)
 			return (parse.back);
-		if (!parse_heredoc(&token, &(*g_exit_status)))
+		if (!parse_heredoc(&token))
 			return (NULL);
 		if (!token)
 			return (parse.back);
@@ -93,7 +93,7 @@ t_output	*parse(t_token *token, int *g_exit_status)
 			parse.i = 0;
 			continue ;
 		}
-		if (parse_wrd(&token, &parse.tmp, &parse.i, &(*g_exit_status)) == 1)
+		if (parse_wrd(&token, &parse.tmp, &parse.i) == 1)
 		{
 			parse.i = 1;
 			return (NULL);
