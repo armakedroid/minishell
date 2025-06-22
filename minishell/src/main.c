@@ -86,13 +86,13 @@ int	space_token(t_mini *var)
 		break ;
 	}
 	if ((*var).line[(*var).k] == '|')
-		return (1) ;
+	return (1) ;
 	(*var).token = my_tok((*var).line);
 	(*var).ttmp = (*var).token;
-	while ((*var).ttmp->next)
+	while ((*var).ttmp && (*var).ttmp->next)
 	{
 		if ((*var).ttmp->type == HEREDOC && (*var).ttmp->next)
-			heredoc((*var).ttmp->next->value);
+		heredoc((*var).ttmp->next->value);
 		(*var).ttmp = (*var).ttmp->next;
 	}
 	return (0);
@@ -147,8 +147,11 @@ int	main(int argc, char **argv, char **envp)
 		else if (i == 1)
 			break;
 	}
-	free(var.path);
-	free_split(var.env);
-	free_split(var.my_p);
+	if (var.path)
+		free(var.path);
+	if (var.env)
+		free_split(var.env);
+	if (var.my_p)
+		free_split(var.my_p);
 	return (g_exit_status);
 }
