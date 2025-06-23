@@ -13,23 +13,23 @@
 // 	return (0);
 // }
 
-// char *get_my_env(char *str, char **env)
-// {
-// 	int	i;
-// 	int	j;
+char	*get_my_env(char *str, char **env)
+{
+	int	i;
 
-// 	i = 0;
-// 	while (env[i])
-// 	{
-// 		j = 0;
-// 		while (env[i][j])
-// 		{
-// 			if (ft_strncmp())
-// 		}
-// 	}
-// }
+	i = 0;
+	while (env[i])
+	{
+		if (!ft_strncmp(str, env[i], ft_strlen(str)))
+			break ;
+		i++;
+	}
+	if (!env[i])
+		return (NULL);
+	return (env[i] + ft_strlen(str) + 1);
+}
 
-int	ft_echo(char **argv, int signal)
+int	ft_echo(char **argv, int signal, char **env)
 {
 	int		i;
 	int		j;
@@ -39,7 +39,7 @@ int	ft_echo(char **argv, int signal)
 
 	n = 0;
 	i = 1;
-	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
+	if (argv[1] && ft_strncmp(argv[1], "-n", 3) == 0)
 		n = ++i - 1;
 	while (argv[i])
 	{
@@ -57,8 +57,8 @@ int	ft_echo(char **argv, int signal)
 				back[j] = str;
 				printf("%s", back[j]);
 			}
-			else if (back[j][0] == '\"'
-				|| back[j][ft_strlen(back[j]) - 1] == '\"')
+			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j])
+				- 1] == '\"')
 			{
 				str = ft_strtrim(back[j], "\"");
 				free(back[j]);
@@ -68,7 +68,7 @@ int	ft_echo(char **argv, int signal)
 				{
 					if (back[j][1] == '?')
 						printf("%d", signal);
-					str = getenv(back[j] + 1);
+					str = get_my_env(back[j] + 1, env);
 					if (str)
 						printf("%s", str);
 				}
@@ -81,7 +81,7 @@ int	ft_echo(char **argv, int signal)
 				{
 					if (back[j][1] == '?')
 						printf("%d", signal);
-					str = getenv(back[j] + 1);
+					str = get_my_env(back[j] + 1, env);
 					if (str)
 						printf("%s", str);
 				}

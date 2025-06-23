@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:26:39 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/23 21:20:17 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ t_output	*parse(t_token *token)
 int	exit_var(t_mini *var)
 {
 	char	**str;
-	size_t	k;
+	ssize_t	k;
 
 	k = 0;
 	if (ft_strlen(var->line) > 4)
@@ -129,12 +129,13 @@ int	exit_var(t_mini *var)
 	}
 	while (str[1][k])
 	{
-		if (ft_isdigit(str[1][k]))
+		if (ft_isdigit(str[1][k]) || str[1][k] == '-' || str[1][k] == '+')
 			k++;
 		else
 			break ;
 	}
-	if (!ft_isdigit(ft_atoi(str[1])) && ft_strlen(str[1]) == k)
+	if (!ft_isdigit(ft_atoi(str[1]))
+		&& (ssize_t)(ft_strlen(str[1])) == k)
 	{
 		if (str[2])
 		{

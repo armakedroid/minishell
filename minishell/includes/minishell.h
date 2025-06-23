@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:27:17 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/23 21:49:46 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_mini
 	int				fd;
 	t_pipe			val;
 	int				k;
+	char			*str;
 	struct termios	orig_termios;
 }					t_mini;
 
@@ -66,8 +67,8 @@ typedef struct s_parse
 
 void				initialization(t_mini *var, char **envp);
 int					parse_and_pipe(t_mini *var);
-int					space_token(t_mini *var);
-int					main_main(t_mini *var);
+int					space_token(t_mini *var, char **env);
+int					main_main(t_mini *var, char **env);
 int					exit_var(t_mini *var);
 t_token				*create_t(char *str, int i);
 char				**ft_copy_env(char **envp);
@@ -86,7 +87,7 @@ int					have_a_var(char **envp, char **back);
 void				update_smth(char **envp, char *var, char *value);
 char				**ft_export(char **envp, char **back);
 int					ft_cd(char **str, char **envp);
-int					ft_echo(char **back, int signal);
+int					ft_echo(char **back, int signal, char **env);
 int					ft_env(char **envp);
 char				**ft_unset(char **envp, char **back);
 char				*ft_pwd(void);
@@ -114,11 +115,12 @@ int					is_space(char c);
 int					is_operator(char c);
 char				**command_s(char *line);
 t_output			*parse(t_token *token);
-t_token				*my_tok(char *line);
+t_token				*my_tok(char *line, char **env);
 void				print_token(t_token *token);
 void				parse_ut(t_output **tmp, t_token **token);
 int					parse_heredoc(t_token **token);
 int					parse_wrd(t_token **token, t_output **tmp, int *i);
 void				handle_sigint(int sl);
+char				*get_my_env(char *str, char **env);
 
 #endif

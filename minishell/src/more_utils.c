@@ -12,8 +12,6 @@ char	**ft_copy_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], "SHLVL=", 7))
-			envp[i] = ft_strjoin("SHLVL=", ft_itoa(ft_atoi(envp[i] + 6) + 1));
 		tmp[i] = ft_strdup(envp[i]);
 		i++;
 	}

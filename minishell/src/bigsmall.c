@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/19 18:51:09 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:39:59 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,7 @@ int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
 				free_fd(fd, cmd_nbr - 1);
 			dup2(saved_stdout, STDOUT_FILENO);
 			close(inf);
+			ft_errors(errors1, str->args, NULL);
 			return (errors1);
 		}
 	}

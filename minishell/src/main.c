@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:39:37 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:14:19 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/23 22:00:54 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	main_function_utils(t_mini *var)
 		close((*var).fd);
 }
 
-int	space_token(t_mini *var)
+int	space_token(t_mini *var, char **env)
 {
 	(*var).k = 0;
 	while ((*var).line[(*var).k])
@@ -79,14 +79,14 @@ int	space_token(t_mini *var)
 			(*var).k++;
 		if ((*var).line[(*var).k] == '|')
 		{
-			(*var).path = "|";
-			ft_errors(2, &(*var).path, NULL);
+			(*var).str = "|";
+			g_exit_status = ft_errors(2, &(*var).str, NULL);
 		}
 		break ;
 	}
 	if ((*var).line[(*var).k] == '|')
 		return (1);
-	(*var).token = my_tok((*var).line);
+	(*var).token = my_tok((*var).line, env);
 	(*var).ttmp = (*var).token;
 	while ((*var).ttmp && (*var).ttmp->next)
 	{
@@ -141,7 +141,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
-		i = main_main(&var);
+		i = main_main(&var, var.env);
 		if (i == 2)
 			continue ;
 		else if (i == 1)

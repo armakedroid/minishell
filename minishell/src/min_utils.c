@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 21:28:34 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:27:54 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/23 21:49:37 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	check_f(char **back, char **envp, char **path, int flag)
 	if (ft_strncmp(back[0], "exit", 5) == 0)
 		g_exit_status = 0;
 	else if (!ft_strncmp(back[0], "echo", 5))
-		g_exit_status = ft_echo(back, g_exit_status);
+		g_exit_status = ft_echo(back, g_exit_status, envp);
 	else if (!ft_strncmp(back[0], "pwd", 4))
 	{
 		line = ft_pwd();
@@ -64,7 +64,7 @@ void	check_f(char **back, char **envp, char **path, int flag)
 	exit(g_exit_status);
 }
 
-int	main_main(t_mini *var)
+int	main_main(t_mini *var, char **env)
 {
 	(*var).stdout1 = dup(STDOUT_FILENO);
 	(*var).stdin1 = dup(STDIN_FILENO);
@@ -75,7 +75,7 @@ int	main_main(t_mini *var)
 		add_history((*var).line1);
 	(*var).line = ft_strtrim((*var).line1, " ");
 	free((*var).line1);
-	if (space_token(&(*var)))
+	if (space_token(&(*var), env))
 		return (2);
 	if (!ft_strncmp((*var).line, "exit", 4))
 	{

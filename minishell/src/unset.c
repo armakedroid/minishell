@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:35:22 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:19:16 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:26:43 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ char	**ft_unset(char **envp, char **back)
 	if (!back || !back[1])
 		return (envp);
 	if (have_a_var(envp, back) == -1)
-	{
-		printf("unset: %s: invalid parameter name\n", back[1]);
 		return (envp);
-	}
 	while (envp[i])
 	{
 		if (mykey(envp[i], back[1]))
