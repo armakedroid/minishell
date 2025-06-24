@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:20:13 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/24 21:38:02 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 {
 	int	i;
 
-	i = -1;
+	i = 0;
 	if (!cmd || !*cmd)
 	{
 		*exit_status = 127;
@@ -56,12 +56,12 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 			execve(cmd[0], cmd, envp);
 		*exit_status = ft_errors(126, cmd, NULL);
 	}
-	else
+	else if (path && *path)
 	{
-		if (path && *path)
+		while (path[i])
 		{
-			while (path[i++])
-				cmd_ut(cmd, path[i], envp, exit_status);
+			cmd_ut(cmd, path[i], envp, exit_status);
+			i++;
 		}
 	}
 	*exit_status = ft_errors(127, cmd, NULL);

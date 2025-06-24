@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:15:16 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/24 21:48:38 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ char	**helper_ex(char **envp, char **back)
 	i = 0;
 	while (envp[i])
 		i++;
-	env = malloc((i + 1) * sizeof(char *));
+	env = malloc((i + 2) * sizeof(char *));
 	i = 0;
 	while (envp[i])
 	{
@@ -93,6 +93,7 @@ char	**helper_ex(char **envp, char **back)
 	}
 	env[i] = ft_strdup(back[1]);
 	env[i + 1] = NULL;
+	free_split(envp);
 	return (env);
 }
 

@@ -24,12 +24,13 @@ int	tok_oper(char *line, int *i, t_token **token)
 	return (1);
 }
 
-void	tok_for_dol(char *str, t_token **token, char **env)
+char	*tok_for_dol(char *str, char **env)
 {
-	if (str[1] == '?' && !str[2])
-		add_token(token, ft_itoa(g_exit_status), WORD);
-	else if (get_my_env(str + 1, env))
-		add_token(token, ft_strdup(get_my_env(str + 1, env)), WORD);
+	if (str[0] == '?' && !str[1])
+		return (ft_itoa(g_exit_status));
+	else if (get_my_env(str, env))
+		return (ft_strdup(get_my_env(str, env)));
+	return (ft_strdup(""));
 }
 
 int	tok_quote(char *line, int *i, t_token **token, char **env)
@@ -38,12 +39,18 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	int		quote;
 	int		sng_qut;
 	int		count;
+	int		l;
+	int		j;
 	char	*str;
+	char	**all;
+	char	*all1_h;
+	char	*all1;
 
 	start = *i;
 	quote = 1;
 	sng_qut = 0;
 	count = 0;
+	all = NULL;
 	while (line[*i] && !is_space(line[*i]) && !is_operator(line[*i]))
 	{
 		if (line[0] == '\'')
@@ -80,32 +87,68 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	if ((line[start] == '\"' && ((*i - start) == 1 || !(*i - start))))
 		return (0);
 	str = ft_substr(line, start, *i - start - !(quote % 2));
-	if (!ft_strncmp(str, "$", 1))
+	if (ft_strchr(str, '$'))
 	{
-		quote = 1;
-		sng_qut = 0;
-		while (str[sng_qut])
+		l = 0;
+		if (ft_strlen(str) == 1)
 		{
-			if (str[sng_qut] == '$')
-				count++;
-			sng_qut++;
+			add_token(token, ft_strdup("$"), WORD);
+			return (0);
 		}
-		tok_for_dol(str, token, env);
-		count--;
-		while (count > 0)
+		while (str[l] && str[l] != '$')
+			l++;
+		if (l)
+			all1 = ft_substr(str, 0, l);
+		else
 		{
-			if (ft_strchr(str + 1, '$'))
+			while (str[l] && str[l + 1] && str[l + 1] == '$')
+				l++;
+			all1 = NULL;
+		}
+		if (str && ft_strlen(str + l) == 1)
+			return (0);
+		all = ft_split(str + l, '$');
+		if (str[0] == '$')
+			quote = 0;
+		else
+			quote = 1;
+		l = 0;
+		while (all[quote])
+		{
+			while (all[quote][l])
 			{
-				while (str[quote] && str[quote] != '$')
-					quote++;
-				tok_for_dol(str + quote, token, env);
+				if (all[quote][l]
+					&& (!ft_isalpha(all[quote][l]) && all[quote][l] != '?'))
+					break ;
+				l++;
 			}
-			count--;
+			if (!l)
+				return (0);
+			all1_h = ft_strjoin(all1, tok_for_dol(ft_substr(all[quote], 0, l), env));
+			free(all1);
+			all1 = all1_h;
+			j = l;
+			if (!all1_h)
+				return (0);
+			while (all[quote][l])
+				l++;
+			if (j != l)
+				all1_h = ft_strjoin(all1, ft_substr(all[quote], j, l - j));
+			if (all1)
+				free(all1);
+			all1 = all1_h;
+			quote++;
 		}
+		add_token(token, all1, WORD);
 		if (str)
 		{
 			free(str);
 			str = NULL;
+		}
+		if (all)
+		{
+			free_split(all);
+			all = NULL;
 		}
 	}
 	else
