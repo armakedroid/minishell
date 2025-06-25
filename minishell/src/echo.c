@@ -15,18 +15,20 @@
 
 char	*get_my_env(char *str, char **env)
 {
-	int	i;
+	int		i;
+	char	*all;
 
+	all = ft_strjoin(str, "=");
 	i = 0;
 	while (env[i])
 	{
-		if (!ft_strncmp(str, env[i], ft_strlen(str)))
+		if (!ft_strncmp(all, env[i], ft_strlen(all)))
 			break ;
 		i++;
 	}
 	if (!env[i])
-		return (NULL);
-	return (env[i] + ft_strlen(str) + 1);
+		return (free(all), NULL);
+	return (free(all), env[i] + ft_strlen(str) + 1);
 }
 
 int	ft_echo(char **argv, int signal, char **env)

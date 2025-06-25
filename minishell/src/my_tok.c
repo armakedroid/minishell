@@ -24,13 +24,22 @@ int	tok_oper(char *line, int *i, t_token **token)
 	return (1);
 }
 
+int	tok_for_dol_2(char *str, char **env)
+{
+	if (str[0] == '?' && !str[1])
+		return (1);
+	else if (get_my_env(str, env))
+		return (1);
+	return (0);
+}
+
 char	*tok_for_dol(char *str, char **env)
 {
 	if (str[0] == '?' && !str[1])
 		return (ft_itoa(g_exit_status));
 	else if (get_my_env(str, env))
 		return (ft_strdup(get_my_env(str, env)));
-	return (ft_strdup(""));
+	return (NULL);
 }
 
 int	tok_quote(char *line, int *i, t_token **token, char **env)
@@ -45,29 +54,40 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	char	**all;
 	char	*all1_h;
 	char	*all1;
+	char	*all2;
+	int		is_echo;
 
 	start = *i;
 	quote = 1;
-	sng_qut = 0;
+	sng_qut = 1;
 	count = 0;
+	is_echo = 0;
 	all = NULL;
-	while (line[*i] && !is_space(line[*i]) && !is_operator(line[*i]))
+	while ((line[*i] && !is_space(line[*i]) && !is_operator(line[*i])) || (quote == 0 || sng_qut == 0))
 	{
-		if (line[0] == '\'')
-			sng_qut = 1;
-		if (line[*i] == '\"' && quote && !sng_qut)
+		if (line[*i] == '\"' && quote)
 		{
 			quote = 0;
 			start = ++(*i);
 		}
-		else if (line[*i] == '\"' && !quote && !sng_qut)
+		else if (line[*i] == '\'' && sng_qut)
+		{
+			sng_qut = 0;
+			start = ++(*i);
+		}
+		else if (line[*i] == '\"'&& !quote)
 		{
 			quote = 2;
 			(*i)++;
 		}
+		else if (line[*i] == '\'' && !sng_qut)
+		{
+			sng_qut = 2;
+			(*i)++;
+		}
 		else
 			(*i)++;
-		if (line[*i] && line[*i + 1] && line[(*i)] == '\'' && !quote
+		if (line[*i] && line[*i + 1] && line[*i] == '\'' && !quote
 			&& !sng_qut)
 		{
 			add_token(token, ft_strdup("'"), WORD);
@@ -87,7 +107,13 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	if ((line[start] == '\"' && ((*i - start) == 1 || !(*i - start))))
 		return (0);
 	str = ft_substr(line, start, *i - start - !(quote % 2));
-	if (ft_strchr(str, '$'))
+	if (sng_qut == 2)
+	{
+		all2 = ft_strtrim(str, "'");
+		free(str);
+		str = all2;
+	}
+	if (ft_strchr(str, '$') && !quote && sng_qut == 2)
 	{
 		l = 0;
 		if (ft_strlen(str) == 1)
@@ -118,13 +144,15 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 			while (all[quote][l])
 			{
 				if (all[quote][l]
-					&& (!ft_isalpha(all[quote][l]) && all[quote][l] != '?'))
+					&& (!ft_isalpha(all[quote][l]) && all[quote][l] != '?'
+					&& all[quote][l] != '_'))
 					break ;
 				l++;
 			}
 			if (!l)
 				return (0);
-			all1_h = ft_strjoin(all1, tok_for_dol(ft_substr(all[quote], 0, l), env));
+			if (tok_for_dol_2(ft_substr(all[quote], 0, l), env))
+				all1_h = ft_strjoin(all1, tok_for_dol(ft_substr(all[quote], 0, l), env));
 			free(all1);
 			all1 = all1_h;
 			j = l;
@@ -134,8 +162,6 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 				l++;
 			if (j != l)
 				all1_h = ft_strjoin(all1, ft_substr(all[quote], j, l - j));
-			if (all1)
-				free(all1);
 			all1 = all1_h;
 			quote++;
 		}
