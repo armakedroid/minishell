@@ -63,7 +63,8 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	count = 0;
 	is_echo = 0;
 	all = NULL;
-	while ((line[*i] && !is_space(line[*i]) && !is_operator(line[*i])) || (quote == 0 || sng_qut == 0))
+	while ((line[*i] && !is_space(line[*i]) && !is_operator(line[*i]))
+		|| (quote == 0 || sng_qut == 0))
 	{
 		if (line[*i] == '\"' && quote)
 		{
@@ -75,7 +76,7 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 			sng_qut = 0;
 			start = ++(*i);
 		}
-		else if (line[*i] == '\"'&& !quote)
+		else if (line[*i] == '\"' && !quote)
 		{
 			quote = 2;
 			(*i)++;
@@ -87,8 +88,7 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 		}
 		else
 			(*i)++;
-		if (line[*i] && line[*i + 1] && line[*i] == '\'' && !quote
-			&& !sng_qut)
+		if (line[*i] && line[*i + 1] && line[*i] == '\'' && !quote && !sng_qut)
 		{
 			add_token(token, ft_strdup("'"), WORD);
 			(*i)++;
@@ -113,7 +113,7 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 		free(str);
 		str = all2;
 	}
-	if (ft_strchr(str, '$') && !quote && sng_qut == 2)
+	if (ft_strchr(str, '$') && quote && sng_qut == 1)
 	{
 		l = 0;
 		if (ft_strlen(str) == 1)
@@ -133,7 +133,7 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 		}
 		if (str && ft_strlen(str + l) == 1)
 			return (0);
-		all = ft_split(str + l, '$');
+		all = ft_split(str + l - !(!(l)), '$');
 		if (str[0] == '$')
 			quote = 0;
 		else
@@ -143,16 +143,18 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 		{
 			while (all[quote][l])
 			{
-				if (all[quote][l]
-					&& (!ft_isalpha(all[quote][l]) && all[quote][l] != '?'
-					&& all[quote][l] != '_'))
+				if (all[quote][l] && (!ft_isalpha(all[quote][l])
+						&& all[quote][l] != '?' && all[quote][l] != '_'))
 					break ;
 				l++;
 			}
 			if (!l)
 				return (0);
 			if (tok_for_dol_2(ft_substr(all[quote], 0, l), env))
-				all1_h = ft_strjoin(all1, tok_for_dol(ft_substr(all[quote], 0, l), env));
+				all1_h = ft_strjoin(all1, tok_for_dol(ft_substr(all[quote], 0,
+								l), env));
+			else
+				all1_h = ft_strjoin(all1, " ");
 			free(all1);
 			all1 = all1_h;
 			j = l;

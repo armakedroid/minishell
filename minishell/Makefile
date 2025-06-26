@@ -9,7 +9,7 @@ OBJS = $(SRCS:%.c=%.o)
 LIBFT = libft/libft.a
 
 CC = cc
-CFLGS = -Wall -Wextra -Werror
+#CFLGS = -Wall -Wextra -Werror
 
 READLINE_FLAGS = -lreadline -g3
 

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 19:15:08 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/24 21:38:02 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/26 20:18:11 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,13 @@ int	cmdfile(char **cmd, char **path, char **envp, int *exit_status)
 		*exit_status = 127;
 		return (1);
 	}
-	if (cmd[0][0] == '.' && cmd[0][1] == '/')
+	if (ft_strlen(cmd[0]) > 1 && cmd[0][0] == '.' && cmd[0][1] == '/')
 	{
 		if (access(cmd[0], X_OK) == 0)
 			execve(cmd[0], cmd, envp);
 		*exit_status = ft_errors(126, cmd, NULL);
 	}
-	else if (path && *path)
+	else if (path && *path && cmd[0] && ft_strncmp(cmd[0], "", 1))
 	{
 		while (path[i])
 		{

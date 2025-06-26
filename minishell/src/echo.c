@@ -59,41 +59,12 @@ int	ft_echo(char **argv, int signal, char **env)
 				back[j] = str;
 				printf("%s", back[j]);
 			}
-			else if (back[j][0] == '\"' || back[j][ft_strlen(back[j])
-				- 1] == '\"')
-			{
-				str = ft_strtrim(back[j], "\"");
-				free(back[j]);
-				back[j] = ft_strdup(str);
-				free(str);
-				if (back[j][0] == '$' && back[j][1])
-				{
-					if (back[j][1] == '?')
-						printf("%d", signal);
-					str = get_my_env(back[j] + 1, env);
-					if (str)
-						printf("%s", str);
-				}
-				else
-					printf("%s", back[j]);
-			}
 			else
 			{
-				if (back[j][0] == '$' && back[j][1])
-				{
-					if (back[j][1] == '?')
-						printf("%d", signal);
-					str = get_my_env(back[j] + 1, env);
-					if (str)
-						printf("%s", str);
-				}
+				if (back[j] && back)
+					printf("%s", back[j]);
 				else
-				{
-					if (back[j] && back)
-						printf("%s", back[j]);
-					else
-						write(1, "\n", 1);
-				}
+					write(1, "\n", 1);
 			}
 			if ((back[j + 1] || str) && back[j][0] != '\'')
 				if ((argv[i + 1] && argv[i + 1][0] != '\'') || (back[j + 1]
