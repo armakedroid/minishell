@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/23 21:49:46 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/28 18:24:07 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,5 +122,9 @@ int					parse_heredoc(t_token **token);
 int					parse_wrd(t_token **token, t_output **tmp, int *i);
 void				handle_sigint(int sl);
 char				*get_my_env(char *str, char **env);
+int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
+void	free_fd(int **fd, int i);
+int	cmd_count(t_output *cmds);
+char	*get_home(char **envp);
 
 #endif

@@ -12,20 +12,6 @@
 
 #include "../includes/minishell.h"
 
-char	*get_home(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
-	{
-		if (!ft_strncmp(envp[i], "HOME=", 5))
-			return (envp[i] + 5);
-		i++;
-	}
-	return (NULL);
-}
-
 char	*get_old_path(char **envp)
 {
 	int	i;
@@ -39,6 +25,19 @@ char	*get_old_path(char **envp)
 	}
 	return (NULL);
 }
+int cd_minus_utils(char *home, char **envp)
+{
+	if (home)
+	{
+		update_smth(envp, "OLDPWD=", ft_pwd());
+		printf("%s\n", home);
+		if (chdir(home) == -1)
+			return (1);
+		free(home);
+		update_smth(envp, "PWD=", ft_pwd());
+	}
+	return (0);
+}
 
 int	cd_utils(char **str, char **envp, char *home)
 {
@@ -47,16 +46,10 @@ int	cd_utils(char **str, char **envp, char *home)
 	if (str[1][0] == '-' && ft_strlen(str[1]) == 1)
 	{
 		home = get_old_path(envp);
-		if (home)
-		{
-			update_smth(envp, "OLDPWD=", ft_pwd());
-			printf("%s\n", home);
-			if (chdir(home) == -1)
-				return (1);
-			free(home);
-			update_smth(envp, "PWD=", ft_pwd());
+		if (cd_minus_utils(home, envp))
+			return (1);
+		else
 			return (0);
-		}
 	}
 	update_smth(envp, "OLDPWD=", ft_pwd());
 	if (str[1][0] == '~')
@@ -72,22 +65,28 @@ int	cd_utils(char **str, char **envp, char *home)
 	return (0);
 }
 
+int ft_cd_utils(char *home, char **envp)
+{
+	if (home)
+	{
+		update_smth(envp, "OLDPWD=", ft_pwd());
+		if (chdir(home) == -1)
+			return (1);
+		update_smth(envp, "PWD=", ft_pwd());
+	}
+	return (0);
+}
+
 int	ft_cd(char **str, char **envp)
 {
 	char	*home;
 
 	home = get_home(envp);
 	if (!str[1] || (str[1][0] == '~' && !str[1][1]))
-	{
-		if (home)
-		{
-			update_smth(envp, "OLDPWD=", ft_pwd());
-			if (chdir(home) == -1)
-				return (1);
-			update_smth(envp, "PWD=", ft_pwd());
+		if (ft_cd_utils(home, envp))
+			return (1);
+		else
 			return (0);
-		}
-	}
 	else if (str[1])
 	{
 		if (str[1] && str[1][0] != '-' && str[1][0] != '~')

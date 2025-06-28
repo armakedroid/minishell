@@ -40,3 +40,17 @@ char	*get_path(char **env)
 	}
 	return (NULL);
 }
+
+char	*get_home(char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i], "HOME=", 5))
+			return (envp[i] + 5);
+		i++;
+	}
+	return (NULL);
+}
