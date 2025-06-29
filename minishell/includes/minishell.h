@@ -95,6 +95,7 @@ typedef struct s_pipes
 	t_output	*str;
 }	t_pipes;
 
+void cmds_exit(t_pipes *m_p);
 void	tok_first(int *i, char *line, t_tok_quote *tok);
 char	*tok_for_dol(char *str, char **env);
 int	tok_for_dol_2(char *str, char **env);
