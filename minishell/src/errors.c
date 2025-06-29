@@ -59,27 +59,12 @@ int	ft_errors126(int signal, char **back, char *infile)
 	}
 	return (126);
 }
-
-int	ft_errors(int signal, char **back, char *infile)
+int	ft_errors_139(int signal, char **back, char *infile)
 {
-	if (signal == 127)
-		return (ft_errors1(signal, back, infile));
-	else if (signal == 126)
-		return (ft_errors126(signal, back, infile));
-	else if (signal == 130 || signal == 131)
-	{
-		printf("\n");
-		return (signal);
-	}
-	else if (signal == 139)
+	if (signal == 139)
 	{
 		printf("Segmentation fault (core dumped)\n");
 		return (139);
-	}
-	else if (signal == 100)
-	{
-		printf("bash : %s: too many arguments\n", back[0]);
-		return (1);
 	}
 	else if (signal == 2)
 	{
@@ -96,5 +81,31 @@ int	ft_errors(int signal, char **back, char *infile)
 			printf("bash: syntax error near unexpected token `%s'\n", *back);
 		return (2);
 	}
+	return (0);
+}
+
+int	ft_errors(int signal, char **back, char *infile)
+{
+	int	i;
+
+	if (signal == 127)
+		return (ft_errors1(signal, back, infile));
+	else if (signal == 126)
+		return (ft_errors126(signal, back, infile));
+	else if (signal == 130 || signal == 131)
+	{
+		printf("\n");
+		return (signal);
+	}
+	else if (signal == 100)
+	{
+		printf("bash : %s: too many arguments\n", back[0]);
+		return (1);
+	}
+	i = ft_errors_139(signal, back, infile);
+	if (i == 2)
+		return (2);
+	else if (i == 139)
+		return(139);
 	return (signal);
 }

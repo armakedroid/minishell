@@ -28,12 +28,6 @@ int	small(t_output *back, int *fd)
 	close(*fd);
 	return (0);
 }
-void	here_doc_u(char **line, char ***back)
-{
-	*back = ft_split(*line, '\n');
-	if (!*back || !**back)
-		return ;
-}
 
 void	heredoc(const char *li)
 {

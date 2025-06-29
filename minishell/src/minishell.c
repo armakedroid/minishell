@@ -82,8 +82,6 @@ t_output	*parse(t_token *token)
 	parse.i = 0;
 	while (token)
 	{
-		if (!token)
-			return (parse.back);
 		if (!parse_heredoc(&token))
 			return (NULL);
 		if (!token)
@@ -108,32 +106,15 @@ int	exit_var(t_mini *var)
 {
 	char	**str;
 	ssize_t	k;
+	int	i;
 
+	str = NULL;
 	k = 0;
-	if (ft_strlen(var->line) > 4)
-		if (var->line[4] != ' ')
-			return (0);
-	printf("exit\n");
-	str = ft_split(var->line, ' ');
-	if (!str)
+	i = exit_var_ut(var, &str, &k);
+	if (i == 2)
+		return (0);
+	else if (i == 1)
 		return (1);
-	if (str && !str[1])
-	{
-		free_split(str);
-		return (1);
-	}
-	if (!ft_strncmp(str[1], "$?", 2))
-	{
-		free_split(str);
-		return (1);
-	}
-	while (str[1][k])
-	{
-		if (ft_isdigit(str[1][k]) || str[1][k] == '-' || str[1][k] == '+')
-			k++;
-		else
-			break ;
-	}
 	if (!ft_isdigit(ft_atoi(str[1]))
 		&& (ssize_t)(ft_strlen(str[1])) == k)
 	{
@@ -147,7 +128,5 @@ int	exit_var(t_mini *var)
 		free_split(str);
 		return (1);
 	}
-	g_exit_status = ft_errors(2, &str[1], str[0]);
-	free_split(str);
-	return (1);
+	return (exit_return(str));
 }

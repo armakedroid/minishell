@@ -116,8 +116,7 @@ int	parse_and_pipe(t_mini *var)
 		(*var).cmd = (*var).cmd->next;
 	if ((*var).cmd && (*var).cmd->next && (*var).cmd->next->next
 		&& (*var).cmd->next->is_p)
-		g_exit_status = my_pipe((*var).cmd, &(*var).val, (*var).env,
-				(*var).my_p);
+		g_exit_status = my_pipe((*var).cmd, (*var).env, (*var).my_p);
 	else
 		main_function_utils(&(*var));
 	free_cmd((*var).cmd_start);

@@ -12,142 +12,140 @@
 
 #include "../includes/minishell.h"
 
-int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p)
+int my_pipe1(t_pipes *m_p, char **env, char **my_p, t_output *cmds)
 {
-	int			saved_stdin;
-	int			saved_stdout;
-	int			in_fd;
-	int			**fd;
-	int			errors;
-	int			errors1;
-	int			inf;
-	int			outf;
-	pid_t		*pid;
-	int			a;
-	int			cmd_nbr;
-	t_output	*str;
-
-	(void)val;
-	errors = 0;
-	errors1 = 0;
-	a = 0;
-	cmd_nbr = cmd_count(cmds);
-	in_fd = cmd_nbr - 1;
-	pid = malloc(sizeof(pid_t) * cmd_nbr);
-	fd = malloc(sizeof(int *) * (cmd_nbr - 1));
-	while (in_fd > 0)
+	if ((*m_p).pid[(*m_p).a] == 0)
+	check_f((*m_p).str->args, env, my_p, 0);
+else
+{
+	waitpid((*m_p).pid[(*m_p).a], &(*m_p).errors, 0);
+	if ((*m_p).errors)
+		(*m_p).errors1 = WEXITSTATUS((*m_p).errors);
+	if ((*m_p).errors1)
 	{
-		fd[in_fd - 1] = malloc(sizeof(int) * 2);
-		in_fd--;
+		if ((*m_p).pid)
+			free((*m_p).pid);
+		if ((*m_p).fd)
+			free_fd((*m_p).fd, (*m_p).cmd_nbr - 1);
+		dup2((*m_p).saved_stdout, STDOUT_FILENO);
+		close((*m_p).inf);
+		ft_errors((*m_p).errors1, (*m_p).str->args, NULL);
+		return (1);
 	}
-	in_fd = 0;
-	saved_stdin = dup(STDIN_FILENO);
-	saved_stdout = dup(STDOUT_FILENO);
-	str = cmds;
-	while (str->next)
-		str = str->next;
-	inf = open("/dev/null", O_RDWR, 0666);
-	dup2(inf, STDOUT_FILENO);
-	pid[a] = fork();
-	if (pid[a] == -1)
+}
+if ((*m_p).inf)
+	close((*m_p).inf);
+dup2((*m_p).saved_stdout, STDOUT_FILENO);
+(*m_p).str = cmds;
+(*m_p).in_fd = (*m_p).saved_stdin;
+return (0);
+}
+	
+void child_p(t_output *cmds, char **env, t_pipes *m_p,char **my_p)
+{
+	{
+		dup2((*m_p).in_fd, STDIN_FILENO);
+		if (cmds->next)
+			dup2((*m_p).fd[(*m_p).a][1], STDOUT_FILENO);
+		if (cmds->infile)
+			small(cmds, &(*m_p).inf);
+		if (cmds->outfile)
+			big_crt(cmds, &(*m_p).outf);
+		if (cmds->next)
+		{
+			close((*m_p).fd[(*m_p).a][0]);
+			close((*m_p).fd[(*m_p).a][1]);
+		}
+		if ((*m_p).in_fd != (*m_p).saved_stdin)
+			close((*m_p).in_fd);
+		check_f(cmds->args, env, my_p, 1);
+		exit(EXIT_FAILURE);
+	}
+}
+
+int	my_pipe(t_output *cmds, char **env, char **my_p)
+{
+	t_pipes m_p;
+
+	m_p.errors = 0;
+	m_p.errors1 = 0;
+	m_p.a = 0;
+	m_p.cmd_nbr = cmd_count(cmds);
+	m_p.in_fd = m_p.cmd_nbr - 1;
+	m_p.pid = malloc(sizeof(pid_t) * m_p.cmd_nbr);
+	m_p.fd = malloc(sizeof(int *) * (m_p.cmd_nbr - 1));
+	while (m_p.in_fd > 0)
+	{
+		m_p.fd[m_p.in_fd - 1] = malloc(sizeof(int) * 2);
+		m_p.in_fd--;
+	}
+	m_p.in_fd = 0;
+	m_p.saved_stdin = dup(STDIN_FILENO);
+	m_p.saved_stdout = dup(STDOUT_FILENO);
+	m_p.str = cmds;
+	while (m_p.str->next)
+		m_p.str = m_p.str->next;
+	m_p.inf = open("/dev/null", O_RDWR, 0666);
+	dup2(m_p.inf, STDOUT_FILENO);
+	m_p.pid[m_p.a] = fork();
+	if (m_p.pid[m_p.a] == -1)
 	{
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
-	if (pid[a] == 0)
-	{
-		check_f(str->args, env, my_p, 0);
-	}
-	else
-	{
-		waitpid(pid[a], &errors, 0);
-		if (errors)
-			errors1 = WEXITSTATUS(errors);
-		if (errors1)
-		{
-			if (pid)
-				free(pid);
-			if (fd)
-				free_fd(fd, cmd_nbr - 1);
-			dup2(saved_stdout, STDOUT_FILENO);
-			close(inf);
-			ft_errors(errors1, str->args, NULL);
-			return (errors1);
-		}
-	}
-	if (inf)
-		close(inf);
-	dup2(saved_stdout, STDOUT_FILENO);
-	str = cmds;
-	in_fd = saved_stdin;
-	a = 0;
-	errors = 0;
-	errors1 = 0;
+	if(my_pipe1(&m_p, env, my_p, cmds) == 1)
+		return (m_p.errors1);
+	m_p.a = 0;
+	m_p.errors = 0;
+	m_p.errors1 = 0;
 	while (cmds)
 	{
 		while (cmds->next && !(cmds->is_p))
 			cmds = cmds->next;
 		if (cmds->next)
-			if (pipe(fd[a]) == -1)
+			if (pipe(m_p.fd[m_p.a]) == -1)
 				perror("pipe");
-		pid[a] = fork();
-		if (pid[a] == 0)
-		{
-			dup2(in_fd, STDIN_FILENO);
-			if (cmds->next)
-				dup2(fd[a][1], STDOUT_FILENO);
-			if (cmds->infile)
-				small(cmds, &inf);
-			if (cmds->outfile)
-				big_crt(cmds, &outf);
-			if (cmds->next)
-			{
-				close(fd[a][0]);
-				close(fd[a][1]);
-			}
-			if (in_fd != saved_stdin)
-				close(in_fd);
-			check_f(cmds->args, env, my_p, 1);
-			exit(EXIT_FAILURE);
-		}
+		m_p.pid[m_p.a] = fork();
+		if (m_p.pid[m_p.a] == 0)
+			child_p(cmds, env, &m_p, my_p);
 		else
 		{
-			if (in_fd != saved_stdin)
-				close(in_fd);
+			if (m_p.in_fd != m_p.saved_stdin)
+				close(m_p.in_fd);
 			if (cmds->next)
 			{
-				close(fd[a][1]);
-				in_fd = fd[a][0];
+				close(m_p.fd[m_p.a][1]);
+				m_p.in_fd = m_p.fd[m_p.a][0];
 			}
 		}
-		a++;
+		m_p.a++;
 		cmds = cmds->next;
 	}
-	a = 0;
-	while (a < cmd_nbr)
+	m_p.a = 0;
+	while (m_p.a < m_p.cmd_nbr)
 	{
-		str = str->next;
-		while (str->next && !(str->is_p))
-			str = str->next;
-		in_fd = waitpid(pid[a], &errors, 0);
-		if (errors)
+		m_p.str = m_p.str->next;
+		while (m_p.str->next && !(m_p.str->is_p))
+			m_p.str = m_p.str->next;
+		m_p.in_fd = waitpid(m_p.pid[m_p.a], &m_p.errors, 0);
+		if (m_p.errors)
 		{
-			errors1 = WEXITSTATUS(errors);
+			m_p.errors1 = WEXITSTATUS(m_p.errors);
 		}
-		if (errors1)
+		if (m_p.errors1)
 		{
-			ft_errors(errors1, str->args, NULL);
-			errors1 = 0;
+			ft_errors(m_p.errors1, m_p.str->args, NULL);
+			m_p.errors1 = 0;
 		}
-		a++;
+		m_p.a++;
 	}
-	dup2(saved_stdin, STDIN_FILENO);
-	dup2(saved_stdout, STDOUT_FILENO);
-	close(saved_stdin);
-	close(saved_stdout);
-	if (pid)
-		free(pid);
-	if (fd)
-		free_fd(fd, cmd_nbr - 1);
-	return (errors1);
+	dup2(m_p.saved_stdin, STDIN_FILENO);
+	dup2(m_p.saved_stdout, STDOUT_FILENO);
+	close(m_p.saved_stdin);
+	close(m_p.saved_stdout);
+	if (m_p.pid)
+		free(m_p.pid);
+	if (m_p.fd)
+		free_fd(m_p.fd, m_p.cmd_nbr - 1);
+	return (m_p.errors1);
 }

@@ -65,6 +65,45 @@ typedef struct s_parse
 	int				i;
 }					t_parse;
 
+typedef struct s_tok_quote
+{
+	int		start;
+	int		quote;
+	int		sng_qut;
+	int		l;
+	int		j;
+	char	*str;
+	char	**all;
+	char	*all1_h;
+	char	*all1;
+	char	*all2;
+}	t_tok_quote;
+
+typedef struct s_pipes
+{
+	int			saved_stdin;
+	int			saved_stdout;
+	int			in_fd;
+	int			**fd;
+	int			errors;
+	int			errors1;
+	int			inf;
+	int			outf;
+	pid_t		*pid;
+	int			a;
+	int			cmd_nbr;
+	t_output	*str;
+}	t_pipes;
+
+void	tok_first(int *i, char *line, t_tok_quote *tok);
+char	*tok_for_dol(char *str, char **env);
+int	tok_for_dol_2(char *str, char **env);
+int	tok_quote(char *line, int *i, t_token **token, char **env);
+int exit_var_ut(t_mini *var, char ***str, ssize_t *k);
+int exit_return(char **str);
+void	sort(char **envp);
+void	print_env(char **envp);
+char 	**export_without_arg(char **envp);
 void				initialization(t_mini *var, char **envp);
 int					parse_and_pipe(t_mini *var);
 int					space_token(t_mini *var, char **env);
@@ -78,8 +117,7 @@ void				cmdfun(t_output **lst, t_output *new);
 int					my_parse_ut(t_output **back, t_output **tmp,
 						t_token **token, t_output **for_args);
 void				add_token(t_token **token, char *str, int i);
-int					my_pipe(t_output *cmds, t_pipe *val, char **env,
-						char **my_p);
+int					my_pipe(t_output *cmds, char **env, char **my_p);
 void				check_f(char **back, char **envp, char **path, int flag);
 void				here_doc_u(char **line, char ***back);
 void				heredoc(const char *li);
@@ -122,7 +160,6 @@ int					parse_heredoc(t_token **token);
 int					parse_wrd(t_token **token, t_output **tmp, int *i);
 void				handle_sigint(int sl);
 char				*get_my_env(char *str, char **env);
-int	my_pipe(t_output *cmds, t_pipe *val, char **env, char **my_p);
 void	free_fd(int **fd, int i);
 int	cmd_count(t_output *cmds);
 char	*get_home(char **envp);
