@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:35:22 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/23 20:26:43 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 20:23:24 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	mykey(char *env, char *key)
 
 char	**ft_unset(char **envp, char **back)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	if (!back || !back[1])
@@ -37,6 +37,7 @@ char	**ft_unset(char **envp, char **back)
 		{
 			while (envp[i + 1])
 			{
+				free(envp[i]);
 				envp[i] = envp[i + 1];
 				i++;
 			}

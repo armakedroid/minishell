@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:22:47 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 20:09:06 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ char	*get_old_path(char **envp)
 	}
 	return (NULL);
 }
-int cd_minus_utils(char *home, char **envp)
+
+int	cd_minus_utils(char *home, char **envp)
 {
 	if (home)
 	{
@@ -65,7 +66,7 @@ int	cd_utils(char **str, char **envp, char *home)
 	return (0);
 }
 
-int ft_cd_utils(char *home, char **envp)
+int	ft_cd_utils(char *home, char **envp)
 {
 	if (home)
 	{
@@ -83,18 +84,24 @@ int	ft_cd(char **str, char **envp)
 
 	home = get_home(envp);
 	if (!str[1] || (str[1][0] == '~' && !str[1][1]))
+	{
 		if (ft_cd_utils(home, envp))
 			return (1);
 		else
 			return (0);
+	}
 	else if (str[1])
 	{
 		if (str[1] && str[1][0] != '-' && str[1][0] != '~')
 		{
-			update_smth(envp, "OLDPWD=", ft_pwd());
+			home = ft_pwd();
+			update_smth(envp, "OLDPWD=", home);
+			free(home);
 			if (chdir(str[1]) == -1)
 				return (1);
-			update_smth(envp, "PWD=", ft_pwd());
+			home = ft_pwd();
+			update_smth(envp, "PWD=", home);
+			free(home);
 			return (0);
 		}
 		return (cd_utils(str, envp, home));

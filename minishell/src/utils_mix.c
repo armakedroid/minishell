@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_mix.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 13:06:03 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/29 13:06:14 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/30 18:57:12 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ void	here_doc_u(char **line, char ***back)
 		return ;
 }
 
-char **export_without_arg(char **envp)
+char	**export_without_arg(char **envp)
 {
-	char **cp;
+	char	**cp;
 
 	cp = ft_copy_env(envp);
 	sort(cp);
@@ -30,36 +30,36 @@ char **export_without_arg(char **envp)
 	return (envp);
 }
 
-int exit_return(char **str)
+int	exit_return(char **str)
 {
 	g_exit_status = ft_errors(2, &str[1], str[0]);
 	free_split(str);
 	return (1);
 }
 
-int exit_var_ut(t_mini *var, char ***str, ssize_t *k)
+int	exit_var_ut(t_mini *var, char ***str, ssize_t *k)
 {
 	if (ft_strlen(var->line) > 4)
-	if (var->line[4] != ' ')
-		return (2);
-printf("exit\n");
-(*str) = ft_split(var->line, ' ');
-if (!(*str))
-	return (1);
-if (((*str) && !(*str)[1]) || !ft_strncmp((*str)[1], "$?", 2))
-{
-	free_split((*str));
-	return (1);
-}
-while ((*str)[1][(*k)])
-{
-	if (ft_isdigit((*str)[1][(*k)]) || 
-		(*str)[1][(*k)] == '-' || (*str)[1][(*k)] == '+')
-		(*k)++;
-	else
-		break ;
-}
-return (0);
+		if (var->line[4] != ' ')
+			return (2);
+	printf("exit\n");
+	(*str) = ft_split(var->line, ' ');
+	if (!(*str))
+		return (1);
+	if (((*str) && !(*str)[1]) || !ft_strncmp((*str)[1], "$?", 2))
+	{
+		free_split((*str));
+		return (1);
+	}
+	while ((*str)[1][(*k)])
+	{
+		if (ft_isdigit((*str)[1][(*k)]) || (*str)[1][(*k)] == '-'
+			|| (*str)[1][(*k)] == '+')
+			(*k)++;
+		else
+			break ;
+	}
+	return (0);
 }
 
 void	tok_first(int *i, char *line, t_tok_quote *tok)

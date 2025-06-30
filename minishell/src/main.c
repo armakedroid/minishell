@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:39:37 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/23 22:00:54 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 22:00:49 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	main_ut(t_mini *var)
 		signal(SIGQUIT, SIG_DFL);
 		while ((*var).cmd->next)
 			(*var).cmd = (*var).cmd->next;
+		free((*var).path);
 		check_f((*var).cmd->args, (*var).env, (*var).my_p, 1);
 	}
 	else if ((*var).cha > 0)

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/23 21:20:17 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 20:58:33 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	exit_var(t_mini *var)
 {
 	char	**str;
 	ssize_t	k;
-	int	i;
+	int		i;
 
 	str = NULL;
 	k = 0;

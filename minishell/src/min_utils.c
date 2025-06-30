@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 21:28:34 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/26 20:02:17 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 21:12:24 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,9 @@ void	check_f(char **back, char **envp, char **path, int flag)
 		else
 			cmd_unexit(back, path, envp, &g_exit_status);
 	}
+	free_split(back);
+	free_split(envp);
+	free_split(path);
 	exit(g_exit_status);
 }
 

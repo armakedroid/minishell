@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:36:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/24 21:48:38 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:57:05 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ char	**ft_export(char **envp, char **back)
 
 	i = 0;
 	if (!back[1])
-		return(export_without_arg(envp));
+		return (export_without_arg(envp));
 	else if (have_a_var(envp, back))
 	{
 		while (back[1][i] && back[1][i] != '=')

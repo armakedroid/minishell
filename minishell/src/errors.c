@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:49:51 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/22 18:15:11 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:56:41 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ int	ft_errors126(int signal, char **back, char *infile)
 	}
 	return (126);
 }
+
 int	ft_errors_139(int signal, char **back, char *infile)
 {
 	if (signal == 139)
@@ -106,6 +107,6 @@ int	ft_errors(int signal, char **back, char *infile)
 	if (i == 2)
 		return (2);
 	else if (i == 139)
-		return(139);
+		return (139);
 	return (signal);
 }

@@ -3,45 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   my_pipe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:22:57 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/28 18:23:04 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/30 18:57:47 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int my_pipe1(t_pipes *m_p, char **env, char **my_p, t_output *cmds)
+int	my_pipe1(t_pipes *m_p, char **env, char **my_p, t_output *cmds)
 {
 	if ((*m_p).pid[(*m_p).a] == 0)
-	check_f((*m_p).str->args, env, my_p, 0);
-else
-{
-	waitpid((*m_p).pid[(*m_p).a], &(*m_p).errors, 0);
-	if ((*m_p).errors)
-		(*m_p).errors1 = WEXITSTATUS((*m_p).errors);
-	if ((*m_p).errors1)
+		check_f((*m_p).str->args, env, my_p, 0);
+	else
 	{
-		if ((*m_p).pid)
-			free((*m_p).pid);
-		if ((*m_p).fd)
-			free_fd((*m_p).fd, (*m_p).cmd_nbr - 1);
-		dup2((*m_p).saved_stdout, STDOUT_FILENO);
-		close((*m_p).inf);
-		ft_errors((*m_p).errors1, (*m_p).str->args, NULL);
-		return (1);
+		waitpid((*m_p).pid[(*m_p).a], &(*m_p).errors, 0);
+		if ((*m_p).errors)
+			(*m_p).errors1 = WEXITSTATUS((*m_p).errors);
+		if ((*m_p).errors1)
+		{
+			if ((*m_p).pid)
+				free((*m_p).pid);
+			if ((*m_p).fd)
+				free_fd((*m_p).fd, (*m_p).cmd_nbr - 1);
+			dup2((*m_p).saved_stdout, STDOUT_FILENO);
+			close((*m_p).inf);
+			ft_errors((*m_p).errors1, (*m_p).str->args, NULL);
+			return (1);
+		}
 	}
+	if ((*m_p).inf)
+		close((*m_p).inf);
+	dup2((*m_p).saved_stdout, STDOUT_FILENO);
+	(*m_p).str = cmds;
+	(*m_p).in_fd = (*m_p).saved_stdin;
+	return (0);
 }
-if ((*m_p).inf)
-	close((*m_p).inf);
-dup2((*m_p).saved_stdout, STDOUT_FILENO);
-(*m_p).str = cmds;
-(*m_p).in_fd = (*m_p).saved_stdin;
-return (0);
-}
-	
-void child_p(t_output *cmds, char **env, t_pipes *m_p,char **my_p)
+
+void	child_p(t_output *cmds, char **env, t_pipes *m_p, char **my_p)
 {
 	{
 		dup2((*m_p).in_fd, STDIN_FILENO);
@@ -63,7 +63,7 @@ void child_p(t_output *cmds, char **env, t_pipes *m_p,char **my_p)
 	}
 }
 
-void cmds_init(t_pipes *m_p, t_output *cmds)
+void	cmds_init(t_pipes *m_p, t_output *cmds)
 {
 	(*m_p).errors1 = 0;
 	(*m_p).a = 0;
@@ -92,7 +92,7 @@ void cmds_init(t_pipes *m_p, t_output *cmds)
 	}
 }
 
-void cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
+void	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 {
 	while (cmds)
 	{
@@ -122,7 +122,7 @@ void cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 
 int	my_pipe(t_output *cmds, char **env, char **my_p)
 {
-	t_pipes m_p;
+	t_pipes	m_p;
 
 	cmds_init(&m_p, cmds);
 	m_p.errors = 0;

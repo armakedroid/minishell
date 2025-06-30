@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 18:48:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/23 20:43:53 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:08:42 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	my_parse_ut(t_output **back, t_output **tmp, t_token **token,
 
 int	parse_heredoc(t_token **token)
 {
-	char *str;
+	char	*str;
 
 	str = NULL;
 	if ((*token)->type == HEREDOC && (*token)->next)

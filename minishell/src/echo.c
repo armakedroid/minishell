@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 19:02:47 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/28 19:02:48 by argharag         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:09:32 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@ char	*get_my_env(char *str, char **env)
 		return (free(all), NULL);
 	return (free(all), env[i] + ft_strlen(str) + 1);
 }
+
 void	echo_utils(char **back, int j, int i, char **argv)
 {
-	char *str;
+	char	*str;
 
 	if (back[j][0] == '\'' || back[j][ft_strlen(back[j]) - 1] == '\'')
 	{
