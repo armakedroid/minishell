@@ -47,10 +47,15 @@ int	tok_for_dol_2(char *str, char **env)
 
 char	*tok_for_dol(char *str, char **env)
 {
+	char	*str1;
 	if (str[0] == '?' && !str[1])
 		return (ft_itoa(g_exit_status));
-	else if (get_my_env(str, env))
-		return (ft_strdup(get_my_env(str, env)));
+	else
+	{
+		str1 = get_my_env(str, env);
+		if (str1)
+			return (str1);
+	}
 	return (NULL);
 }
 

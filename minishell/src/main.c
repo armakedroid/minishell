@@ -24,7 +24,7 @@ void	main_ut(t_mini *var)
 		while ((*var).cmd->next)
 			(*var).cmd = (*var).cmd->next;
 		free((*var).path);
-		check_f((*var).cmd->args, (*var).env, (*var).my_p, 1);
+		check_f((*var).cmd, (*var).env, (*var).my_p, 1);
 	}
 	else if ((*var).cha > 0)
 	{
@@ -45,10 +45,13 @@ void	main_ut(t_mini *var)
 
 void	main_function_utils(t_mini *var)
 {
-	if ((*var).cmd->outfile)
-		g_exit_status = big_crt((*var).cmd, &(*var).fd);
-	else if ((*var).cmd->infile)
-		g_exit_status = small((*var).cmd, &(*var).fd);
+	if ((*var).cmd)
+	{
+		if ((*var).cmd->outfile)
+			g_exit_status = big_crt((*var).cmd, &(*var).fd);
+		else if ((*var).cmd->infile)
+			g_exit_status = small((*var).cmd, &(*var).fd);
+	}
 	if (!(ft_strncmp((*var).cmd->args[0], "cd", 3)))
 	{
 		(*var).cd_result = ft_cd((*var).cmd->args, (*var).env);
@@ -100,10 +103,16 @@ int	space_token(t_mini *var, char **env)
 
 int	parse_and_pipe(t_mini *var)
 {
-	(*var).cmd = parse((*var).token);
+	t_parse		*pa;
+	t_output	*tmp_start;
+
+	pa = parse((*var).token);
+	(*var).cmd = pa->back;
 	(*var).cmd_start = (*var).cmd;
-	free_tokens((*var).token);
-	free((*var).line);
+	if ((*var).token)
+		free_tokens((*var).token);
+	if ((*var).line)
+		free((*var).line);
 	if (!(*var).cmd || !(*var).cmd->args)
 	{
 		if (g_exit_status)
@@ -115,6 +124,7 @@ int	parse_and_pipe(t_mini *var)
 	}
 	while ((*var).cmd->next && (*var).cmd->next->is_p != 1)
 		(*var).cmd = (*var).cmd->next;
+	free(pa);
 	if ((*var).cmd && (*var).cmd->next && (*var).cmd->next->next
 		&& (*var).cmd->next->is_p)
 		g_exit_status = my_pipe((*var).cmd, (*var).env, (*var).my_p);

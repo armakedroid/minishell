@@ -15,7 +15,7 @@
 int	my_pipe1(t_pipes *m_p, char **env, char **my_p, t_output *cmds)
 {
 	if ((*m_p).pid[(*m_p).a] == 0)
-		check_f((*m_p).str->args, env, my_p, 0);
+		check_f((*m_p).str, env, my_p, 0);
 	else
 	{
 		waitpid((*m_p).pid[(*m_p).a], &(*m_p).errors, 0);
@@ -58,7 +58,7 @@ void	child_p(t_output *cmds, char **env, t_pipes *m_p, char **my_p)
 		}
 		if ((*m_p).in_fd != (*m_p).saved_stdin)
 			close((*m_p).in_fd);
-		check_f(cmds->args, env, my_p, 1);
+		check_f(cmds, env, my_p, 1);
 		exit(EXIT_FAILURE);
 	}
 }

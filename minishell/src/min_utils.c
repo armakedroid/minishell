@@ -36,32 +36,32 @@ char	**command_s(char *line)
 	return (back);
 }
 
-void	check_f(char **back, char **envp, char **path, int flag)
+void	check_f(t_output *cmd, char **envp, char **path, int flag)
 {
 	char	*line;
 
 	line = NULL;
-	if (ft_strncmp(back[0], "exit", 5) == 0)
+	if (ft_strncmp((cmd->args)[0], "exit", 5) == 0)
 		g_exit_status = 0;
-	else if (!ft_strncmp(back[0], "echo", 5))
-		g_exit_status = ft_echo(back, g_exit_status, envp);
-	else if (!ft_strncmp(back[0], "pwd", 4))
+	else if (!ft_strncmp((cmd->args)[0], "echo", 5))
+		g_exit_status = ft_echo(cmd->args, g_exit_status, envp);
+	else if (!ft_strncmp((cmd->args)[0], "pwd", 4))
 	{
 		line = ft_pwd();
 		if (line)
 			printf("%s\n", line);
 		free(line);
 	}
-	else if (!ft_strncmp(back[0], "env", 4))
+	else if (!ft_strncmp((cmd->args)[0], "env", 4))
 		g_exit_status = ft_env(envp);
 	else
 	{
 		if (flag)
-			cmdfile(back, path, envp, &g_exit_status);
+			cmdfile(cmd->args, path, envp, &g_exit_status);
 		else
-			cmd_unexit(back, path, envp, &g_exit_status);
+			cmd_unexit(cmd->args, path, envp, &g_exit_status);
 	}
-	free_split(back);
+	free_cmd(cmd);
 	free_split(envp);
 	free_split(path);
 	exit(g_exit_status);

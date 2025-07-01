@@ -44,18 +44,29 @@ int	tok_sec(t_tok_quote *tok, t_token **token)
 
 int	tok_quote3(t_tok_quote *tok, char **env)
 {
-	(*tok).l--;
-	while ((*tok).all[(*tok).quote][(*tok).l++])
-		if ((*tok).all[(*tok).quote][(*tok).l]
-			&& (!ft_isalpha((*tok).all[(*tok).quote][(*tok).l])
-				&& (*tok).all[(*tok).quote][(*tok).l] != '?'
-				&& (*tok).all[(*tok).quote][(*tok).l] != '_'))
+	char	*str_sub;
+	char	*str_dol;
+
+	str_sub = NULL;
+	while (((*tok).all)[(*tok).quote][(*tok).l])
+	{
+		if (((*tok).all)[(*tok).quote][(*tok).l]
+			&& (!ft_isalpha(((*tok).all)[(*tok).quote][(*tok).l])
+				&& ((*tok).all)[(*tok).quote][(*tok).l] != '?'
+				&& ((*tok).all)[(*tok).quote][(*tok).l] != '_'))
 			break ;
+		(tok->l)++;
+	}
 	if (!(*tok).l)
 		return (1);
-	if (D(B((*tok).all[(*tok).quote], 0, (*tok).l), env))
-		(*tok).all1_h = C((*tok).all1, A(B((*tok).all[(*tok).quote], 0,
-						(*tok).l), env));
+	str_sub = B(((*tok).all)[(*tok).quote], 0, (*tok).l);
+	if (D(str_sub, env))
+	{
+		free(str_sub);
+		str_sub = B(((*tok).all)[(*tok).quote], 0, (*tok).l);
+		(*tok).all1_h = C(str_dol, A(str_sub, env));
+		free(str_sub);
+	}
 	else
 		(*tok).all1_h = C((*tok).all1, " ");
 	free((*tok).all1);
@@ -66,8 +77,11 @@ int	tok_quote3(t_tok_quote *tok, char **env)
 	while ((*tok).all[(*tok).quote][(*tok).l])
 		(*tok).l++;
 	if ((*tok).j != (*tok).l)
-		(*tok).all1_h = C((*tok).all1, B((*tok).all[(*tok).quote], (*tok).j,
-					(*tok).l - (*tok).j));
+	{
+		str_sub = B(((*tok).all)[(*tok).quote], (*tok).j, (*tok).l - (*tok).j);
+		(*tok).all1_h = C((*tok).all1, str_sub);
+		free(str_sub);
+	}
 	(*tok).all1 = (*tok).all1_h;
 	return (0);
 }
@@ -78,7 +92,7 @@ int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 	{
 		if (tok_sec(&(*tok), token))
 			return (1);
-		while ((*tok).all[(*tok).quote])
+		while (((*tok).all)[(*tok).quote])
 		{
 			tok_quote3(&(*tok), env);
 			(*tok).quote++;
@@ -114,8 +128,7 @@ int	tok_quote5(t_tok_quote *tok, t_token **token, char *line, int **i)
 			(*tok).start = *(*i);
 			while (line[*(*i)] && line[*(*i)] != '\'')
 				(*(*i))++;
-			add_token(token, ft_substr(line, (*tok).start, *(*i)
-					- (*tok).start), WORD);
+			add_token(token, B(line, (*tok).start, *(*i) - (*tok).start), WORD);
 			(*(*i))++;
 			add_token(token, ft_strdup("'"), WORD);
 			(*(*i))++;

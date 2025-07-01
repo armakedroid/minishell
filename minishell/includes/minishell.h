@@ -99,6 +99,7 @@ typedef struct s_pipes
 	t_output		*str;
 }					t_pipes;
 
+t_parse				*parse(t_token *token);
 void				cmds_exit(t_pipes *m_p);
 void				tok_first(int *i, char *line, t_tok_quote *tok);
 char				*tok_for_dol(char *str, char **env);
@@ -123,7 +124,7 @@ int					my_parse_ut(t_output **back, t_output **tmp,
 						t_token **token, t_output **for_args);
 void				add_token(t_token **token, char *str, int i);
 int					my_pipe(t_output *cmds, char **env, char **my_p);
-void				check_f(char **back, char **envp, char **path, int flag);
+void				check_f(t_output *cmd, char **envp, char **path, int flag);
 void				here_doc_u(char **line, char ***back);
 void				heredoc(const char *li);
 int					have_a_var(char **envp, char **back);
@@ -157,7 +158,6 @@ void				free_split(char **back);
 int					is_space(char c);
 int					is_operator(char c);
 char				**command_s(char *line);
-t_output			*parse(t_token *token);
 t_token				*my_tok(char *line, char **env);
 void				print_token(t_token *token);
 void				parse_ut(t_output **tmp, t_token **token);

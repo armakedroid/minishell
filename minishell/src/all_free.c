@@ -49,20 +49,17 @@ void	free_cmd(t_output *cmd)
 {
 	t_output	*next;
 
-	if (cmd)
+	while (cmd)
 	{
-		while (cmd)
-		{
-			next = cmd->next;
-			if (cmd->args && cmd->args[0])
-				free_split(cmd->args);
-			if (cmd->infile)
-				free(cmd->infile);
-			if (cmd->outfile)
-				free(cmd->outfile);
-			free(cmd);
-			cmd = next;
-		}
+		next = cmd->next;
+		if (cmd->args && cmd->args[0])
+			free_split(cmd->args);
+		if (cmd->infile)
+			free(cmd->infile);
+		if (cmd->outfile)
+			free(cmd->outfile);
+		free(cmd);
+		cmd = next;
 	}
 }
 

@@ -73,33 +73,31 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 	return (new);
 }
 
-t_output	*parse(t_token *token)
+t_parse	*parse(t_token *token)
 {
-	t_parse	parse;
+	t_parse	*parse;
 
-	parse.back = NULL;
-	parse.tmp = NULL;
-	parse.i = 0;
+	parse = ft_calloc(1, sizeof(t_parse)); 
 	while (token)
 	{
 		if (!parse_heredoc(&token))
 			return (NULL);
 		if (!token)
-			return (parse.back);
-		if (my_parse_ut(&parse.back, &parse.tmp, &token, &parse.for_args) == 1)
+			return (parse);
+		if (my_parse_ut(&(parse->back), &(parse->tmp), &token, &(parse->for_args)) == 1)
 		{
-			parse.i = 0;
+			parse->i = 0;
 			continue ;
 		}
-		if (parse_wrd(&token, &parse.tmp, &parse.i) == 1)
+		if (parse_wrd(&token, &(parse->tmp), &(parse->i)) == 1)
 		{
-			parse.i = 1;
+			parse->i = 1;
 			return (NULL);
 		}
 		token = token->next;
-		cmdfun(&parse.back, parse.tmp);
+		cmdfun(&(parse->back),parse->tmp);
 	}
-	return (parse.back);
+	return (parse);
 }
 
 int	exit_var(t_mini *var)
