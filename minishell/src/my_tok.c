@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   my_tok.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:21:47 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/28 18:21:48 by argharag         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:10:38 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int	tok_for_dol_2(char *str, char **env)
 char	*tok_for_dol(char *str, char **env)
 {
 	char	*str1;
+
 	if (str[0] == '?' && !str[1])
 		return (ft_itoa(g_exit_status));
 	else

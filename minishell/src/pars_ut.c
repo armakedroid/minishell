@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 18:48:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 19:08:42 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 19:32:26 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,15 @@ void	parse_ut(t_output **tmp, t_token **token)
 	}
 }
 
-int	my_parse_ut(t_output **back, t_output **tmp, t_token **token,
-		t_output **for_args)
+int	my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args)
 {
 	if (!(*back))
-		*tmp = create_out(NULL, NULL, NULL);
+	{
+		if ((*token)->next && (*token)->next->type == 5)
+			*tmp = create_out(NULL, ft_strdup(TMP), NULL);
+		else
+			*tmp = create_out(NULL, NULL, NULL);
+	}
 	else
 	{
 		(*for_args) = (*back);

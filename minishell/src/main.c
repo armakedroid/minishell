@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:39:37 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 22:00:49 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:12:03 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void	main_function_utils(t_mini *var)
 			g_exit_status = big_crt((*var).cmd, &(*var).fd);
 		else if ((*var).cmd->infile)
 			g_exit_status = small((*var).cmd, &(*var).fd);
+		if (g_exit_status)
+			return ;
 	}
 	if (!(ft_strncmp((*var).cmd->args[0], "cd", 3)))
 	{

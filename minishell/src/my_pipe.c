@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:22:57 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 18:57:47 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:22:38 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,53 +43,59 @@ int	my_pipe1(t_pipes *m_p, char **env, char **my_p, t_output *cmds)
 
 void	child_p(t_output *cmds, char **env, t_pipes *m_p, char **my_p)
 {
+	dup2((*m_p).in_fd, STDIN_FILENO);
+	if (cmds->next)
+		dup2((*m_p).fd[(*m_p).a][1], STDOUT_FILENO);
+	if (cmds->infile)
+		small(cmds, &(*m_p).inf);
+	if (cmds->outfile)
+		big_crt(cmds, &(*m_p).outf);
+	if (cmds->next)
 	{
-		dup2((*m_p).in_fd, STDIN_FILENO);
-		if (cmds->next)
-			dup2((*m_p).fd[(*m_p).a][1], STDOUT_FILENO);
-		if (cmds->infile)
-			small(cmds, &(*m_p).inf);
-		if (cmds->outfile)
-			big_crt(cmds, &(*m_p).outf);
-		if (cmds->next)
-		{
-			close((*m_p).fd[(*m_p).a][0]);
-			close((*m_p).fd[(*m_p).a][1]);
-		}
-		if ((*m_p).in_fd != (*m_p).saved_stdin)
-			close((*m_p).in_fd);
-		check_f(cmds, env, my_p, 1);
-		exit(EXIT_FAILURE);
+		close((*m_p).fd[(*m_p).a][0]);
+		close((*m_p).fd[(*m_p).a][1]);
 	}
+	if ((*m_p).in_fd != (*m_p).saved_stdin)
+		close((*m_p).in_fd);
+	check_f(cmds, env, my_p, 1);
+	exit(EXIT_FAILURE);
 }
 
 void	cmds_init(t_pipes *m_p, t_output *cmds)
 {
 	(*m_p).errors1 = 0;
 	(*m_p).a = 0;
+	write(1, "a\n", 2);
 	(*m_p).cmd_nbr = cmd_count(cmds);
 	(*m_p).in_fd = (*m_p).cmd_nbr - 1;
 	(*m_p).pid = malloc(sizeof(pid_t) * (*m_p).cmd_nbr);
 	(*m_p).fd = malloc(sizeof(int *) * ((*m_p).cmd_nbr - 1));
+	write(1, "b\n", 2);
 	while ((*m_p).in_fd > 0)
 	{
 		(*m_p).fd[(*m_p).in_fd - 1] = malloc(sizeof(int) * 2);
 		(*m_p).in_fd--;
 	}
+	write(1, "c\n", 2);
 	(*m_p).in_fd = 0;
 	(*m_p).saved_stdin = dup(STDIN_FILENO);
 	(*m_p).saved_stdout = dup(STDOUT_FILENO);
 	(*m_p).str = cmds;
 	while ((*m_p).str->next)
 		(*m_p).str = (*m_p).str->next;
-	(*m_p).inf = open("/dev/null", O_RDWR, 0666);
+	write(1, "d\n", 2);
+	(*m_p).inf = open("/dev/null", O_RDWR | O_CREAT | O_TRUNC, 0666);
 	dup2((*m_p).inf, STDOUT_FILENO);
+	write(1, "e2\n", 2);
 	(*m_p).pid[(*m_p).a] = fork();
+	write(1, "f\n", 2);
 	if ((*m_p).pid[(*m_p).a] == -1)
 	{
+		write(1, "aa\n", 3);
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
+	write(1, "g\n", 2);
 }
 
 void	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
@@ -124,9 +130,12 @@ int	my_pipe(t_output *cmds, char **env, char **my_p)
 {
 	t_pipes	m_p;
 
+	write(1, "1\n", 2);
 	cmds_init(&m_p, cmds);
+	write(1, "2\n", 2);
 	m_p.errors = 0;
 	cmds_utils(cmds, &m_p, my_p, env);
+	write(1, "3\n", 2);
 	while (m_p.a < m_p.cmd_nbr)
 	{
 		m_p.str = m_p.str->next;

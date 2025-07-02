@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:58:26 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/23 20:39:59 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:00:17 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	small(t_output *back, int *fd)
 {
 	int	dup_res;
 
+	dup_res = 0;
 	if (back->infile)
 	{
 		*fd = open(back->infile, O_RDONLY, 0444);
@@ -25,7 +26,8 @@ int	small(t_output *back, int *fd)
 	dup_res = dup2(*fd, STDIN_FILENO);
 	if (dup_res == -1)
 		return (ft_errors1(127, back->args, NULL));
-	close(*fd);
+	if (*fd >= 0)
+		close(*fd);
 	return (0);
 }
 
@@ -76,7 +78,8 @@ int	big_crt(t_output *back, int *fd)
 	dup_res = dup2(*fd, STDOUT_FILENO);
 	if (dup_res == -1)
 		return (ft_errors1(127, back->args, NULL));
-	close(*fd);
+	if (*fd >= 0)
+		close(*fd);
 	return (0);
 }
 

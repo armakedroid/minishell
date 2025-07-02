@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 20:58:33 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 19:06:35 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_parse	*parse(t_token *token)
 {
 	t_parse	*parse;
 
-	parse = ft_calloc(1, sizeof(t_parse)); 
+	parse = ft_calloc(1, sizeof(t_parse));
 	while (token)
 	{
 		if (!parse_heredoc(&token))
