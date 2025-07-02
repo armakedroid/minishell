@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:22:57 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/02 20:22:38 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:06:43 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,8 @@ void	cmds_init(t_pipes *m_p, t_output *cmds)
 	write(1, "b\n", 2);
 	while ((*m_p).in_fd > 0)
 	{
-		(*m_p).fd[(*m_p).in_fd - 1] = malloc(sizeof(int) * 2);
-		(*m_p).in_fd--;
+		((*m_p).fd)[(*m_p).in_fd - 1] = malloc(sizeof(int) * 2);
+		((*m_p).in_fd)--;
 	}
 	write(1, "c\n", 2);
 	(*m_p).in_fd = 0;
@@ -87,9 +87,9 @@ void	cmds_init(t_pipes *m_p, t_output *cmds)
 	(*m_p).inf = open("/dev/null", O_RDWR | O_CREAT | O_TRUNC, 0666);
 	dup2((*m_p).inf, STDOUT_FILENO);
 	write(1, "e2\n", 2);
-	(*m_p).pid[(*m_p).a] = fork();
+	((*m_p).pid)[(*m_p).a] = fork();
 	write(1, "f\n", 2);
-	if ((*m_p).pid[(*m_p).a] == -1)
+	if (((*m_p).pid)[(*m_p).a] == -1)
 	{
 		write(1, "aa\n", 3);
 		perror("fork");
@@ -98,14 +98,14 @@ void	cmds_init(t_pipes *m_p, t_output *cmds)
 	write(1, "g\n", 2);
 }
 
-void	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
+int	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 {
 	while (cmds)
 	{
 		while (cmds->next && !(cmds->is_p))
 			cmds = cmds->next;
 		if (cmds->next)
-			if (pipe((*m_p).fd[(*m_p).a]) == -1)
+			if (pipe(((*m_p).fd)[(*m_p).a]) == -1)
 				perror("pipe");
 		(*m_p).pid[(*m_p).a] = fork();
 		if ((*m_p).pid[(*m_p).a] == 0)
@@ -116,32 +116,47 @@ void	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 				close((*m_p).in_fd);
 			if (cmds->next)
 			{
-				close((*m_p).fd[(*m_p).a][1]);
-				(*m_p).in_fd = (*m_p).fd[(*m_p).a][0];
+				close(((*m_p).fd)[(*m_p).a][1]);
+				(*m_p).in_fd = ((*m_p).fd)[(*m_p).a][0];
 			}
 		}
 		(*m_p).a++;
 		cmds = cmds->next;
 	}
 	(*m_p).a = 0;
+	return (0);
 }
 
 int	my_pipe(t_output *cmds, char **env, char **my_p)
 {
 	t_pipes	m_p;
 
-	write(1, "1\n", 2);
 	cmds_init(&m_p, cmds);
-	write(1, "2\n", 2);
+	if (my_pipe1(&m_p, env, my_p, cmds))
+		return (1);
 	m_p.errors = 0;
-	cmds_utils(cmds, &m_p, my_p, env);
-	write(1, "3\n", 2);
+	if (cmds_utils(cmds, &m_p, my_p, env))
+	{
+		m_p.in_fd = waitpid((m_p.pid)[m_p.a], &m_p.errors, 0);
+		if (m_p.errors)
+		{
+			m_p.errors1 = WEXITSTATUS(m_p.errors);
+		}
+		if (m_p.errors1)
+		{
+			ft_errors(m_p.errors1, m_p.str->args, NULL);
+			m_p.errors1 = 0;
+		}
+		cmds_exit(&m_p);
+		return (m_p.errors1);
+	}
 	while (m_p.a < m_p.cmd_nbr)
 	{
-		m_p.str = m_p.str->next;
-		while (m_p.str->next && !(m_p.str->is_p))
+		if (m_p.str)
 			m_p.str = m_p.str->next;
-		m_p.in_fd = waitpid(m_p.pid[m_p.a], &m_p.errors, 0);
+		while (m_p.str && m_p.str->next && !(m_p.str->is_p))
+			m_p.str = m_p.str->next;
+		m_p.in_fd = waitpid((m_p.pid)[m_p.a], &m_p.errors, 0);
 		if (m_p.errors)
 		{
 			m_p.errors1 = WEXITSTATUS(m_p.errors);

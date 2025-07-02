@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:09:50 by apetoyan          #+#    #+#             */
-/*   Updated: 2025/06/30 19:57:19 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/02 21:58:24 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 void	cmds_exit(t_pipes *m_p)
 {
+	if ((*m_p).in_fd != (*m_p).saved_stdin)
+		close((*m_p).in_fd);
+	// if (cmds->next)
+	// {
+	// 	close(((*m_p).fd)[(*m_p).a][1]);
+	// 	(*m_p).in_fd = ((*m_p).fd)[(*m_p).a][0];
+	// }
 	dup2((*m_p).saved_stdin, STDIN_FILENO);
 	dup2((*m_p).saved_stdout, STDOUT_FILENO);
 	close((*m_p).saved_stdin);
