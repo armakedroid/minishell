@@ -48,6 +48,7 @@ int	tok_quote3(t_tok_quote *tok, char **env)
 	char	*str_dol;
 
 	str_sub = NULL;
+	str_dol = NULL;
 	while (((*tok).all)[(*tok).quote][(*tok).l])
 	{
 		if (((*tok).all)[(*tok).quote][(*tok).l]
@@ -157,10 +158,14 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	if (tok.sng_qut == 2)
 	{
 		tok.all2 = ft_strtrim(tok.str, "'");
-		free(tok.str);
+		if (tok.str)
+			free(tok.str);
 		tok.str = tok.all2;
 	}
 	if (tok_quote4(&tok, token, env))
+	{	if (tok.str)
+			free(tok.str);
 		return (0);
+	}
 	return (1);
 }

@@ -12,19 +12,6 @@
 
 #include "../includes/minishell.h"
 
-// static int	need_change(char *back)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	if (back[0] == '\"')
-// 	{
-// 		if (back[1] && back[1] == '\'')
-// 			return (1);
-// 	}
-// 	return (0);
-// }
-
 char	*get_my_env(char *str, char **env)
 {
 	int		i;
@@ -40,13 +27,15 @@ char	*get_my_env(char *str, char **env)
 	}
 	if (!env[i])
 		return (free(all), NULL);
-	return (free(all), env[i] + ft_strlen(str) + 1);
+	free(all);
+	return (env[i] + ft_strlen(str) + 1);
 }
 
 void	echo_utils(char **back, int j, int i, char **argv)
 {
 	char	*str;
 
+	str = NULL;
 	if (back[j][0] == '\'' || back[j][ft_strlen(back[j]) - 1] == '\'')
 	{
 		if (ft_strlen(back[j]) != 1)
@@ -64,7 +53,7 @@ void	echo_utils(char **back, int j, int i, char **argv)
 		else
 			write(1, "\n", 1);
 	}
-	if ((back[j + 1] || str) && back[j][0] != '\'')
+	if ((back[j + 1]) || back[j][0] != '\'')
 		if ((argv[i + 1] && argv[i + 1][0] != '\'') || (back[j + 1]
 				&& back[j + 1][0] != '\''))
 			printf(" ");

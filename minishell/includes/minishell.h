@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 22:01:08 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:21:05 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ typedef struct s_pipes
 	t_output		*str;
 }					t_pipes;
 
+void	free_parse(t_parse *var);
 t_parse				*parse(t_token *token);
 void				cmds_exit(t_pipes *m_p);
 void				tok_first(int *i, char *line, t_tok_quote *tok);

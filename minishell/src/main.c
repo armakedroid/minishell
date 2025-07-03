@@ -16,13 +16,19 @@ int		g_exit_status = 0;
 
 void	main_ut(t_mini *var)
 {
+	t_output	*exmpl1;
+
 	(*var).cha = fork();
 	if ((*var).cha == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		while ((*var).cmd->next)
-			(*var).cmd = (*var).cmd->next;
+		{
+			exmpl1 = var->cmd->next;
+			free_cmd(var->cmd);
+			(*var).cmd = exmpl1;
+		}
 		free((*var).path);
 		check_f((*var).cmd, (*var).env, (*var).my_p, 1);
 	}
@@ -51,7 +57,7 @@ void	main_function_utils(t_mini *var)
 			g_exit_status = big_crt((*var).cmd, &(*var).fd);
 		else if ((*var).cmd->infile)
 			g_exit_status = small((*var).cmd, &(*var).fd);
-		if (g_exit_status)
+		if (g_exit_status && var->cmd->infile)
 			return ;
 	}
 	if (!(ft_strncmp((*var).cmd->args[0], "cd", 3)))
@@ -103,14 +109,42 @@ int	space_token(t_mini *var, char **env)
 	return (0);
 }
 
+t_output *new_parse(t_output *var)
+{
+	t_output *new;
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	new = ft_calloc(sizeof(t_output), 1);
+	if (var->infile)
+		new->infile = ft_strdup(var->infile);
+	if (var->outfile)
+		new->outfile = ft_strdup(var->outfile);
+	if (var->args)
+	{
+		while (var->args[j])
+			j++;
+		new->args = ft_calloc(j, sizeof(char *));
+		while (var->args[i])
+		{
+			new->args[i] = ft_strdup(var->args[i]);
+			i++;
+		}
+	}
+	return(new);
+}
+
+
 int	parse_and_pipe(t_mini *var)
 {
 	t_parse		*pa;
-	t_output	*tmp_start;
+	t_output	*exmpl;
 
 	pa = parse((*var).token);
 	(*var).cmd = pa->back;
-	(*var).cmd_start = (*var).cmd;
+	free_parse(pa);
 	if ((*var).token)
 		free_tokens((*var).token);
 	if ((*var).line)
@@ -125,14 +159,16 @@ int	parse_and_pipe(t_mini *var)
 		return (1);
 	}
 	while ((*var).cmd->next && (*var).cmd->next->is_p != 1)
-		(*var).cmd = (*var).cmd->next;
-	free(pa);
+	{
+		exmpl = (*var).cmd->next;
+		free_cmd((*var).cmd);
+		(*var).cmd = exmpl;
+	}
 	if ((*var).cmd && (*var).cmd->next && (*var).cmd->next->next
 		&& (*var).cmd->next->is_p)
 		g_exit_status = my_pipe((*var).cmd, (*var).env, (*var).my_p);
 	else
 		main_function_utils(&(*var));
-	free_cmd((*var).cmd_start);
 	return (0);
 }
 
@@ -158,6 +194,8 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		else if (i == 1)
 			break ;
+		if(var.cmd)
+			free_cmd(var.cmd);
 	}
 	free(var.path);
 	free_split(var.env);

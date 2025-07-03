@@ -70,8 +70,6 @@ int	my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for
 		if (!((*for_args)->is_p))
 			*tmp = create_out((*for_args)->args, (*for_args)->infile,
 					(*for_args)->outfile);
-		else
-			*tmp = create_out(NULL, NULL, NULL);
 	}
 	if ((*token)->type == PIPE)
 	{

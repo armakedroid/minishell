@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:45:16 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 22:00:56 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:18:56 by argharag         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	free_split(char **back)
 	i = 0;
 	while (back[i])
 	{
-		free(back[i]);
+		free_var(back[i]);
 		i++;
 	}
 	free(back);
@@ -47,11 +47,11 @@ void	free_split(char **back)
 
 void	free_cmd(t_output *cmd)
 {
-	t_output	*next;
+	// t_output	*next;
 
-	while (cmd)
-	{
-		next = cmd->next;
+	// while (cmd)
+	// {
+		// next = cmd->next;
 		if (cmd->args && cmd->args[0])
 			free_split(cmd->args);
 		if (cmd->infile)
@@ -59,12 +59,17 @@ void	free_cmd(t_output *cmd)
 		if (cmd->outfile)
 			free(cmd->outfile);
 		free(cmd);
-		cmd = next;
-	}
+		// cmd = next;
+	// }
 }
 
 void	free_var(void *var)
 {
 	if (var)
 		free(var);
+}
+
+void	free_parse(t_parse *var)
+{
+	free(var);
 }

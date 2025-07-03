@@ -52,7 +52,7 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 	int			i;
 
 	i = 0;
-	new = malloc(sizeof(t_output));
+	new = ft_calloc(sizeof(t_output), 1);
 	new->infile = infile;
 	new->outfile = outfile;
 	new->is_p = 0;
