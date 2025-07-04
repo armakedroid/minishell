@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:39:37 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/02 20:12:03 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:57:15 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,8 @@ int	parse_and_pipe(t_mini *var)
 	t_output	*exmpl;
 
 	pa = parse((*var).token);
+	if (!pa)
+		return (1);
 	(*var).cmd = pa->back;
 	free_parse(pa);
 	if ((*var).token)
