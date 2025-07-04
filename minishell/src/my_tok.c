@@ -53,7 +53,7 @@ char	*tok_for_dol(char *str, char **env)
 		return (ft_itoa(g_exit_status));
 	else
 	{
-		str1 = get_my_env(str, env);
+		str1 = ft_strdup(get_my_env(str, env));
 		if (str1)
 			return (str1);
 	}

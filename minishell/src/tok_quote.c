@@ -46,44 +46,52 @@ int	tok_quote3(t_tok_quote *tok, char **env)
 {
 	char	*str_sub;
 	char	*str_dol;
+	char	*str_for_dol;
 
 	str_sub = NULL;
-	str_dol = NULL;
-	while (((*tok).all)[(*tok).quote][(*tok).l])
+	str_dol = ft_calloc(1, 1);
+	while ((tok->all)[tok->quote][tok->l])
 	{
-		if (((*tok).all)[(*tok).quote][(*tok).l]
-			&& (!ft_isalpha(((*tok).all)[(*tok).quote][(*tok).l])
-				&& ((*tok).all)[(*tok).quote][(*tok).l] != '?'
-				&& ((*tok).all)[(*tok).quote][(*tok).l] != '_'))
+		if ((tok->all)[tok->quote][tok->l]
+			&& (!ft_isalpha((tok->all)[tok->quote][tok->l])
+				&& (tok->all)[tok->quote][tok->l] != '?'
+				&& (tok->all)[tok->quote][tok->l] != '_'))
 			break ;
 		(tok->l)++;
 	}
-	if (!(*tok).l)
+	if (!tok->l)
 		return (1);
-	str_sub = B(((*tok).all)[(*tok).quote], 0, (*tok).l);
+	str_sub = B((tok->all)[tok->quote], 0, tok->l);
 	if (D(str_sub, env))
 	{
-		free(str_sub);
-		str_sub = B(((*tok).all)[(*tok).quote], 0, (*tok).l);
-		(*tok).all1_h = C(str_dol, A(str_sub, env));
-		free(str_sub);
+		free_var(str_sub);
+		str_sub = B((tok->all)[tok->quote], 0, tok->l);
+		str_for_dol = A(str_sub, env);
+		tok->all1_h = C(str_dol, str_for_dol);
+		free_var(str_sub);
+		free_var(str_for_dol);
+		str_sub = NULL;
 	}
 	else
-		(*tok).all1_h = C((*tok).all1, " ");
-	free((*tok).all1);
-	(*tok).all1 = (*tok).all1_h;
-	(*tok).j = (*tok).l;
-	if (!(*tok).all1_h)
+		tok->all1_h = C(tok->all1, " ");
+	free_var(tok->all1);
+	tok->all1 = tok->all1_h;
+	tok->j = tok->l;
+	if (!tok->all1_h)
 		return (1);
-	while ((*tok).all[(*tok).quote][(*tok).l])
-		(*tok).l++;
-	if ((*tok).j != (*tok).l)
+	if (ft_strlen(tok->all[tok->quote]) < tok->l + 1)
+		while (tok->all[tok->quote][tok->l])
+			tok->l++;
+	if (tok->j != tok->l)
 	{
-		str_sub = B(((*tok).all)[(*tok).quote], (*tok).j, (*tok).l - (*tok).j);
-		(*tok).all1_h = C((*tok).all1, str_sub);
-		free(str_sub);
+		str_sub = B((tok->all)[tok->quote], tok->j, tok->l - tok->j);
+		str_for_dol = tok->all1;
+		tok->all1_h = C(str_for_dol, str_sub);
+		free_var(str_for_dol);
 	}
-	(*tok).all1 = (*tok).all1_h;
+	free_var(str_dol);
+	free_var(str_sub);
+	tok->all1 = tok->all1_h;
 	return (0);
 }
 
@@ -163,7 +171,8 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 		tok.str = tok.all2;
 	}
 	if (tok_quote4(&tok, token, env))
-	{	if (tok.str)
+	{	
+		if (tok.str)
 			free(tok.str);
 		return (0);
 	}
