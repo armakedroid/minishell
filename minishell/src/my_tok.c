@@ -63,11 +63,9 @@ char	*tok_for_dol(char *str, char **env)
 t_token	*my_tok(char *line, char **env)
 {
 	int		i;
-	int		start;
 	t_token	*token;
 
 	i = 0;
-	start = 0;
 	token = NULL;
 	while (line[i])
 	{

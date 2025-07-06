@@ -60,7 +60,8 @@ void	main_function_utils(t_mini *var)
 		if (g_exit_status && var->cmd->infile)
 			return ;
 	}
-	if (!(ft_strncmp((*var).cmd->args[0], "cd", 3)))
+	write (1, "a\n",2 );
+	if (var->cmd->args[0] && !(ft_strncmp((*var).cmd->args[0], "cd", 3)))
 	{
 		(*var).cd_result = ft_cd((*var).cmd->args, (*var).env);
 		if ((*var).cd_result == 100)
