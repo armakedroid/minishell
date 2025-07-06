@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:39:37 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/04 16:57:15 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/06 19:06:36 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,6 @@ t_output *new_parse(t_output *var)
 int	parse_and_pipe(t_mini *var)
 {
 	t_parse		*pa;
-	t_output	*exmpl;
 
 	pa = parse((*var).token);
 	if (!pa)
@@ -160,11 +159,7 @@ int	parse_and_pipe(t_mini *var)
 		return (1);
 	}
 	while ((*var).cmd->next && (*var).cmd->next->is_p != 1)
-	{
-		exmpl = (*var).cmd->next;
-		free_cmd((*var).cmd);
-		(*var).cmd = exmpl;
-	}
+		(*var).cmd = var->cmd->next;
 	if ((*var).cmd && (*var).cmd->next && (*var).cmd->next->next
 		&& (*var).cmd->next->is_p)
 		g_exit_status = my_pipe((*var).cmd, (*var).env, (*var).my_p);
@@ -193,17 +188,20 @@ int	main(int argc, char **argv, char **envp)
 		var.path = get_path(var.env);
 		var.my_p = ft_split(var.path, ':');
 		i = main_main(&var, var.env);
-		if (i == 2)
-			continue ;
-		else if (i == 1)
-			break ;
-		if(var.cmd)
+		if (i)
+		{
+			free_var(var.path);
+			free_split(var.my_p);
+			if (i == 2)
+				continue ;
+			else if (i == 1)
+				break ;
+		}
+		if (var.cmd)
 			free_cmd(var.cmd);
 		free_var(var.path);
 		free_split(var.my_p);
 	}
-	free_var(var.path);
-	free_split(var.my_p);
 	free_split(var.env);
 	return (g_exit_status);
 }
