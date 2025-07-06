@@ -17,10 +17,12 @@ int		g_exit_status = 0;
 void	main_ut(t_mini *var)
 {
 	t_output	*exmpl1;
-
+	if (!var->cmd->infile && !var->cmd->outfile)
+		return ;
 	(*var).cha = fork();
 	if ((*var).cha == 0)
 	{
+		write(1, "d\n", 2);
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		while ((*var).cmd->next)
@@ -34,14 +36,19 @@ void	main_ut(t_mini *var)
 	}
 	else if ((*var).cha > 0)
 	{
+				write(1, "e\n", 2);
 		signal(SIGINT, SIG_IGN);
 		waitpid((*var).cha, &(*var).signal1, 0);
 		dup2((*var).stdout1, STDOUT_FILENO);
 		dup2((*var).stdin1, STDIN_FILENO);
 		signal(SIGINT, handle_sigint);
 		if ((*var).signal1 < 256 && (*var).signal1)
+		{
+					write(1, "f\n", 2);
+
 			g_exit_status = ft_errors(WTERMSIG((*var).signal1) + 128, NULL,
 					NULL);
+		}
 		else
 			g_exit_status = WEXITSTATUS((*var).signal1);
 	}
@@ -69,12 +76,16 @@ void	main_function_utils(t_mini *var)
 		else if ((*var).cd_result == 1)
 			g_exit_status = ft_errors1(1, (*var).cmd->args, NULL);
 	}
-	else if (!(ft_strncmp((*var).cmd->args[0], "export", 7)))
+	else if (var->cmd->args[0] && !(ft_strncmp((*var).cmd->args[0], "export", 7)))
 		(*var).env = ft_export((*var).env, (*var).cmd->args);
-	else if (ft_strncmp((*var).cmd->args[0], "unset", 6) == 0)
+	else if (var->cmd->args[0] && ft_strncmp((*var).cmd->args[0], "unset", 6) == 0)
 		(*var).env = ft_unset((*var).env, (*var).cmd->args);
 	else
+	{
+		write (1, "b\n",2);
 		main_ut(&(*var));
+	}
+	write (1, "c\n", 2);
 	dup2((*var).stdout1, STDOUT_FILENO);
 	dup2((*var).stdin1, STDIN_FILENO);
 	close((*var).stdout1);
