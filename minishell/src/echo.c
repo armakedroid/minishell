@@ -26,8 +26,8 @@ char	*get_my_env(char *str, char **env)
 		i++;
 	}
 	if (!env[i])
-		return (free(all), NULL);
-	free(all);
+		return (free_var(all), NULL);
+	free_var(all);
 	return (env[i] + ft_strlen(str) + 1);
 }
 
@@ -42,7 +42,7 @@ void	echo_utils(char **back, int j, int i, char **argv)
 			str = ft_strtrim(back[j], "'");
 		else
 			str = ft_strdup("'");
-		free(back[j]);
+		free_var(back[j]);
 		back[j] = str;
 		printf("%s", back[j]);
 	}

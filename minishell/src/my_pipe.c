@@ -65,37 +65,29 @@ void	cmds_init(t_pipes *m_p, t_output *cmds)
 {
 	(*m_p).errors1 = 0;
 	(*m_p).a = 0;
-	write(1, "a\n", 2);
 	(*m_p).cmd_nbr = cmd_count(cmds);
 	(*m_p).in_fd = (*m_p).cmd_nbr - 1;
 	(*m_p).pid = malloc(sizeof(pid_t) * (*m_p).cmd_nbr);
 	(*m_p).fd = malloc(sizeof(int *) * ((*m_p).cmd_nbr - 1));
-	write(1, "b\n", 2);
 	while ((*m_p).in_fd > 0)
 	{
 		((*m_p).fd)[(*m_p).in_fd - 1] = malloc(sizeof(int) * 2);
 		((*m_p).in_fd)--;
 	}
-	write(1, "c\n", 2);
 	(*m_p).in_fd = 0;
 	(*m_p).saved_stdin = dup(STDIN_FILENO);
 	(*m_p).saved_stdout = dup(STDOUT_FILENO);
 	(*m_p).str = cmds;
 	while ((*m_p).str->next)
 		(*m_p).str = (*m_p).str->next;
-	write(1, "d\n", 2);
 	(*m_p).inf = open("/dev/null", O_RDWR | O_CREAT | O_TRUNC, 0666);
 	dup2((*m_p).inf, STDOUT_FILENO);
-	write(1, "e2\n", 2);
 	((*m_p).pid)[(*m_p).a] = fork();
-	write(1, "f\n", 2);
 	if (((*m_p).pid)[(*m_p).a] == -1)
 	{
-		write(1, "aa\n", 3);
 		perror("fork");
 		exit(EXIT_FAILURE);
 	}
-	write(1, "g\n", 2);
 }
 
 int	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)

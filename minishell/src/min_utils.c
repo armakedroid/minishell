@@ -50,7 +50,7 @@ void	check_f(t_output *cmd, char **envp, char **path, int flag)
 		line = ft_pwd();
 		if (line)
 			printf("%s\n", line);
-		free(line);
+		free_var(line);
 	}
 	else if (!ft_strncmp((cmd->args)[0], "env", 4))
 		g_exit_status = ft_env(envp);
@@ -77,14 +77,14 @@ int	main_main(t_mini *var, char **env)
 	if (*(*var).line1)
 		add_history((*var).line1);
 	(*var).line = ft_strtrim((*var).line1, " ");
-	free((*var).line1);
+	free_var((*var).line1);
 	if (space_token(&(*var), env))
 		return (2);
 	if (!ft_strncmp((*var).line, "exit", 4))
 	{
 		if (exit_var(var))
 		{
-			free((*var).line);
+			free_var((*var).line);
 			free_tokens((*var).token);
 			return (1);
 		}

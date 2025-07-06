@@ -49,12 +49,12 @@ void	heredoc(const char *li)
 			here_doc_u(&line, &back);
 			if (ft_strncmp(back[0], li, sizeof(back[0])) == 0)
 			{
-				free(line);
+				free_var(line);
 				break ;
 			}
 		}
 		write(fd, line, ft_strlen(line));
-		free(line);
+		free_var(line);
 	}
 	close(fd);
 }
@@ -101,8 +101,8 @@ void	free_fd(int **fd, int i)
 {
 	while (i > 0)
 	{
-		free(fd[i - 1]);
+		free_var(fd[i - 1]);
 		i--;
 	}
-	free(fd);
+	free_var(fd);
 }

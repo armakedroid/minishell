@@ -22,9 +22,9 @@ void	free_tokens(t_token *tokens)
 		{
 			next = tokens->next;
 			if (tokens->value)
-				free(tokens->value);
+				free_var(tokens->value);
 			if (tokens)
-				free(tokens);
+				free_var(tokens);
 			tokens = next;
 		}
 	}
@@ -42,7 +42,7 @@ void	free_split(char **back)
 		free_var(back[i]);
 		i++;
 	}
-	free(back);
+	free_var(back);
 }
 
 void	free_cmd(t_output *cmd)
@@ -55,10 +55,10 @@ void	free_cmd(t_output *cmd)
 		if (cmd->args && cmd->args[0])
 			free_split(cmd->args);
 		if (cmd->infile)
-			free(cmd->infile);
+			free_var(cmd->infile);
 		if (cmd->outfile)
-			free(cmd->outfile);
-		free(cmd);
+			free_var(cmd->outfile);
+		free_var(cmd);
 		// cmd = next;
 	// }
 }
@@ -66,10 +66,14 @@ void	free_cmd(t_output *cmd)
 void	free_var(void *var)
 {
 	if (var)
+	{
 		free(var);
+		var = NULL;
+	}
 }
 
 void	free_parse(t_parse *var)
 {
 	free(var);
+	var = NULL;
 }

@@ -21,27 +21,29 @@ int	mykey(char *env, char *key)
 		i++;
 	return (ft_strncmp(env, key, i) == 0 && (int)ft_strlen(key) == i);
 }
-
 char	**ft_unset(char **envp, char **back)
 {
 	int		i;
+	int		j;
 
-	i = 0;
 	if (!back || !back[1])
 		return (envp);
 	if (have_a_var(envp, back) == -1)
 		return (envp);
+
+	i = 0;
 	while (envp[i])
 	{
 		if (mykey(envp[i], back[1]))
 		{
-			while (envp[i + 1])
+			free(envp[i]);
+			j = i;
+			while (envp[j + 1])
 			{
-				free(envp[i]);
-				envp[i] = envp[i + 1];
-				i++;
+				envp[j] = envp[j + 1];
+				j++;
 			}
-			envp[i] = NULL;
+			envp[j] = NULL;
 			break ;
 		}
 		i++;

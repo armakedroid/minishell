@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int	tok_sec(t_tok_quote *tok, t_token **token)
+int tok_sec(t_tok_quote *tok, t_token **token)
 {
 	(*tok).l = 0;
 	if (ft_strlen((*tok).str) == 1)
@@ -26,8 +26,7 @@ int	tok_sec(t_tok_quote *tok, t_token **token)
 		(*tok).all1 = ft_substr((*tok).str, 0, (*tok).l);
 	else
 	{
-		while ((*tok).str[(*tok).l] && (*tok).str[(*tok).l + 1]
-			&& (*tok).str[(*tok).l + 1] == '$')
+		while ((*tok).str[(*tok).l] && (*tok).str[(*tok).l + 1] && (*tok).str[(*tok).l + 1] == '$')
 			(*tok).l++;
 		(*tok).all1 = NULL;
 	}
@@ -42,25 +41,28 @@ int	tok_sec(t_tok_quote *tok, t_token **token)
 	return (0);
 }
 
-int	tok_quote3(t_tok_quote *tok, char **env)
+int tok_quote3(t_tok_quote *tok, char **env)
 {
-	char	*str_sub;
-	char	*str_dol;
-	char	*str_for_dol;
+	char *str_sub;
+	char *str_dol;
+	char *str_for_dol;
 
 	str_sub = NULL;
-	str_dol = ft_calloc(1, 1);
+	if (!(tok->all1))
+		str_dol = ft_calloc(1, 1);
+	else
+		str_dol = ft_strdup(tok->all1);
 	while ((tok->all)[tok->quote][tok->l])
 	{
-		if ((tok->all)[tok->quote][tok->l]
-			&& (!ft_isalpha((tok->all)[tok->quote][tok->l])
-				&& (tok->all)[tok->quote][tok->l] != '?'
-				&& (tok->all)[tok->quote][tok->l] != '_'))
-			break ;
+		if ((tok->all)[tok->quote][tok->l] && (!ft_isalpha((tok->all)[tok->quote][tok->l]) && (tok->all)[tok->quote][tok->l] != '?' && (tok->all)[tok->quote][tok->l] != '_'))
+			break;
 		(tok->l)++;
 	}
 	if (!tok->l)
+	{
+		free_var(str_dol);
 		return (1);
+	}
 	str_sub = B((tok->all)[tok->quote], 0, tok->l);
 	if (D(str_sub, env))
 	{
@@ -73,15 +75,18 @@ int	tok_quote3(t_tok_quote *tok, char **env)
 		str_sub = NULL;
 	}
 	else
-		tok->all1_h = C(tok->all1, " ");
+		tok->all1_h = ft_strdup("");
 	free_var(tok->all1);
 	tok->all1 = tok->all1_h;
 	tok->j = tok->l;
-	if (!tok->all1_h)
+	if (!tok->all1_h || !*(tok->all1_h))
+	{
+		free_var(str_dol);
+		free_var(str_sub);
 		return (1);
-	if (ft_strlen(tok->all[tok->quote]) < tok->l + 1)
-		while (tok->all[tok->quote][tok->l])
-			tok->l++;
+	}
+	while (tok->all[tok->quote][tok->l])
+		tok->l++;
 	if (tok->j != tok->l)
 	{
 		str_sub = B((tok->all)[tok->quote], tok->j, tok->l - tok->j);
@@ -95,7 +100,7 @@ int	tok_quote3(t_tok_quote *tok, char **env)
 	return (0);
 }
 
-int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
+int tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 {
 	if (ft_strchr((*tok).str, '$') && (*tok).quote && (*tok).sng_qut == 1)
 	{
@@ -104,6 +109,7 @@ int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 		while (((*tok).all)[(*tok).quote])
 		{
 			tok_quote3(&(*tok), env);
+			tok->l = 0;
 			(*tok).quote++;
 		}
 		add_token(token, (*tok).all1, WORD);
@@ -123,14 +129,12 @@ int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 	return (0);
 }
 
-int	tok_quote5(t_tok_quote *tok, t_token **token, char *line, int **i)
+int tok_quote5(t_tok_quote *tok, t_token **token, char *line, int **i)
 {
-	while ((line[*(*i)] && !is_space(line[*(*i)]) && !is_operator(line[*(*i)]))
-		|| ((*tok).quote == 0 || (*tok).sng_qut == 0))
+	while ((line[*(*i)] && !is_space(line[*(*i)]) && !is_operator(line[*(*i)])) || ((*tok).quote == 0 || (*tok).sng_qut == 0))
 	{
 		tok_first((*i), line, &(*tok));
-		if (line[*(*i)] && line[*(*i) + 1] && line[*(*i)] == '\''
-			&& !(*tok).quote && !(*tok).sng_qut)
+		if (line[*(*i)] && line[*(*i) + 1] && line[*(*i)] == '\'' && !(*tok).quote && !(*tok).sng_qut)
 		{
 			add_token(token, ft_strdup("'"), WORD);
 			(*(*i))++;
@@ -143,15 +147,15 @@ int	tok_quote5(t_tok_quote *tok, t_token **token, char *line, int **i)
 			(*(*i))++;
 			if (!line[*(*i)] || line[*(*i)] == '\"')
 				return (1);
-			continue ;
+			continue;
 		}
 	}
 	return (0);
 }
 
-int	tok_quote(char *line, int *i, t_token **token, char **env)
+int tok_quote(char *line, int *i, t_token **token, char **env)
 {
-	t_tok_quote	tok;
+	t_tok_quote tok;
 
 	tok.start = *i;
 	tok.quote = 1;
@@ -159,21 +163,18 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	tok.all = NULL;
 	if (tok_quote5(&tok, token, line, &i))
 		return (0);
-	if ((line[tok.start] == '\"' && ((*i - tok.start) == 1 || !(*i
-					- tok.start))))
+	if ((line[tok.start] == '\"' && ((*i - tok.start) == 1 || !(*i - tok.start))))
 		return (0);
 	tok.str = ft_substr(line, tok.start, *i - tok.start - !(tok.quote % 2));
 	if (tok.sng_qut == 2)
 	{
 		tok.all2 = ft_strtrim(tok.str, "'");
-		if (tok.str)
-			free(tok.str);
+		free_var(tok.str);
 		tok.str = tok.all2;
 	}
 	if (tok_quote4(&tok, token, env))
-	{	
-		if (tok.str)
-			free(tok.str);
+	{
+		free_var(tok.str);
 		return (0);
 	}
 	return (1);

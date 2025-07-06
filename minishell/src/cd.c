@@ -37,14 +37,14 @@ int	cd_minus_utils(char *home, char **envp)
 		printf("%s\n", home);
 		if (chdir(home) == -1)
 		{
-			free(str);
+			free_var(str);
 			return (1);
 		}
-		free(home);
+		free_var(home);
 		update_smth(envp, "PWD=", str);
 	}
 	if (str)
-		free(str);
+		free_var(str);
 	return (0);
 }
 
@@ -69,11 +69,11 @@ int	cd_utils(char **str, char **envp, char *home)
 		if (home)
 			if (chdir(home) == -1 || chdir(str[1] + 2) == -1)
 			{
-				free(str1);
+				free_var(str1);
 				return (1);
 			}
 	if (str1)
-		free(str1);
+		free_var(str1);
 	return (0);
 }
 
@@ -87,13 +87,13 @@ int	ft_cd_utils(char *home, char **envp)
 		update_smth(envp, "OLDPWD=", str);
 		if (chdir(home) == -1)
 		{
-			free(str);
+			free_var(str);
 			return (1);
 		}
 		update_smth(envp, "PWD=", str);
 	}
 	if (str)
-		free(str);
+		free_var(str);
 	return (0);
 }
 
@@ -114,12 +114,12 @@ int	ft_cd(char **str, char **envp)
 		{
 			home = ft_pwd();
 			update_smth(envp, "OLDPWD=", home);
-			free(home);
+			free_var(home);
 			if (chdir(str[1]) == -1)
 				return (1);
 			home = ft_pwd();
 			update_smth(envp, "PWD=", home);
-			free(home);
+			free_var(home);
 			return (0);
 		}
 		return (cd_utils(str, envp, home));

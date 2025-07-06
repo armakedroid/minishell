@@ -21,7 +21,7 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 	{
 		all = ft_strjoin("/", cmd[0]);
 		str = ft_strjoin(path, all);
-		free(all);
+		free_var(all);
 	}
 	else
 		str = ft_strdup(cmd[0]);
@@ -31,12 +31,12 @@ void	cmd_ut(char **cmd, char *path, char **envp, int *exit_status)
 		{
 			execve(str, cmd, envp);
 			perror("execve failed");
-			free(str);
+			free_var(str);
 		}
 		free_split(cmd);
 		*exit_status = ft_errors126(126, cmd, NULL);
 	}
-	free(str);
+	free_var(str);
 	str = NULL;
 }
 
@@ -79,18 +79,18 @@ int	cmd_ut_unex(char **cmd, char *path, char **envp, int *exit_status)
 		str = ft_strjoin(all, cmd[0]);
 	else
 		str = ft_strjoin(all, ft_strrchr(cmd[0], '/') + 1);
-	free(all);
+	free_var(all);
 	if (access(str, F_OK) == 0)
 	{
 		if (access(str, X_OK) == 0)
 		{
-			free(str);
+			free_var(str);
 			exit(0);
 		}
 		free_split(cmd);
 		*exit_status = ft_errors126(126, cmd, NULL);
 	}
-	free(str);
+	free_var(str);
 	str = NULL;
 	return (1);
 }

@@ -29,7 +29,7 @@ void	main_ut(t_mini *var)
 			free_cmd(var->cmd);
 			(*var).cmd = exmpl1;
 		}
-		free((*var).path);
+		free_var((*var).path);
 		check_f((*var).cmd, (*var).env, (*var).my_p, 1);
 	}
 	else if ((*var).cha > 0)
@@ -149,8 +149,7 @@ int	parse_and_pipe(t_mini *var)
 	free_parse(pa);
 	if ((*var).token)
 		free_tokens((*var).token);
-	if ((*var).line)
-		free((*var).line);
+	free_var((*var).line);
 	if (!(*var).cmd || !(*var).cmd->args)
 	{
 		if (g_exit_status)
@@ -191,6 +190,8 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
+		var.path = get_path(var.env);
+		var.my_p = ft_split(var.path, ':');
 		i = main_main(&var, var.env);
 		if (i == 2)
 			continue ;
@@ -198,9 +199,11 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		if(var.cmd)
 			free_cmd(var.cmd);
+		free_var(var.path);
+		free_split(var.my_p);
 	}
-	free(var.path);
-	free_split(var.env);
+	free_var(var.path);
 	free_split(var.my_p);
+	free_split(var.env);
 	return (g_exit_status);
 }
