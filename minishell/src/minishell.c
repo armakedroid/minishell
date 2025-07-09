@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/02 19:06:35 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/08 21:04:37 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,38 +72,32 @@ t_output	*create_out(char **str, char *infile, char *outfile)
 	new->next = NULL;
 	return (new);
 }
-t_parse *parse(t_token *token)
-{
-    t_parse    *parse;
-    t_output   *tmp;
-    int         i;
 
-    parse = ft_calloc(1, sizeof(*parse));
-    tmp = create_out(NULL, NULL, NULL);
-    cmdfun(&parse->back, tmp);
-    parse->tmp = tmp;
-    i = 0;
-    while (token)
-    {
-        if (token->type == PIPE)
-        {
-            parse->tmp->is_p = 1;
-            token = token->next;
-            tmp = create_out(NULL, NULL, NULL);
-            cmdfun(&parse->back, tmp);
-            parse->tmp = tmp;
-            i = 0;
-            continue;
-        }
-        if (!parse_heredoc(&token))
-            break;
-        if (token->type == WORD)
-            parse->tmp->args[i++] = ft_strdup(token->value);
-        else
-            parse_ut(&parse->tmp, &token);
-        token = token->next;
-    }
-    return (parse);
+t_parse	*parse(t_token *token)
+{
+	t_parse	*parse;
+
+	parse = ft_calloc(1, sizeof(t_parse));
+	while (token)
+	{
+		if (!parse_heredoc(&token))
+			return (NULL);
+		if (!token)
+			return (parse);
+		if (my_parse_ut(&(parse->back), &(parse->tmp), &token, &(parse->for_args)) == 1)
+		{
+			parse->i = 0;
+			continue ;
+		}
+		if (parse_wrd(&token, &(parse->tmp), &(parse->i)) == 1)
+		{
+			parse->i = 1;
+			return (NULL);
+		}
+		token = token->next;
+		cmdfun(&(parse->back),parse->tmp);
+	}
+	return (parse);
 }
 
 int	exit_var(t_mini *var)

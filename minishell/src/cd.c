@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 19:35:53 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 20:09:06 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/08 20:13:40 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*get_old_path(char **envp)
 
 int	cd_minus_utils(char *home, char **envp)
 {
-	char *str;
+	char	*str;
 
 	str = ft_pwd();
 	if (home)
@@ -50,18 +50,18 @@ int	cd_minus_utils(char *home, char **envp)
 
 int	cd_utils(char **str, char **envp, char *home)
 {
-	char *str1;
+	char	*str1;
 
 	str1 = NULL;
 	if (str[2])
-	return (100);
+		return (100);
 	if (str[1][0] == '-' && ft_strlen(str[1]) == 1)
 	{
 		home = get_old_path(envp);
 		if (cd_minus_utils(home, envp))
-		return (1);
+			return (1);
 		else
-		return (0);
+			return (0);
 	}
 	str1 = ft_pwd();
 	update_smth(envp, "OLDPWD=", str1);

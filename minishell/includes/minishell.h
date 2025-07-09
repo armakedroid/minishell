@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/03 19:21:05 by argharag         ###   ########.fr       */
+/*   Updated: 2025/07/09 19:31:38 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ typedef struct s_pipes
 	int				a;
 	int				cmd_nbr;
 	t_output		*str;
+	t_output		*cmd_s;
 }					t_pipes;
 
 void	free_parse(t_parse *var);
@@ -124,7 +125,7 @@ void				cmdfun(t_output **lst, t_output *new);
 int					my_parse_ut(t_output **back, t_output **tmp,
 						t_token **token, t_output **for_args);
 void				add_token(t_token **token, char *str, int i);
-int					my_pipe(t_output *cmds, char **env, char **my_p);
+int					my_pipe(t_output *cmds, t_mini *var, char **my_p);
 void				check_f(t_output *cmd, char **envp, char **path, int flag);
 void				here_doc_u(char **line, char ***back);
 void				heredoc(const char *li);
@@ -155,6 +156,8 @@ void				print_str(char **str, char *type);
 void				print_cmd(t_output *token);
 void				free_var(void *var);
 void				free_cmd(t_output *cmd);
+void				free_cmd_start(t_output *cmd);
+void				free_cmd_start_wthend(t_output *cmd);
 void				free_split(char **back);
 int					is_space(char c);
 int					is_operator(char c);

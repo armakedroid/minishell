@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 18:48:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/06 18:45:09 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/08 20:45:08 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ int	my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for
 		if (!((*for_args)->is_p))
 			*tmp = create_out((*for_args)->args, (*for_args)->infile,
 					(*for_args)->outfile);
+		else
+			*tmp = create_out(NULL, NULL, NULL);
 	}
 	if ((*token)->type == PIPE)
 	{

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:45:16 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/03 19:18:56 by argharag         ###   ########.fr       */
+/*   Updated: 2025/07/09 20:22:02 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,22 +45,57 @@ void	free_split(char **back)
 	free_var(back);
 }
 
+void	free_cmd_start_wthend(t_output *cmd)
+{
+	t_output	*next;
+
+	if (cmd && cmd->next)
+	{
+		while (cmd->next)
+		{
+			next = cmd->next;
+			if (cmd->args && cmd->args[0])
+				free_split(cmd->args);
+			if (cmd->infile)
+				free_var(cmd->infile);
+			if (cmd->outfile)
+				free_var(cmd->outfile);
+			free_var(cmd);
+			cmd = next;
+		}
+	}
+}
+
+void	free_cmd_start(t_output *cmd)
+{
+	t_output	*next;
+
+	if (cmd)
+	{
+		while (cmd)
+		{
+			next = cmd->next;
+			if (cmd->args && cmd->args[0])
+				free_split(cmd->args);
+			if (cmd->infile)
+				free_var(cmd->infile);
+			if (cmd->outfile)
+				free_var(cmd->outfile);
+			free_var(cmd);
+			cmd = next;
+		}
+	}
+}
+
 void	free_cmd(t_output *cmd)
 {
-	// t_output	*next;
-
-	// while (cmd)
-	// {
-		// next = cmd->next;
-		if (cmd->args && cmd->args[0])
-			free_split(cmd->args);
-		if (cmd->infile)
-			free_var(cmd->infile);
-		if (cmd->outfile)
-			free_var(cmd->outfile);
-		free_var(cmd);
-		// cmd = next;
-	// }
+	if (cmd->args && cmd->args[0])
+		free_split(cmd->args);
+	if (cmd->infile)
+		free_var(cmd->infile);
+	if (cmd->outfile)
+		free_var(cmd->outfile);
+	free_var(cmd);
 }
 
 void	free_var(void *var)
