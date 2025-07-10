@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:22:57 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/09 21:42:57 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/10 19:20:19 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,7 @@ void	cmds_init(t_pipes *m_p, t_output *cmds)
 
 int	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 {
-	int	k;
-
-	k = 0;
 	while (cmds)
-	{
-		while (cmds->next && !(cmds->is_p))
-			cmds = cmds->next;
-		(*m_p).a++;
-		cmds = cmds->next;
-	}
-	cmds = m_p->cmd_s;
-	while (k < m_p->a)
 	{
 		while (cmds->next && !(cmds->is_p))
 			cmds = cmds->next;
@@ -117,7 +106,6 @@ int	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 		}
 		else
 		{
-			free_cmd_start_wthend(m_p->cmd_s);
 			if ((*m_p).in_fd != (*m_p).saved_stdin)
 				close((*m_p).in_fd);
 			if (cmds->next)
@@ -126,7 +114,7 @@ int	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 				(*m_p).in_fd = ((*m_p).fd)[(*m_p).a][0];
 			}
 		}
-		k++;
+		(*m_p).a++;
 		cmds = cmds->next;
 	}
 	(*m_p).a = 0;
