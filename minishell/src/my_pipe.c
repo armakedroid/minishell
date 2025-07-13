@@ -58,7 +58,6 @@ void	child_p(t_output *cmds, char **env, t_pipes *m_p, char **my_p)
 	if ((*m_p).in_fd != (*m_p).saved_stdin)
 		close((*m_p).in_fd);
 	check_f(cmds, env, my_p, 1);
-	// exit(EXIT_FAILURE);
 }
 
 void	cmds_init(t_pipes *m_p, t_output *cmds)
@@ -105,15 +104,7 @@ int	cmds_utils(t_output *cmds, t_pipes *m_p, char **my_p, char **env)
 			child_p(cmds, env, &(*m_p), my_p);
 		}
 		else
-		{
-			if ((*m_p).in_fd != (*m_p).saved_stdin)
-				close((*m_p).in_fd);
-			if (cmds->next)
-			{
-				close(((*m_p).fd)[(*m_p).a][1]);
-				(*m_p).in_fd = ((*m_p).fd)[(*m_p).a][0];
-			}
-		}
+			cmds_while_utils(m_p, cmds);
 		(*m_p).a++;
 		cmds = cmds->next;
 	}
@@ -143,22 +134,7 @@ int	my_pipe(t_output *cmds, t_mini *var, char **my_p)
 		cmds_exit(&m_p);
 		return (m_p.errors1);
 	}
-	while (m_p.a < m_p.cmd_nbr)
-	{
-		if (m_p.str)
-			m_p.str = m_p.str->next;
-		while (m_p.str && m_p.str->next && !(m_p.str->is_p))
-			m_p.str = m_p.str->next;
-		m_p.in_fd = waitpid((m_p.pid)[m_p.a], &m_p.errors, 0);
-		if (m_p.errors)
-			m_p.errors1 = WEXITSTATUS(m_p.errors);
-		if (m_p.errors1)
-		{
-			ft_errors(m_p.errors1, m_p.str->args, NULL);
-			m_p.errors1 = 0;
-		}
-		m_p.a++;
-	}
+	my_pipe_while(&m_p);
 	cmds_exit(&m_p);
 	return (m_p.errors1);
 }

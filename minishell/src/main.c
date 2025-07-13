@@ -28,64 +28,9 @@ void	main_ut(t_mini *var)
 		check_f((*var).cmd, (*var).env, (*var).my_p, 1);
 	}
 	else if ((*var).cha > 0)
-	{
-		signal(SIGINT, SIG_IGN);
-		waitpid((*var).cha, &(*var).signal1, 0);
-		dup2((*var).stdout1, STDOUT_FILENO);
-		dup2((*var).stdin1, STDIN_FILENO);
-		signal(SIGINT, handle_sigint);
-		if ((*var).signal1 < 256 && (*var).signal1)
-			g_exit_status = ft_errors(WTERMSIG((*var).signal1) + 128, NULL,
-					NULL);
-		else
-			g_exit_status = WEXITSTATUS((*var).signal1);
-	}
+		fork_ut(var);
 	else
 		perror("fork");
-}
-
-void	main_function_utils(t_mini *var)
-{
-	if ((*var).cmd)
-	{
-		if ((*var).cmd->outfile)
-			g_exit_status = big_crt((*var).cmd, &(*var).fd);
-		else if ((*var).cmd->infile)
-			g_exit_status = small((*var).cmd, &(*var).fd);
-		if ((var->cmd->outfile || var->cmd->infile) && (g_exit_status
-				|| !var->cmd->args[0]))
-		{
-			dup2((*var).stdout1, STDOUT_FILENO);
-			dup2((*var).stdin1, STDIN_FILENO);
-			close((*var).stdout1);
-			close((*var).stdin1);
-			if ((*var).fd)
-				close((*var).fd);
-			return ;
-		}
-	}
-	if (var->cmd->args[0] && !(ft_strncmp((*var).cmd->args[0], "cd", 3)))
-	{
-		(*var).cd_result = ft_cd((*var).cmd->args, (*var).env);
-		if ((*var).cd_result == 100)
-			g_exit_status = ft_errors(100, (*var).cmd->args, NULL);
-		else if ((*var).cd_result == 1)
-			g_exit_status = ft_errors1(1, (*var).cmd->args, NULL);
-	}
-	else if (var->cmd->args[0] && !(ft_strncmp((*var).cmd->args[0], "export",
-				7)))
-		(*var).env = ft_export((*var).env, (*var).cmd->args);
-	else if (var->cmd->args[0] && ft_strncmp((*var).cmd->args[0], "unset",
-			6) == 0)
-		(*var).env = ft_unset((*var).env, (*var).cmd->args);
-	else
-		main_ut(&(*var));
-	dup2((*var).stdout1, STDOUT_FILENO);
-	dup2((*var).stdin1, STDIN_FILENO);
-	close((*var).stdout1);
-	close((*var).stdin1);
-	if ((*var).fd)
-		close((*var).fd);
 }
 
 int	space_token(t_mini *var, char **env)
@@ -144,16 +89,8 @@ t_output	*new_parse(t_output *var)
 
 int	parse_and_pipe(t_mini *var)
 {
-	t_parse	*pa;
-
-	pa = parse((*var).token);
-	if (!pa)
+	if (tokens_and_parse(var))
 		return (1);
-	(*var).cmd = pa->back;
-	free_parse(pa);
-	if ((*var).token)
-		free_tokens((*var).token);
-	free_var((*var).line);
 	if (!(*var).cmd || !(*var).cmd->args)
 	{
 		if (g_exit_status)
@@ -190,22 +127,11 @@ int	main(int argc, char **argv, char **envp)
 	tcgetattr(STDIN_FILENO, &var.orig_termios);
 	while (1)
 	{
-		tcsetattr(STDIN_FILENO, TCSANOW, &var.orig_termios);
-		var.path = get_path(var.env);
-		var.my_p = ft_split(var.path, ':');
-		i = main_main(&var, var.env);
-		if (i)
-		{
-			free_var(var.path);
-			free_split(var.my_p);
-			if (i == 2)
-				continue ;
-			else if (i == 1)
-				break ;
-		}
-		free_cmd_start(var.cmd_start);
-		free_var(var.path);
-		free_split(var.my_p);
+		i = main_while(&var);
+		if (i == 2)
+			continue ;
+		if (i == 1)
+			break ;
 	}
 	free_split(var.env);
 	return (g_exit_status);

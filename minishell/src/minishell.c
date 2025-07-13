@@ -84,7 +84,8 @@ t_parse	*parse(t_token *token)
 			return (NULL);
 		if (!token)
 			return (parse);
-		if (my_parse_ut(&(parse->back), &(parse->tmp), &token, &(parse->for_args)) == 1)
+		if (my_parse_ut(&(parse->back), &(parse->tmp), 
+			&token, &(parse->for_args)) == 1)
 		{
 			parse->i = 0;
 			continue ;
@@ -95,7 +96,7 @@ t_parse	*parse(t_token *token)
 			return (NULL);
 		}
 		token = token->next;
-		cmdfun(&(parse->back),parse->tmp);
+		cmdfun(&(parse->back), parse->tmp);
 	}
 	return (parse);
 }

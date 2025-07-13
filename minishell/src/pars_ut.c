@@ -53,7 +53,7 @@ void	parse_ut(t_output **tmp, t_token **token)
 	}
 }
 
-int	my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for_args)
+int	my_parse_ut(E **back, E **tmp, t_token **token, E **for_args)
 {
 	if (!(*back))
 	{
@@ -77,8 +77,7 @@ int	my_parse_ut(t_output **back, t_output **tmp, t_token **token, t_output **for
 	{
 		(*tmp)->is_p = 1;
 		(*token) = (*token)->next;
-		cmdfun(&(*back), *tmp);
-		return (1);
+		return (cmdfun(&(*back), *tmp), 1);
 	}
 	return (0);
 }

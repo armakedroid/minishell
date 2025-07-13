@@ -26,6 +26,7 @@
 # define B ft_substr
 # define C ft_strjoin
 # define D tok_for_dol_2
+# define E t_output
 
 extern int			g_exit_status;
 
@@ -100,6 +101,20 @@ typedef struct s_pipes
 	t_output		*cmd_s;
 }					t_pipes;
 
+int	tok_quote3(t_tok_quote *tok, char **env);
+int tok_sec_ut(t_tok_quote *tok, t_token **token);
+void tok4_ut(t_tok_quote *tok);
+void my_pipe_while(t_pipes *m_p);
+void fork_ut(t_mini *var);
+int tokens_and_parse(t_mini *var);
+int	main_while(t_mini *var);
+void cmds_while_utils(t_pipes *m_p, t_output *cmds);
+void	main_function_utils(t_mini *var);
+void var_f(t_mini *var);
+void	main_ut(t_mini *var);
+int	cd_utils(char **str, char **envp, char *home);
+int cd_utils_mod(char **str, char *home, char **envp);
+void    free_ut(t_output *cmd, char **envp, char **path);
 void	free_parse(t_parse *var);
 t_parse				*parse(t_token *token);
 void				cmds_exit(t_pipes *m_p);

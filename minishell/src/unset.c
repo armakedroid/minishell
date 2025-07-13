@@ -21,6 +21,7 @@ int	mykey(char *env, char *key)
 		i++;
 	return (ft_strncmp(env, key, i) == 0 && (int)ft_strlen(key) == i);
 }
+
 char	**ft_unset(char **envp, char **back)
 {
 	int		i;
@@ -30,7 +31,6 @@ char	**ft_unset(char **envp, char **back)
 		return (envp);
 	if (have_a_var(envp, back) == -1)
 		return (envp);
-
 	i = 0;
 	while (envp[i])
 	{

@@ -15,11 +15,8 @@
 int	tok_sec(t_tok_quote *tok, t_token **token)
 {
 	(*tok).l = 0;
-	if (ft_strlen((*tok).str) == 1)
-	{
-		add_token(token, ft_strdup("$"), WORD);
+	if (tok_sec_ut(tok, token))
 		return (1);
-	}
 	while ((*tok).str[(*tok).l] && (*tok).str[(*tok).l] != '$')
 		(*tok).l++;
 	if ((*tok).l)
@@ -42,67 +39,6 @@ int	tok_sec(t_tok_quote *tok, t_token **token)
 	return (0);
 }
 
-int	tok_quote3(t_tok_quote *tok, char **env)
-{
-	char	*str_sub;
-	char	*str_dol;
-	char	*str_for_dol;
-
-	str_sub = NULL;
-	if (!(tok->all1))
-		str_dol = ft_calloc(1, 1);
-	else
-		str_dol = ft_strdup(tok->all1);
-	while ((tok->all)[tok->quote][tok->l])
-	{
-		if ((tok->all)[tok->quote][tok->l]
-			&& (!ft_isalpha((tok->all)[tok->quote][tok->l])
-				&& (tok->all)[tok->quote][tok->l] != '?'
-				&& (tok->all)[tok->quote][tok->l] != '_'))
-			break ;
-		(tok->l)++;
-	}
-	if (!tok->l)
-	{
-		free_var(str_dol);
-		return (1);
-	}
-	str_sub = B((tok->all)[tok->quote], 0, tok->l);
-	if (D(str_sub, env))
-	{
-		free_var(str_sub);
-		str_sub = B((tok->all)[tok->quote], 0, tok->l);
-		str_for_dol = A(str_sub, env);
-		tok->all1_h = C(str_dol, str_for_dol);
-		free_var(str_sub);
-		free_var(str_for_dol);
-		str_sub = NULL;
-	}
-	else
-		tok->all1_h = ft_strdup("");
-	free_var(tok->all1);
-	tok->all1 = tok->all1_h;
-	tok->j = tok->l;
-	if (!tok->all1_h || !*(tok->all1_h))
-	{
-		free_var(str_dol);
-		free_var(str_sub);
-		return (2);
-	}
-	while (tok->all[tok->quote][tok->l])
-		tok->l++;
-	if (tok->j != tok->l)
-	{
-		str_sub = B((tok->all)[tok->quote], tok->j, tok->l - tok->j);
-		str_for_dol = tok->all1;
-		tok->all1_h = C(str_for_dol, str_sub);
-		free_var(str_for_dol);
-	}
-	free_var(str_dol);
-	free_var(str_sub);
-	tok->all1 = tok->all1_h;
-	return (0);
-}
 
 int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 {
@@ -125,16 +61,7 @@ int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 		}
 		if (!k)
 			add_token(token, (*tok).all1, WORD);
-		if ((*tok).str)
-		{
-			free((*tok).str);
-			(*tok).str = NULL;
-		}
-		if ((*tok).all)
-		{
-			free_split((*tok).all);
-			(*tok).all = NULL;
-		}
+		tok4_ut(tok);
 	}
 	else
 		add_token(token, (*tok).str, WORD);

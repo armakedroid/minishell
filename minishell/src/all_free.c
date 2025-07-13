@@ -97,18 +97,3 @@ void	free_cmd(t_output *cmd)
 		free_var(cmd->outfile);
 	free_var(cmd);
 }
-
-void	free_var(void *var)
-{
-	if (var)
-	{
-		free(var);
-		var = NULL;
-	}
-}
-
-void	free_parse(t_parse *var)
-{
-	free(var);
-	var = NULL;
-}

@@ -61,9 +61,7 @@ void	check_f(t_output *cmd, char **envp, char **path, int flag)
 		else
 			cmd_unexit(cmd->args, path, envp, &g_exit_status);
 	}
-	free_cmd(cmd);
-	free_split(envp);
-	free_split(path);
+	free_ut(cmd, envp, path);
 	exit(g_exit_status);
 }
 
