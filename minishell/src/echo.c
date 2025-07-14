@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 19:02:47 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/06 17:42:53 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:21:19 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void	echo_utils(char **back, int j, int i, char **argv)
 			write(1, "\n", 1);
 	}
 	if ((back[j + 1]) || back[j][0] != '\'')
-		if ((argv[i + 1] && argv[i + 1][0] != '\'') || (back[j + 1]
-				&& back[j + 1][0] != '\''))
+		if ((argv[i + 1] && argv[i + 1][0] != '\'') || (back[j + 1] && back[j
+				+ 1][0] != '\''))
 			printf(" ");
 }
 
@@ -66,8 +66,8 @@ int	ft_echo(char **argv, int signal, char **env)
 	int		n;
 	char	**back;
 
-	(void) signal;
-	(void) env;
+	(void)signal;
+	(void)env;
 	n = 0;
 	i = 1;
 	if (argv[1] && ft_strncmp(argv[1], "-n", 3) == 0)

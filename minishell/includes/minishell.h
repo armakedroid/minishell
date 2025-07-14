@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/09 19:31:38 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 20:37:06 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,21 +101,21 @@ typedef struct s_pipes
 	t_output		*cmd_s;
 }					t_pipes;
 
-int	tok_quote3(t_tok_quote *tok, char **env);
-int tok_sec_ut(t_tok_quote *tok, t_token **token);
-void tok4_ut(t_tok_quote *tok);
-void my_pipe_while(t_pipes *m_p);
-void fork_ut(t_mini *var);
-int tokens_and_parse(t_mini *var);
-int	main_while(t_mini *var);
-void cmds_while_utils(t_pipes *m_p, t_output *cmds);
-void	main_function_utils(t_mini *var);
-void var_f(t_mini *var);
-void	main_ut(t_mini *var);
-int	cd_utils(char **str, char **envp, char *home);
-int cd_utils_mod(char **str, char *home, char **envp);
-void    free_ut(t_output *cmd, char **envp, char **path);
-void	free_parse(t_parse *var);
+int					tok_quote3(t_tok_quote *tok, char **env);
+int					tok_sec_ut(t_tok_quote *tok, t_token **token);
+void				tok4_ut(t_tok_quote *tok);
+void				my_pipe_while(t_pipes *m_p);
+void				fork_ut(t_mini *var);
+int					tokens_and_parse(t_mini *var);
+int					main_while(t_mini *var);
+void				cmds_while_utils(t_pipes *m_p, t_output *cmds);
+void				main_function_utils(t_mini *var);
+void				var_f(t_mini *var);
+void				main_ut(t_mini *var);
+int					cd_utils(char **str, char **envp, char *home);
+int					cd_utils_mod(char **str, char *home, char **envp);
+void				free_ut(t_output *cmd, char **envp, char **path);
+void				free_parse(t_parse *var);
 t_parse				*parse(t_token *token);
 void				cmds_exit(t_pipes *m_p);
 void				tok_first(int *i, char *line, t_tok_quote *tok);
@@ -151,7 +151,7 @@ int					ft_cd(char **str, char **envp);
 int					ft_echo(char **back, int signal, char **env);
 int					ft_env(char **envp);
 char				**ft_unset(char **envp, char **back);
-char				*ft_pwd(void);
+char				*ft_pwd(char **env);
 int					cmdfile(char **cmd, char **path, char **envp,
 						int *exit_status);
 int					cmd_unexit(char **cmd, char **path, char **envp,
@@ -176,6 +176,8 @@ void				free_cmd_start_wthend(t_output *cmd);
 void				free_split(char **back);
 int					is_space(char c);
 int					is_operator(char c);
+void				cd_utils_mod_ut(char **str1, char **str2, char **str,
+						char *home);
 char				**command_s(char *line);
 t_token				*my_tok(char *line, char **env);
 void				print_token(t_token *token);

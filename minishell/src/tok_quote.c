@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 13:57:14 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/06 19:01:18 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:25:21 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,12 @@ int	tok_sec(t_tok_quote *tok, t_token **token)
 	return (0);
 }
 
-
 int	tok_quote4(t_tok_quote *tok, t_token **token, char **env)
 {
+	int	k;
+
 	if (ft_strchr((*tok).str, '$') && (*tok).quote && (*tok).sng_qut == 1)
 	{
-		int	k;
-
 		k = 0;
 		if (tok_sec(&(*tok), token))
 			return (1);

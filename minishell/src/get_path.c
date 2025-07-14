@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 18:40:06 by argharag          #+#    #+#             */
-/*   Updated: 2025/06/30 19:57:48 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:21:36 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*get_path(char **env)
 
 char	*get_home(char **envp)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (envp[i])

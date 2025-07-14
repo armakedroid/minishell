@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   lines.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: argharag <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 15:20:11 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/13 15:20:13 by argharag         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:25:08 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void my_pipe_while(t_pipes *m_p)
+void	my_pipe_while(t_pipes *m_p)
 {
-    while (m_p->a < m_p->cmd_nbr)
+	while (m_p->a < m_p->cmd_nbr)
 	{
 		if (m_p->str)
 			m_p->str = m_p->str->next;
@@ -32,26 +32,26 @@ void my_pipe_while(t_pipes *m_p)
 	}
 }
 
-void tok4_ut(t_tok_quote *tok)
+void	tok4_ut(t_tok_quote *tok)
 {
-    if ((*tok).str)
-    {
-        free((*tok).str);
-        (*tok).str = NULL;
-    }
-    if ((*tok).all)
-    {
-        free_split((*tok).all);
-        (*tok).all = NULL;
-    }
+	if ((*tok).str)
+	{
+		free((*tok).str);
+		(*tok).str = NULL;
+	}
+	if ((*tok).all)
+	{
+		free_split((*tok).all);
+		(*tok).all = NULL;
+	}
 }
 
-int tok_sec_ut(t_tok_quote *tok, t_token **token)
+int	tok_sec_ut(t_tok_quote *tok, t_token **token)
 {
-    if (ft_strlen((*tok).str) == 1)
+	if (ft_strlen((*tok).str) == 1)
 	{
 		add_token(token, ft_strdup("$"), WORD);
 		return (1);
 	}
-    return (0);
+	return (0);
 }

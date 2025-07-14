@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 18:39:37 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/10 19:18:45 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:21:44 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	parse_and_pipe(t_mini *var)
 		(*var).cmd = var->cmd->next;
 	if ((*var).cmd && (*var).cmd->next && (*var).cmd->next->next
 		&& (*var).cmd->next->is_p)
-			g_exit_status = my_pipe((*var).cmd, var, (*var).my_p);
+		g_exit_status = my_pipe((*var).cmd, var, (*var).my_p);
 	else
 		main_function_utils(&(*var));
 	return (0);

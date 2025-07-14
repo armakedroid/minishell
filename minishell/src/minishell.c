@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:48:13 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/08 21:04:37 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:21:51 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ t_parse	*parse(t_token *token)
 			return (NULL);
 		if (!token)
 			return (parse);
-		if (my_parse_ut(&(parse->back), &(parse->tmp), 
-			&token, &(parse->for_args)) == 1)
+		if (my_parse_ut(&(parse->back), &(parse->tmp), &token,
+				&(parse->for_args)) == 1)
 		{
 			parse->i = 0;
 			continue ;
@@ -114,8 +114,7 @@ int	exit_var(t_mini *var)
 		return (0);
 	else if (i == 1)
 		return (1);
-	if (!ft_isdigit(ft_atoi(str[1]))
-		&& (ssize_t)(ft_strlen(str[1])) == k)
+	if (!ft_isdigit(ft_atoi(str[1])) && (ssize_t)(ft_strlen(str[1])) == k)
 	{
 		if (str[2])
 		{

@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 21:28:34 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/09 18:48:27 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/14 19:23:44 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	check_f(t_output *cmd, char **envp, char **path, int flag)
 		g_exit_status = ft_echo(cmd->args, g_exit_status, envp);
 	else if (!ft_strncmp((cmd->args)[0], "pwd", 4))
 	{
-		line = ft_pwd();
+		line = ft_pwd(envp);
 		if (line)
 			printf("%s\n", line);
 		free_var(line);
