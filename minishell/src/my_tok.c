@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 18:21:47 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/06 19:01:56 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:31:19 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,10 @@ t_token	*my_tok(char *line, char **env)
 	i = 0;
 	start = 0;
 	token = NULL;
+	if (ft_strlen(line) == 1 && (line[i] == '\'' || line[i] == '\"'))
+		return (NULL);
+	if (foo(line, '\'') || foo(line, '\"'))
+		return (NULL);
 	while (line[i])
 	{
 		while (is_space(line[i]))

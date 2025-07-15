@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 13:57:14 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/14 18:25:21 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:51:53 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ int	tok_quote(char *line, int *i, t_token **token, char **env)
 	}
 	if (tok_quote4(&tok, token, env))
 	{
-		print_token(*token);
 		free_var(tok.str);
 		return (0);
 	}

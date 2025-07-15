@@ -6,7 +6,7 @@
 /*   By: apetoyan <apetoyan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 19:33:41 by argharag          #+#    #+#             */
-/*   Updated: 2025/07/14 20:37:06 by apetoyan         ###   ########.fr       */
+/*   Updated: 2025/07/15 19:52:30 by apetoyan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_tok_quote
 	int				sng_qut;
 	int				l;
 	int				j;
+	int				tok_qut;
 	char			*str;
 	char			**all;
 	char			*all1_h;
@@ -167,8 +168,6 @@ int					ft_errors(int signal, char **back, char *infile);
 int					ft_errors126(int signal, char **back, char *infile);
 int					big_crt(t_output *back, int *fd);
 int					small(t_output *back, int *fd);
-void				print_str(char **str, char *type);
-void				print_cmd(t_output *token);
 void				free_var(void *var);
 void				free_cmd(t_output *cmd);
 void				free_cmd_start(t_output *cmd);
@@ -180,7 +179,6 @@ void				cd_utils_mod_ut(char **str1, char **str2, char **str,
 						char *home);
 char				**command_s(char *line);
 t_token				*my_tok(char *line, char **env);
-void				print_token(t_token *token);
 void				parse_ut(t_output **tmp, t_token **token);
 int					parse_heredoc(t_token **token);
 int					parse_wrd(t_token **token, t_output **tmp, int *i);
@@ -188,6 +186,7 @@ void				handle_sigint(int sl);
 char				*get_my_env(char *str, char **env);
 void				free_fd(int **fd, int i);
 int					cmd_count(t_output *cmds);
+int					foo(char *line, char c);
 char				*get_home(char **envp);
 
 #endif
